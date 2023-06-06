@@ -1,0 +1,27 @@
+<html>
+
+<head>
+  <title>HtmlRun - Custom calls example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+  <h1>Custom calls example</h1>
+
+  <h2>Run</h2>
+  <ul class="calls">
+    <li><u>Log</u> <i class="string">El resultado de Fibonacci(13) es</i> <a href="#Fibonacci" title="Fibonacci(n: number)" class="call">Fibonacci(13)</a></li>
+  </ul>
+
+  <h2>Calls</h2>
+  <div id="Fibonacci" class="code">
+    <h3>Fibonacci (<i class="number">n</i>)</h3>
+    <pre>
+      if (n &lt;= 1) return n;
+      return Fibonacci(n - 1) + Fibonacci(n - 2);
+    </pre>
+  </div>
+</body>
+
+</html>

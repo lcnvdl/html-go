@@ -1,0 +1,132 @@
+@import url("https://fonts.googleapis.com/css?family=Inconsolata&display=swap");
+
+u,
+i,
+p,
+span,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+th,
+td {
+  font-family: "Inconsolata", monospace;
+}
+
+u,
+i,
+p,
+span,
+ul,
+ol,
+li {
+  font-size: 1rem;
+}
+
+.comment {
+  color: green;
+}
+
+li .comment:before {
+  content: "(";
+}
+
+li .comment:after {
+  content: ")";
+}
+
+.boolean,
+.string {
+  color: orangered;
+}
+
+.solve {
+  color: magenta;
+}
+
+.solve:before {
+  content: "(";
+}
+
+.solve:after {
+  content: ")";
+}
+
+.string:before {
+  content: "«";
+}
+
+.string:after {
+  content: "»";
+}
+
+h2 {
+  margin-block-start: 1em;
+  margin-block-end: 0.3em;
+}
+
+ul,
+ol {
+  list-style-type: none;
+  margin-block-start: 0.2em;
+  margin-block-end: 0.2em;
+  padding-inline-start: 20px;
+}
+
+li {
+  padding-block-start: 0.2em;
+  padding-block-end: 0.2em;
+}
+
+table {
+  width: 100%;
+  border: 2px solid black;
+  border-collapse: collapse;
+}
+
+table.class th {
+  font-weight: normal;
+  text-align: left;
+  text-transform: none;
+}
+
+table.class th:first-child,
+table th {
+  background-color: silver;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+table td,
+table th {
+  padding: 8px;
+  border: 1px solid black;
+}
+
+table td[colspan="2"].section {
+  background-color: #ddd;
+  font-weight: bold;
+  text-align: center;
+  font-style: italic;
+}
+
+.classname {
+  color: orangered;
+  font-weight: bold;
+}
+
+.keyword {
+  color: blue;
+}
+
+.code {
+  padding-left: 1em;
+}
+
+.code h3:after {
+  content: ":";
+}
