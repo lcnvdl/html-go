@@ -1,0 +1,51 @@
+using HtmlRun.Runtime.Interfaces;
+using HtmlRun.Runtime.Native;
+
+namespace HtmlRun.Runtime.Providers;
+
+class DateProvider : INativeProvider
+{
+  public string Namespace => "Date";
+
+  public INativeInstruction[] Instructions => new INativeInstruction[] { new TimestampCmd(), new TimestampInSecondsCmd() };
+}
+
+class TimestampCmd : INativeInstruction, INativeJSInstruction
+{
+  private long Value => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
+  public string Key => Runtime.Constants.DateInstructionsSet.Timestamp;
+
+  public Action<IRuntimeContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+
+  public Delegate ToJSAction()
+  {
+    return new Func<string>(() => this.Value.ToString());
+  }
+}
+
+class TimestampInSecondsCmd : INativeInstruction
+{
+  private long Value => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+
+  public string Key => Runtime.Constants.DateInstructionsSet.TimestampInSeconds;
+
+  public Action<IRuntimeContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+
+  public Delegate ToJSAction()
+  {
+    return new Func<string>(() => this.Value.ToString());
+  }
+}

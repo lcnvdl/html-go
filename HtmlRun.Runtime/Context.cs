@@ -1,4 +1,5 @@
 using HtmlRun.Runtime.Interfaces;
+using HtmlRun.Runtime.RuntimeContext;
 
 namespace HtmlRun.Runtime;
 
@@ -12,7 +13,7 @@ public class Context : IRuntimeContext
 
   private List<string?>? args;
 
-  public string? CursorModification { get; set; }
+  public IContextJump? CursorModification { get; set; }
 
   public Context(Context? parent, Stack<Context> ctxStack)
   {
@@ -60,8 +61,8 @@ public class Context : IRuntimeContext
     return new Context(this, this.ctxStack, callName, args);
   }
 
-  public void JumpToBranch(string condition)
+  public void Jump<T>(T jump) where T : class, IContextJump
   {
-    this.CursorModification = condition;
+    this.CursorModification = jump;
   }
 }

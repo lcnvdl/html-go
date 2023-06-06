@@ -3,6 +3,7 @@ using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 using HtmlRun.Runtime.Providers;
+using HtmlRun.Runtime.RuntimeContext;
 
 namespace HtmlRun.Runtime;
 
@@ -30,7 +31,33 @@ public class HtmlRuntime
 
     foreach (var kv in this.jsInstructions)
     {
-      jsParserWithContext.RegisterInstruction(kv.Key, kv.Value);
+      Console.WriteLine(kv.Key);
+
+      if (kv.Key.Contains("."))
+      {
+        string sanitizedKey = "call__" + kv.Key.Replace(".", "__");
+        jsParserWithContext.RegisterInstruction(sanitizedKey, kv.Value);
+
+        var split = kv.Key.Split('.');
+
+        for (int i = 0; i < split.Length; i++)
+        {
+          string curr = split[i];
+
+          for (int j = i - 1; j >= 0; j--)
+          {
+            curr = $"{split[j]}.{curr}";
+          }
+
+          jsParserWithContext.ExecuteCode($"window.{curr}=window.{curr}||{{}};");
+        }
+
+        jsParserWithContext.ExecuteCode($"window.{kv.Key}={sanitizedKey}");
+      }
+      else
+      {
+        jsParserWithContext.RegisterInstruction(kv.Key, kv.Value);
+      }
     }
 
     //  Title
@@ -62,15 +89,42 @@ public class HtmlRuntime
 
         var finalCtx = this.RunInstruction(instruction.FunctionName, arguments);
 
-        if (!string.IsNullOrEmpty(finalCtx.CursorModification))
+        if (finalCtx.CursorModification != null && !finalCtx.CursorModification.IsEmpty)
         {
-          var newBranch = instruction.Arguments.Find(m => m.IsBranch && finalCtx.CursorModification.Equals(m.BranchCondition, StringComparison.InvariantCultureIgnoreCase));
-          if (newBranch == null)
+          if (finalCtx.CursorModification is JumpToBranch)
           {
-            throw new NullReferenceException($"Missing branch {finalCtx.CursorModification} in {instruction.FunctionName} call.");
+            var jump = (JumpToBranch)finalCtx.CursorModification;
+            var newBranch = instruction.Arguments.Find(m => m.IsBranch && jump.IsBranch(m.BranchCondition));
+            if (newBranch == null)
+            {
+              throw new NullReferenceException($"Missing branch {jump.Condition} in {instruction.FunctionName} call.");
+            }
+
+            app.Instructions.InsertRange(cursor + 1, newBranch.BranchInstructions!);
+          }
+          else if (finalCtx.CursorModification is JumpToLine)
+          {
+            var jump = (JumpToLine)finalCtx.CursorModification;
+            if (jump.JumpType == JumpToLine.JumpTypeEnum.LineNumber)
+            {
+              cursor = int.Parse(jump.Line!) - 1;
+            }
+            else
+            {
+              cursor = app.Instructions.FindIndex(m => m.CustomId != null && m.CustomId == jump.Line);
+              if (cursor < 0)
+              {
+                throw new IndexOutOfRangeException();
+              }
+
+              --cursor;
+            }
+          }
+          else
+          {
+            throw new InvalidCastException();
           }
 
-          app.Instructions.InsertRange(cursor + 1, newBranch.BranchInstructions!);
           finalCtx.CursorModification = null;
         }
 
@@ -101,14 +155,22 @@ public class HtmlRuntime
 
   public void RegisterBasicProviders()
   {
+    //  Language instructions
     this.RegisterProvider(new ConditionalProvider());
+    this.RegisterProvider(new GotoProvider());
+
+    //  Tools
+    this.RegisterProvider(new DateProvider());
+
+    //  TODO  Threading is not a basic provider
+    this.RegisterProvider(new ThreadingProvider());
   }
 
   public void RegisterProvider(INativeProvider provider)
   {
     foreach (var instruction in provider.Instructions)
     {
-      if (string.IsNullOrEmpty(provider.Namespace) || provider.Namespace == Runtime.Constants.Namespaces.Global)
+      if (provider.IsGlobal)
       {
         this.instructions[instruction.Key] = instruction.Action;
         this.instructions[$"{Runtime.Constants.Namespaces.Global}.{instruction.Key}"] = instruction.Action;
@@ -121,7 +183,14 @@ public class HtmlRuntime
       if (instruction is INativeJSInstruction)
       {
         var jsInstruction = (INativeJSInstruction)instruction;
-        this.jsInstructions[instruction.Key] = jsInstruction.ToJSAction();
+        if (provider.IsGlobal)
+        {
+          this.jsInstructions[instruction.Key] = jsInstruction.ToJSAction();
+        }
+        else
+        {
+          this.jsInstructions[$"{provider.Namespace}.{instruction.Key}"] = jsInstruction.ToJSAction();
+        }
       }
     }
   }
@@ -154,7 +223,7 @@ public class HtmlRuntime
           result[i] = JavascriptParser.SimpleSolve(arguments[i].Content!)?.ToString();
         }
       }
-      else if (arguments[i].IsString)
+      else if (arguments[i].IsPrimitive)
       {
         result[i] = arguments[i].Content;
       }

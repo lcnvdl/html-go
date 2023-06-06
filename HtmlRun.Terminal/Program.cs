@@ -19,7 +19,8 @@ if (file == "run")
   // file = Path.Combine(Environment.CurrentDirectory, "../Examples/01-hello_world.html");
   // file = Path.Combine(Environment.CurrentDirectory, "../Examples/02-simple_operation.html");
   // file = Path.Combine(Environment.CurrentDirectory, "../Examples/03-custom_calls.html");
-  file = Path.Combine(Environment.CurrentDirectory, "../Examples/04-conditionals.html");
+  // file = Path.Combine(Environment.CurrentDirectory, "../Examples/04-conditionals.html");
+  file = Path.Combine(Environment.CurrentDirectory, "../Examples/05-goto.html");
 }
 
 if (!File.Exists(file))

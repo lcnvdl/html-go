@@ -8,6 +8,10 @@ public class CallArgumentModel
 
   public bool IsString => this.ArgumentType == "string";
 
+  public bool IsNumber => this.ArgumentType == "number";
+
+  public bool IsPrimitive => this.IsString || this.IsNumber;
+
   public bool IsSolve => this.ArgumentType == "solve";
 
   public bool IsCall => this.ArgumentType == "call";

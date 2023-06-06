@@ -1,5 +1,6 @@
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
+using HtmlRun.Runtime.RuntimeContext;
 
 namespace HtmlRun.Runtime.Providers;
 
@@ -7,7 +8,7 @@ class ConditionalProvider : INativeProvider
 {
   public string Namespace => Runtime.Constants.Namespaces.Global;
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new IfCmd(), new EndIfCmd(), };
+  public INativeInstruction[] Instructions => new INativeInstruction[] { new IfCmd(), new EndIfCmd(),};
 }
 
 class EndIfCmd : INativeInstruction
@@ -31,7 +32,7 @@ class IfCmd : INativeInstruction
   {
     get
     {
-      return ctx => ctx.JumpToBranch(ctx.GetArgument<bool>().ToString());
+      return ctx => ctx.Jump(new JumpToBranch(ctx.GetArgument<bool>().ToString()));
     }
   }
 }

@@ -39,8 +39,9 @@ public class SpiderInterpreter : IInterpreter
 
   private CallModel? ParseCall(IHtmlElementAbstraction li)
   {
-    if (li.HasClass("comment", StringComparison.InvariantCultureIgnoreCase) ||
-    li.HasClass("ignore", StringComparison.InvariantCultureIgnoreCase))
+    if (
+      li.HasClass("comment", StringComparison.InvariantCultureIgnoreCase) ||
+      li.HasClass("ignore", StringComparison.InvariantCultureIgnoreCase))
     {
       return null;
     }
@@ -56,6 +57,7 @@ public class SpiderInterpreter : IInterpreter
     var model = new CallModel();
 
     model.Index = this.nextCallModelIdx++;
+    model.CustomId = li.GetData("id") ?? call.GetData("id");
     model.FunctionName = call.InnerHtml.Trim();
     model.IsSpecial = special != null;
 

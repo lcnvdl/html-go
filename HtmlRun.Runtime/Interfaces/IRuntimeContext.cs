@@ -8,5 +8,5 @@ public interface IRuntimeContext
 
   string?[] GetArguments();
 
-  void JumpToBranch(string condition);
+  void Jump<T>(T jump) where T: class, IContextJump;
 }

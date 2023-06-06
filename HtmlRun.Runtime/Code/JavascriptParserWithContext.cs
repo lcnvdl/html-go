@@ -11,6 +11,7 @@ public class JavascriptParserWithContext
       if (this.engine == null)
       {
         this.engine = new Jurassic.ScriptEngine();
+        this.engine.SetGlobalValue("window", this.engine.Global);
       }
 
       return this.engine;

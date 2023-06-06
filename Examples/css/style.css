@@ -43,6 +43,7 @@ li .comment:after {
   color: orangered;
 }
 
+.call,
 .solve {
   color: magenta;
 }
@@ -53,6 +54,14 @@ li .comment:after {
 
 .solve:after {
   content: ")";
+}
+
+.call:before {
+  content: "{";
+}
+
+.call:after {
+  content: "}";
 }
 
 .string:before {

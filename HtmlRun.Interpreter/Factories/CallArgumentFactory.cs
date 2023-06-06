@@ -10,6 +10,10 @@ static class CallArgumentFactory
     {
       return new CallArgumentModel() { ArgumentType = "string", Content = content };
     }
+    else if (elementHtmlDefinition.HasClass("number", StringComparison.InvariantCultureIgnoreCase))
+    {
+      return new CallArgumentModel() { ArgumentType = "number", Content = content };
+    }
     else if (elementHtmlDefinition.HasClass("solve", StringComparison.InvariantCultureIgnoreCase))
     {
       return new CallArgumentModel() { ArgumentType = "solve", Content = content };

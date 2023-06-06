@@ -9,4 +9,10 @@ public static class BasicInstructionsSet
   public const string Log = "Log";
   
   public const string SetTitle = "SetTitle";
+
+  public const string Goto = "Goto";
+
+  public const string Label = "Label";
+
+  public const string GotoLine = "GotoLine";
 }
