@@ -12,6 +12,8 @@ public class Context : IRuntimeContext
 
   private List<string?>? args;
 
+  public string? CursorModification { get; set; }
+
   public Context(Context? parent, Stack<Context> ctxStack)
   {
     this.parent = parent;
@@ -56,5 +58,10 @@ public class Context : IRuntimeContext
   public Context Fork(string callName, IEnumerable<string?> args)
   {
     return new Context(this, this.ctxStack, callName, args);
+  }
+
+  public void JumpToBranch(string condition)
+  {
+    this.CursorModification = condition;
   }
 }

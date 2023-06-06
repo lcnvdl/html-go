@@ -56,7 +56,11 @@ class AngleSharpHtmlElementAbstraction : IHtmlElementAbstraction
     this.element = element;
   }
 
-  public string? ElementId => this.element.Id;
+  public string? ElementId
+  {
+    get => this.element.Id;
+    set => this.element.Id = value;
+  }
 
   public string TagName => this.element.TagName;
 
@@ -67,6 +71,8 @@ class AngleSharpHtmlElementAbstraction : IHtmlElementAbstraction
   public IEnumerable<IHtmlElementAbstraction> Children => this.element.Children.AsEnumerable().Select(m => new AngleSharpHtmlElementAbstraction(m)).Cast<IHtmlElementAbstraction>();
 
   public bool HasClass(string className, StringComparison comparison) => this.element.ClassList.Any(m => className.Equals(m, comparison));
+
+  public string? GetData(string dataName) => this.element.GetAttribute($"data-{dataName}");
 
   public override string ToString()
   {

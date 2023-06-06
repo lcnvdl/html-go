@@ -7,4 +7,6 @@ public interface IRuntimeContext
   T? GetArgument<T>(int idx = 0, string? errorMessage = null);
 
   string?[] GetArguments();
+
+  void JumpToBranch(string condition);
 }

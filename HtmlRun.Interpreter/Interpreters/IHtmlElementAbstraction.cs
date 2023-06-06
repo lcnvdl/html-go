@@ -1,6 +1,6 @@
 public interface IHtmlElementAbstraction
 {
-  string? ElementId { get; }
+  string? ElementId { get; set; }
 
   string TagName { get; }
 
@@ -11,4 +11,8 @@ public interface IHtmlElementAbstraction
   string InnerText { get; }
 
   bool HasClass(string className, StringComparison comparison);
+
+  string? GetData(string dataName);
+
+  IHtmlElementAbstraction? FindChildByTag(string tag, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase) => this.Children.FirstOrDefault(m => m.TagName.Equals(tag, comparison));
 }

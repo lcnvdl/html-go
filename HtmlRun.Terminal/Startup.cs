@@ -7,6 +7,7 @@ public static class Startup
   public static HtmlRuntime GetRuntime()
   {
     var runtime = new HtmlRuntime();
+    runtime.RegisterBasicProviders();
     runtime.RegisterProvider(new TerminalProvider());
     return runtime;
   }

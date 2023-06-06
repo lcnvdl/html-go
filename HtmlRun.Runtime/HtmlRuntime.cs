@@ -2,6 +2,7 @@
 using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
+using HtmlRun.Runtime.Providers;
 
 namespace HtmlRun.Runtime;
 
@@ -59,7 +60,19 @@ public class HtmlRuntime
 
         var arguments = this.ParseArguments(jsParserWithContext, instruction.Arguments);
 
-        this.RunInstruction(instruction.FunctionName, arguments);
+        var finalCtx = this.RunInstruction(instruction.FunctionName, arguments);
+
+        if (!string.IsNullOrEmpty(finalCtx.CursorModification))
+        {
+          var newBranch = instruction.Arguments.Find(m => m.IsBranch && finalCtx.CursorModification.Equals(m.BranchCondition, StringComparison.InvariantCultureIgnoreCase));
+          if (newBranch == null)
+          {
+            throw new NullReferenceException($"Missing branch {finalCtx.CursorModification} in {instruction.FunctionName} call.");
+          }
+
+          app.Instructions.InsertRange(cursor + 1, newBranch.BranchInstructions!);
+          finalCtx.CursorModification = null;
+        }
 
         ++cursor;
       }
@@ -70,18 +83,25 @@ public class HtmlRuntime
     }
   }
 
-  public void RunInstruction(string key, params string?[] args)
+  public Context RunInstruction(string key, params string?[] args)
   {
     if (this.instructions.TryGetValue(key, out var action))
     {
       var ctx = this.globalCtx.Fork(key, args);
 
       action(ctx);
+
+      return ctx;
     }
     else
     {
       throw new InvalidOperationException($"Unknown instruction: {key}.");
     }
+  }
+
+  public void RegisterBasicProviders()
+  {
+    this.RegisterProvider(new ConditionalProvider());
   }
 
   public void RegisterProvider(INativeProvider provider)
@@ -134,9 +154,17 @@ public class HtmlRuntime
           result[i] = JavascriptParser.SimpleSolve(arguments[i].Content!)?.ToString();
         }
       }
-      else
+      else if (arguments[i].IsString)
       {
         result[i] = arguments[i].Content;
+      }
+      else if (arguments[i].IsBranch)
+      {
+        result[i] = null;
+      }
+      else
+      {
+        throw new InvalidDataException($"Unknown argument type {arguments[i].ArgumentType}.");
       }
     }
 

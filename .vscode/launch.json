@@ -10,7 +10,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       "program": "${workspaceFolder}/HtmlRun.Terminal/bin/Debug/net6.0/HtmlRun.Terminal.dll",
-      "args": [],
+      "args": ["run"],
       "cwd": "${workspaceFolder}/HtmlRun.Terminal",
       "console": "internalConsole",
       "stopAtEntry": false

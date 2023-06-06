@@ -12,6 +12,12 @@ public class CallArgumentModel
 
   public bool IsCall => this.ArgumentType == "call";
 
+  public bool IsBranch => this.ArgumentType == "branch";
+
+  public string? BranchCondition { get; set; }
+
+  public List<CallModel>? BranchInstructions { get; set; }
+
   public static CallArgumentModel FromString(string str)
   {
     return new CallArgumentModel() { ArgumentType = "string", Content = str };
