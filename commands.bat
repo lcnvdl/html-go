@@ -1,3 +1,6 @@
+echo DON NOT RUN THIS FILE
+exit
+
 dotnet new sln --output HtmlRun
 
 cd HtmlRun
