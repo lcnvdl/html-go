@@ -18,9 +18,9 @@ if (file == "run")
   Console.WriteLine("DEBUG MODE. Running example...");
   // file = Path.Combine(Environment.CurrentDirectory, "../Examples/01-hello_world.html");
   // file = Path.Combine(Environment.CurrentDirectory, "../Examples/02-simple_operation.html");
-  // file = Path.Combine(Environment.CurrentDirectory, "../Examples/03-custom_calls.html");
+  file = Path.Combine(Environment.CurrentDirectory, "../Examples/03-custom_calls.html");
   // file = Path.Combine(Environment.CurrentDirectory, "../Examples/04-conditionals.html");
-  file = Path.Combine(Environment.CurrentDirectory, "../Examples/05-goto.html");
+  // file = Path.Combine(Environment.CurrentDirectory, "../Examples/05-goto.html");
 }
 
 if (!File.Exists(file))
@@ -45,7 +45,7 @@ var runtime = HtmlRun.Terminal.Startup.GetRuntime();
 
 runtime.Run(app);
 
-Console.WriteLine();
+// Console.WriteLine();
 
 // Console.WriteLine("App result");
 // Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(app));

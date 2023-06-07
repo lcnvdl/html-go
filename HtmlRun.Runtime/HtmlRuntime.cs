@@ -31,8 +31,6 @@ public class HtmlRuntime
 
     foreach (var kv in this.jsInstructions)
     {
-      Console.WriteLine(kv.Key);
-
       if (kv.Key.Contains("."))
       {
         string sanitizedKey = "call__" + kv.Key.Replace(".", "__");

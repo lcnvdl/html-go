@@ -25,3 +25,9 @@ dotnet add HtmlRun.Runtime package Jurassic --version 3.2.6
 
 dotnet add HtmlRun.Terminal reference HtmlRun.Interpreter
 dotnet add HtmlRun.Terminal reference HtmlRun.Runtime
+
+@REM DIFFERENT COMPILATION WAYS
+@REM dotnet publish HtmlRun.sln -c Release -r win-x64  -p:PublishSingleFile=true --output ./bin
+@REM dotnet publish HtmlRun.sln -c Release --self-contained -r win-x64 -p:PublishSingleFile=true --output ./bin/win-x64
+@REM dotnet publish HtmlRun.sln /p:DebugType=None /p:DebugSymbols=false /p:PublishSingleFile=true -c Release --self-contained -r win-x64 --output ../bin/win-x64
+@REM dotnet publish /p:DebugType=None /p:DebugSymbols=false /p:PublishSingleFile=true -c Release --self-contained -r win-x64 --output ../bin/win-x64
