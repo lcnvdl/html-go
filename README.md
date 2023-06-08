@@ -11,6 +11,8 @@ For a comprehensive understanding of the HTML language and its syntax, we recomm
 
 To access the HTML Language Specification, please visit [./specification.md](./REFERENCE.md).
 
+![alt text](./Docs/screenshot_1.png)
+
 ## What is HtmlGo?
 `HtmlGo` allows you to compile and execute applications in a whole new way. Say goodbye to boring lines of code and embrace a more visual and developer-friendly approach. With `HtmlGo`, all you have to do is write your code in .html files and let its interpreter, developed in NET 6.0, do the rest.
 
