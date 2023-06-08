@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.Interpreter", "Html
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.Common", "HtmlRun.Common\HtmlRun.Common.csproj", "{72040FA5-43CD-4F51-AFDD-45B31182C3F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.WebApi", "HtmlRun.WebApi\HtmlRun.WebApi.csproj", "{E79931C2-A289-402D-9F3B-E944AA1302BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{72040FA5-43CD-4F51-AFDD-45B31182C3F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72040FA5-43CD-4F51-AFDD-45B31182C3F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72040FA5-43CD-4F51-AFDD-45B31182C3F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E79931C2-A289-402D-9F3B-E944AA1302BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E79931C2-A289-402D-9F3B-E944AA1302BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E79931C2-A289-402D-9F3B-E944AA1302BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E79931C2-A289-402D-9F3B-E944AA1302BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,1 @@
+dotnet watch --project HtmlRun.WebApi

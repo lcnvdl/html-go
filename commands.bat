@@ -5,6 +5,12 @@ dotnet new sln --output HtmlRun
 
 cd HtmlRun
 
+dotnet new webapi --name HtmlRun.WebApi
+dotnet sln add HtmlRun.WebApi
+
+@REM dotnet new worker --name HtmlRun.Server
+@REM dotnet sln add HtmlRun.Server
+
 dotnet new console --name HtmlRun.Terminal
 dotnet sln add HtmlRun.Terminal
 
@@ -28,6 +34,12 @@ dotnet add HtmlRun.Runtime package Jurassic --version 3.2.6
 
 dotnet add HtmlRun.Terminal reference HtmlRun.Interpreter
 dotnet add HtmlRun.Terminal reference HtmlRun.Runtime
+
+@REM dotnet add HtmlRun.Server reference HtmlRun.Interpreter
+@REM dotnet add HtmlRun.Server reference HtmlRun.Runtime
+
+dotnet add HtmlRun.WebApi reference HtmlRun.Interpreter
+dotnet add HtmlRun.WebApi reference HtmlRun.Runtime
 
 @REM DIFFERENT COMPILATION WAYS
 @REM dotnet publish HtmlRun.sln -c Release -r win-x64  -p:PublishSingleFile=true --output ./bin

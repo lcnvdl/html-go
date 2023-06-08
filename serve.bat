@@ -1,0 +1,1 @@
+dotnet --project HtmlRun.WebApi
