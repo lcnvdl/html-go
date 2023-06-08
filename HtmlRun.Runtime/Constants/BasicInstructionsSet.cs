@@ -15,4 +15,10 @@ public static class BasicInstructionsSet
   public const string Label = "Label";
 
   public const string GotoLine = "GotoLine";
+
+  public const string Set = "Set";
+
+  public const string Var = "Var";
+
+  public const string Const = "Const";
 }

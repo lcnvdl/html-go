@@ -47,51 +47,60 @@ public class SpiderInterpreter : IInterpreter
     }
 
     var special = li.FindChildByTag("b");
-
     var call = special ?? li.FindChildByTag("u");
+
     if (call == null)
     {
-      throw new NullReferenceException("Call not found.");
+      throw new NullReferenceException($"Call not found in line {li.InnerHtml}.");
     }
+
+    List<IHtmlElementAbstraction> callArguments = li.Children.Skip(1).ToList();
 
     var model = new CallModel();
 
-    model.Index = this.nextCallModelIdx++;
+    model.Index = Interlocked.Increment(ref this.nextCallModelIdx);
     model.CustomId = li.GetData("id") ?? call.GetData("id");
     model.FunctionName = call.InnerHtml.Trim();
     model.IsSpecial = special != null;
+    model.Arguments.AddRange(this.ParseCallArguments(callArguments, model.IsSpecial, model.FunctionName));
 
-    var args = li.Children.Skip(1).ToList();
+    return model;
+  }
 
+  private IEnumerable<CallArgumentModel> ParseCallArguments(List<IHtmlElementAbstraction> callArguments, bool isSpecialModel, string modelFunctionName)
+  {
     int argumentIndex = 0;
-    foreach (var argHtmlDefinition in args)
+    foreach (var argHtmlDefinition in callArguments)
     {
-      if (model.IsSpecial && argHtmlDefinition.TagName.Equals("ul", StringComparison.InvariantCultureIgnoreCase))
+      //  Branched instructions
+      
+      if (isSpecialModel && argHtmlDefinition.TagName.Equals("ul", StringComparison.InvariantCultureIgnoreCase))
       {
-        var branch = new CallArgumentModel();
-        branch.ArgumentType = "branch";
-        branch.BranchCondition = argHtmlDefinition.GetData("condition");
-        branch.BranchInstructions = argHtmlDefinition.Children.Select(this.ParseCall).Where(m => m != null).Cast<CallModel>().ToList();
-        model.Arguments.Add(branch);
+        CallArgumentModel branch = CallArgumentFactory.NewInstanceFromBranch(
+          argHtmlDefinition.GetData("condition"),
+          argHtmlDefinition.Children.Select(this.ParseCall).Where(m => m != null).Cast<CallModel>().ToList()
+        );
+
+        yield return branch;
       }
       else
       {
+        //  Linear instructions
+
         string content = HtmlDecode(argHtmlDefinition.InnerHtml).Trim();
 
-        CallArgumentModel? argModel = CallArgumentFactory.GetInstance(argHtmlDefinition, content);
+        CallArgumentModel? argModel = CallArgumentFactory.NewInstance(argHtmlDefinition, content);
 
         if (argModel == null)
         {
-          throw new InvalidDataException($"Unknown type of argument #{argumentIndex} on call {model.FunctionName}");
+          throw new InvalidDataException($"Unknown type of argument #{argumentIndex} on call {modelFunctionName}.");
         }
 
-        model.Arguments.Add(argModel);
+        yield return argModel;
       }
 
       ++argumentIndex;
     }
-
-    return model;
   }
 
   private FunctionModel? ParseCode(IHtmlElementAbstraction e)

@@ -15,7 +15,7 @@ class EndIfCmd : INativeInstruction
 {
   public string Key => Runtime.Constants.BasicInstructionsSet.EndIf;
 
-  public Action<IRuntimeContext> Action
+  public Action<ICurrentInstructionContext> Action
   {
     get
     {
@@ -28,7 +28,7 @@ class IfCmd : INativeInstruction
 {
   public string Key => Runtime.Constants.BasicInstructionsSet.If;
 
-  public Action<IRuntimeContext> Action
+  public Action<ICurrentInstructionContext> Action
   {
     get
     {

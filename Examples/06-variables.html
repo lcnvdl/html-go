@@ -1,0 +1,65 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Variables example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+  <h1>Variables example</h1>
+
+  <h2>Main</h2>
+  <ul>
+    <!-- Declare and set a constant -->
+    <li class="comment"><i>Declare and set a constant</i></li>
+    <li><u>Const</u> <i class="string">lang</i> <i class="string">HyperText Machine Language</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Show the variable</i></li>
+    <li><u>Log</u> <i class="string">Language: </i> <i class="call">lang</i></li>
+
+    <li class="ignore"><hr></li>
+
+    <!-- Declare and set in a single line -->
+    <li class="comment"><i>Declare and set in a single line</i></li>
+    <li><u>Var</u> <i class="string">message</i> <i class="string">Hi there!</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Show the variable</i></li>
+    <li><u>Log</u> <i class="string">You have a new message: </i> <i class="call">message</i></li>
+
+    <li class="ignore"><hr></li>
+
+    <!-- Declare and set in different lines -->
+    <li class="comment"><i>Declare and set in different lines</i></li>
+    <li><u>Var</u> <i class="string">reply</i></li>
+    <li><u>Set</u> <i class="string">reply</i> <i class="string">Hello</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Show the variable</i></li>
+    <li><u>Log</u> <i class="string">Reply: </i> <i class="call">reply</i></li>
+
+    <li class="ignore"><hr></li>
+
+    <!-- Operations -->
+    <li class="comment"><i>Operations</i></li>
+    <li><u>Var</u> <i class="string">currentTime</i> <i class="call">Date.Timestamp()</i></li>
+    <li><u>Var</u> <i class="string">nextSecond</i> <i class="call">Number(currentTime) + 1000</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Show the variables</i></li>
+    <li><u>Log</u> <i class="string">Current time: </i> <i class="call">currentTime</i></li>
+    <li><u>Log</u> <i class="string">Next second value: </i> <i class="call">nextSecond</i></li>
+
+    <li class="ignore"><hr></li>
+  </ul>
+
+  <h3>Exit</h3>
+</body>
+
+</html>

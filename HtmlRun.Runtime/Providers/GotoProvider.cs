@@ -15,7 +15,7 @@ class LabelCmd : INativeInstruction
 {
   public string Key => Runtime.Constants.BasicInstructionsSet.Label;
 
-  public Action<IRuntimeContext> Action
+  public Action<ICurrentInstructionContext> Action
   {
     get
     {
@@ -28,7 +28,7 @@ class GotoCmd : INativeInstruction
 {
   public string Key => Runtime.Constants.BasicInstructionsSet.Goto;
 
-  public Action<IRuntimeContext> Action
+  public Action<ICurrentInstructionContext> Action
   {
     get
     {
@@ -41,7 +41,7 @@ class GotoLineCmd : INativeInstruction
 {
   public string Key => Runtime.Constants.BasicInstructionsSet.GotoLine;
 
-  public Action<IRuntimeContext> Action
+  public Action<ICurrentInstructionContext> Action
   {
     get
     {

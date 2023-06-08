@@ -7,7 +7,7 @@ class LogCmd : INativeInstruction, INativeJSInstruction
 {
   public string Key => Runtime.Constants.BasicInstructionsSet.Log;
 
-  public Action<IRuntimeContext> Action
+  public Action<ICurrentInstructionContext> Action
   {
     get
     {

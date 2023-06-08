@@ -16,7 +16,7 @@ class TimestampCmd : INativeInstruction, INativeJSInstruction
 
   public string Key => Runtime.Constants.DateInstructionsSet.Timestamp;
 
-  public Action<IRuntimeContext> Action
+  public Action<ICurrentInstructionContext> Action
   {
     get
     {
@@ -36,7 +36,7 @@ class TimestampInSecondsCmd : INativeInstruction
 
   public string Key => Runtime.Constants.DateInstructionsSet.TimestampInSeconds;
 
-  public Action<IRuntimeContext> Action
+  public Action<ICurrentInstructionContext> Action
   {
     get
     {

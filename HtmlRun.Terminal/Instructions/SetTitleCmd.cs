@@ -7,7 +7,7 @@ class SetTitleCmd : INativeInstruction
 {
   public string Key => Runtime.Constants.BasicInstructionsSet.SetTitle;
 
-  public Action<IRuntimeContext> Action
+  public Action<ICurrentInstructionContext> Action
   {
     get
     {

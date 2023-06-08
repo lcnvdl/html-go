@@ -4,7 +4,7 @@ namespace HtmlRun.Interpreter.Factories;
 
 static class CallArgumentFactory
 {
-  internal static CallArgumentModel? GetInstance(IHtmlElementAbstraction elementHtmlDefinition, string content)
+  internal static CallArgumentModel? NewInstance(IHtmlElementAbstraction elementHtmlDefinition, string content)
   {
     if (elementHtmlDefinition.HasClass("string", StringComparison.InvariantCultureIgnoreCase))
     {
@@ -26,5 +26,14 @@ static class CallArgumentFactory
     {
       return null;
     }
+  }
+
+  internal static CallArgumentModel NewInstanceFromBranch(string? condition, List<CallModel> subInstructions)
+  {
+    var branch = new CallArgumentModel();
+    branch.ArgumentType = "branch";
+    branch.BranchCondition = condition;
+    branch.BranchInstructions = subInstructions;
+    return branch;
   }
 }

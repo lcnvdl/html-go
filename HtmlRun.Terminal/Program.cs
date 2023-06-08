@@ -1,53 +1,62 @@
-﻿var spider = new HtmlRun.Interpreter.Interpreters.SpiderInterpreter();
+﻿using HtmlRun.Common.Models;
 
-// Console.WriteLine(string.Join(",", Environment.GetCommandLineArgs()));
-
-string? file = Environment.GetCommandLineArgs().Skip(1).FirstOrDefault();
-
-Console.WriteLine();
-
-if (string.IsNullOrEmpty(file))
+static class Program
 {
-  Console.WriteLine("Missing input file.");
-  Environment.Exit(1);
-  return;
+  async static Task Main(string[] args)
+  {
+    // Console.WriteLine(string.Join(", ", args));
+
+    string? file = args.FirstOrDefault();
+
+    Console.WriteLine();
+
+    if (string.IsNullOrEmpty(file))
+    {
+      Console.WriteLine("Missing input file.");
+      Environment.Exit(1);
+      return;
+    }
+
+    if (file == "run")
+    {
+      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 4);
+      Console.WriteLine($"DEBUG MODE. Running example {file}...");
+    }
+
+    if (!File.Exists(file))
+    {
+      Console.WriteLine($"File not found: {Path.GetFileName(file)}.");
+      Environment.Exit(1);
+      return;
+    }
+
+    if (!Path.GetExtension(file).Equals(".html", StringComparison.InvariantCultureIgnoreCase))
+    {
+      Console.WriteLine($"Extension of \"{Path.GetFileName(file)}\" must be .html.");
+      Environment.Exit(1);
+      return;
+    }
+
+    await RunAppFromFile(file);
+  }
+
+  private static async Task RunAppFromFile(string file, CancellationToken? token = null)
+  {
+    var runtime = HtmlRun.Terminal.Startup.GetRuntime();
+    runtime.Run(await ReadAppFromFile(file), token);
+  }
+
+  private static async Task<AppModel> ReadAppFromFile(string file)
+  {
+    var spider = new HtmlRun.Interpreter.Interpreters.SpiderInterpreter();
+
+    AppModel app = await spider.ParseString(File.ReadAllText(file));
+
+    return app;
+  }
+
+  private static string GetExample(int number)
+  {
+    return new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "../Examples")).GetFiles("*.html")[number].FullName;
+  }
 }
-
-if (file == "run")
-{
-  Console.WriteLine("DEBUG MODE. Running example...");
-  // file = Path.Combine(Environment.CurrentDirectory, "../Examples/01-hello_world.html");
-  // file = Path.Combine(Environment.CurrentDirectory, "../Examples/02-simple_operation.html");
-  file = Path.Combine(Environment.CurrentDirectory, "../Examples/03-custom_calls.html");
-  // file = Path.Combine(Environment.CurrentDirectory, "../Examples/04-conditionals.html");
-  // file = Path.Combine(Environment.CurrentDirectory, "../Examples/05-goto.html");
-}
-
-if (!File.Exists(file))
-{
-  Console.WriteLine($"File not found: {file}.");
-  Environment.Exit(1);
-  return;
-}
-
-if (!Path.GetExtension(file).Equals(".html", StringComparison.InvariantCultureIgnoreCase))
-{
-  Console.WriteLine($"Extension of \"{Path.GetFileName(file)}\" must be .html.");
-  Environment.Exit(1);
-  return;
-}
-
-var app = await spider.ParseString(File.ReadAllText(file));
-
-var runtime = HtmlRun.Terminal.Startup.GetRuntime();
-
-// runtime.RunInstruction("Log", new string[] { "Hola", "mundo!" });
-
-runtime.Run(app);
-
-// Console.WriteLine();
-
-// Console.WriteLine("App result");
-// Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(app));
-
-// Console.WriteLine(app?.ToString() ?? HtmlRun.Runtime.Constants.Strings.Null);

@@ -6,5 +6,5 @@ public interface INativeInstruction
 {
   public string Key { get; }
 
-  public Action<IRuntimeContext> Action { get; }
+  public Action<ICurrentInstructionContext> Action { get; }
 }

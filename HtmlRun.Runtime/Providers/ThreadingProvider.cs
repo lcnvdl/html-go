@@ -1,3 +1,4 @@
+using System.Reflection;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 
@@ -7,18 +8,93 @@ class ThreadingProvider : INativeProvider
 {
   public string Namespace => "Threading";
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new SleepCmd(), };
+  public INativeInstruction[] Instructions => new INativeInstruction[] { new SleepCmd(), new IncrementCmd(), new DecrementCmd(), };
 }
 
 class SleepCmd : INativeInstruction
 {
   public string Key => Runtime.Constants.ThreadingInstructionsSet.Sleep;
 
-  public Action<IRuntimeContext> Action
+  public Action<ICurrentInstructionContext> Action
   {
     get
     {
-      return ctx => Thread.Sleep(ctx.GetArgument<int>());
+      return ctx => Thread.Sleep(ctx.GetRequiredArgument<int>());
     }
+  }
+}
+
+class IncrementCmd : INativeInstruction
+{
+  public string Key => Runtime.Constants.ThreadingInstructionsSet.Increment;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx =>
+      {
+        string varName = ctx.GetRequiredArgument();
+        var meta = ctx.GetVariable(varName);
+
+        if (meta == null)
+        {
+          throw new NullReferenceException($"Variable {varName} not found.");
+        }
+
+        var cast = HtmlRun.Runtime.Utils.CastingUtils.ToNumber(meta.Value);
+        if (cast == null)
+        {
+          throw new InvalidCastException($"Variable {varName} is not a number.");
+        }
+
+        object finalValue = InterlokedUtils.Call("Increment", cast.Value);
+
+        ctx.SetVariable(varName, finalValue.ToString()!);
+      };
+    }
+  }
+}
+
+class DecrementCmd : INativeInstruction
+{
+  public string Key => Runtime.Constants.ThreadingInstructionsSet.Decrement;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx =>
+      {
+        string varName = ctx.GetRequiredArgument();
+        var meta = ctx.GetVariable(varName);
+
+        if (meta == null)
+        {
+          throw new NullReferenceException($"Variable {varName} not found.");
+        }
+
+        var cast = HtmlRun.Runtime.Utils.CastingUtils.ToNumber(meta.Value);
+        if (cast == null)
+        {
+          throw new InvalidCastException($"Variable {varName} is not a number.");
+        }
+
+        object finalValue = InterlokedUtils.Call("Decrement", cast.Value);
+
+        ctx.SetVariable(varName, finalValue.ToString()!);
+      };
+    }
+  }
+}
+
+static class InterlokedUtils
+{
+  internal static object Call(string method, object value)
+  {
+    Type t = value.GetType();
+    return typeof(Interlocked).GetMethods(BindingFlags.Public | BindingFlags.Static)
+      .First(m => m.Name.Equals(method) && m.ReturnType == t)
+      .Invoke(null, new[] { value })!;
   }
 }
