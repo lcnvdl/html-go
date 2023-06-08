@@ -67,4 +67,5 @@ https://www.youtube.com/@ACodearla
 * Publish (release build) - `publish.bat`
 
 ## License
+Please note that the license specified in this documentation apply specifically to the `HtmlGo compiler` and not to the HTML language itself. The HTML language is free to use, both for commercial and non-commercial purposes.
 [Attribution-NonCommercial-NoDerivatives 4.0 International](https://github.com/lcnvdl/html-go/blob/master/LICENSE)
