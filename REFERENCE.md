@@ -101,6 +101,47 @@ Here is an example of HTML code that demonstrates the use of some elements and a
 </html>
 ```
 
+## Language-related Calls
+The language-related calls should be enclosed within a `<b>` tag.
+* If
+  * If condition. 
+  Example: 
+  ```html
+    <li>
+      <b>If</b>
+      <i class="solve">1 > 2</i>
+      <ul data-condition="true">
+        <!-- True result -->
+      </ul>
+      <ul data-condition="false">
+        <!-- False result -->
+      </ul>
+    </li>
+  ```
+* EndIf
+  * Optional.
+
+## Calls
+The calls should be enclosed within a `<u>` tag.
+
+### Global calls
+* Const
+* Goto
+* GotoLine
+* Label
+* Log
+* Set
+* Var
+
+### Date calls
+* Date.Timestamp
+* Date.TimestampInSeconds
+
+### Threading calls
+* Threading.Sleep
+* Threading.Increment
+* Threading.Decrement
+
 ## CSS Keywords
 * call
   * Used to set dynamic arguments. For example `<i class='call'>Date.Timestamp()</i>`.
