@@ -63,7 +63,8 @@ https://www.youtube.com/@ACodearla
 
 ## Dev tools
 * Commands (list of commands I've used) - `commands.bat`
-* Watch (compile and run) - `watch.bat`
+* Watch (compile and run with hot-reload feature) - `watch.bat`
+* Watch-sv (compile and run in server mode with hot-reload feature) - `watch-sv.bat`
 * Publish (release build) - `publish.bat`
 
 ## License
