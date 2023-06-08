@@ -2,9 +2,14 @@ using HtmlRun.Runtime.Interfaces;
 
 namespace HtmlRun.Runtime.Native;
 
-public abstract class VoidInstruction : INativeInstruction
+public class VoidInstruction : INativeInstruction
 {
-  public abstract string Key { get; }
+  public string Key { get; private set; }
+
+  public VoidInstruction(string key)
+  {
+    this.Key = key;
+  }
 
   public Action<ICurrentInstructionContext> Action
   {

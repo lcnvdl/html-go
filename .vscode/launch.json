@@ -5,13 +5,24 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": ".NET Core Launch (console)",
+      "name": "Launch Terminal",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
       "program": "${workspaceFolder}/HtmlRun.Terminal/bin/Debug/net6.0/HtmlRun.Terminal.dll",
       "args": ["run"],
       "cwd": "${workspaceFolder}/HtmlRun.Terminal",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Launch WebApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/HtmlRun.WebApi/bin/Debug/net6.0/HtmlRun.WebApi.dll",
+      "args": ["run"],
+      "cwd": "${workspaceFolder}/HtmlRun.WebApi",
       "console": "internalConsole",
       "stopAtEntry": false
     },
