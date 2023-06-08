@@ -17,7 +17,7 @@ static class Program
       return;
     }
 
-    if (file == "run")
+    if (file == "run" || file == "--run-example")
     {
       file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 4);
       Console.WriteLine($"DEBUG MODE. Running example {file}...");
@@ -57,6 +57,10 @@ static class Program
 
   private static string GetExample(int number)
   {
-    return new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "../Examples")).GetFiles("*.html")[number].FullName;
+    return new DirectoryInfo(
+      Directory.Exists(
+        Path.Combine(Environment.CurrentDirectory, "../Examples")) ?
+        Path.Combine(Environment.CurrentDirectory, "../Examples") :
+        Path.Combine(Environment.CurrentDirectory, "./Examples")).GetFiles("*.html")[number].FullName;
   }
 }
