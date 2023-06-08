@@ -4,14 +4,14 @@ The interpreter that lets you 'program' in HTML! Now you can finally join the fu
 
 ¡El intérprete que te permite 'programar' en HTML! Ahora puedes unirte a la diversión y decir con orgullo que eres un programador de HTML (más o menos)!
 
+![alt text](./Docs/screenshot_1.png)
+
 ## What is HTML (HyperText __Machine__ Language)?
 The HTML (HyperText Machine Language) language is our new standard we've made to to create and structure applications inspired by HTML (HyperText Markup Language).
 
 For a comprehensive understanding of the HTML language and its syntax, we recommend referring to the Language Specification. This specification provides detailed documentation on the language's structure, elements, attributes, and key features.
 
 To access the HTML Language Specification, please visit [REFERENCE.md](./REFERENCE.md).
-
-![alt text](./Docs/screenshot_1.png)
 
 ## What is HtmlGo?
 `HtmlGo` allows you to compile and execute applications in a whole new way. Say goodbye to boring lines of code and embrace a more visual and developer-friendly approach. With `HtmlGo`, all you have to do is write your code in .html files and let its interpreter, developed in NET 6.0, do the rest.
