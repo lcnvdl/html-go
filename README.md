@@ -9,7 +9,7 @@ The HTML (HyperText Machine Language) language is our new standard we've made to
 
 For a comprehensive understanding of the HTML language and its syntax, we recommend referring to the Language Specification. This specification provides detailed documentation on the language's structure, elements, attributes, and key features.
 
-To access the HTML Language Specification, please visit [./specification.md](./REFERENCE.md).
+To access the HTML Language Specification, please visit [REFERENCE.md](./REFERENCE.md).
 
 ![alt text](./Docs/screenshot_1.png)
 
