@@ -9,7 +9,7 @@ The HTML (HyperText Machine Language) language is our new standard we've made to
 
 For a comprehensive understanding of the HTML language and its syntax, we recommend referring to the Language Specification. This specification provides detailed documentation on the language's structure, elements, attributes, and key features.
 
-To access the HTML Language Specification, please visit [./specification.md](./REFERENCE.md).
+To access the HTML Language Specification, please visit [REFERENCE.md](./REFERENCE.md).
 
 ## What is HtmlGo?
 `HtmlGo` allows you to compile and execute applications in a whole new way. Say goodbye to boring lines of code and embrace a more visual and developer-friendly approach. With `HtmlGo`, all you have to do is write your code in .html files and let its interpreter, developed in NET 6.0, do the rest.
