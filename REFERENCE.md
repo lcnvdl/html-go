@@ -103,11 +103,19 @@ Here is an example of HTML code that demonstrates the use of some elements and a
 
 ## CSS Keywords
 * call
+  * Used to set dynamic arguments. For example `<i class='call'>Date.Timestamp()</i>`.
 * calls
+  * Used in `ul` to specify an instruction list.
 * comment
+  * Used in `li` to comment the code. For example `<li class="comment"><i>This is a comment</i></li>`.
+* ignore
+  * Used in `li` to ignore the line by the compiler. Useful for `<li><hr /></li>` for example.
 * number
+  * Used to set the type of the argument. For example `<i class='number'>5</i>`.
 * solve
+  * Used to set static math-operation arguments. For example `<i class='solve'>1 + 1</i>`.
 * string
+  * Used to set the type of the argument. For example `<i class='string'>I am an HTML developer.</i>`.
 
 ## Specialized Tags
 * ul -
