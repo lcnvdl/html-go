@@ -1,3 +1,5 @@
+using HtmlRun.Runtime.Code;
+
 namespace HtmlRun.Runtime.Interfaces;
 
 public interface ICurrentInstructionContext : IBaseContext
@@ -8,13 +10,15 @@ public interface ICurrentInstructionContext : IBaseContext
 
   string GetRequiredArgument(int idx = 0, string? errorMessage = null) => GetRequiredArgument<string>(idx, errorMessage);
 
+  ParsedArgument GetArgumentAt(int idx);
+
   int CountArguments();
 
   T? GetArgument<T>(int idx = 0);
 
   T GetRequiredArgument<T>(int idx = 0, string? errorMessage = null);
 
-  string?[] GetArguments();
+  ParsedArgument[] GetArguments();
 
   void Jump<T>(T jump) where T : class, IContextJump;
 

@@ -1,0 +1,34 @@
+<html>
+
+<head>
+  <title>HtmlGo! - WebApi - Hello world example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <h1>WebApi - Hello world example</h1>
+
+  <h2>Main</h2>
+  <ul>
+    <li><u>Server.Get</u> <i class="string">/</i> <i class="string">Hello world</i></li>
+    <li><u>Server.Get</u> <i class="string">/now</i> <i class="callReference">GetTime()</i></li>
+  </ul>
+
+  <h2>Calls</h2>
+  <div id="GetTime" class="code">
+    <h3>GetTime()</h3>
+    <pre>
+      return Date.Timestamp();
+    </pre>
+  </div>
+
+  <h2>Toolbox</h2>
+  <div>
+    <a href="https://localhost:7266/swagger/index.html" target="_blank">Open website (https)</a>
+    -
+    <a href="http://localhost:5200/swagger/index.html" target="_blank">Open website (http)</a>
+  </div>
+</body>
+
+</html>

@@ -1,3 +1,4 @@
+using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.RuntimeContext;
 
@@ -37,12 +38,12 @@ public class Context : BaseContext, IRuntimeContext
     }
   }
 
-  public ICurrentInstructionContext Fork(string callName, IEnumerable<string?> args)
+  public ICurrentInstructionContext Fork(IHtmlRuntimeForContext runtimeForContext, string callName, IEnumerable<ParsedArgument> args)
   {
-    return new CurrentInstructionContext(this, this.ctxStack, callName, args);
+    return new CurrentInstructionContext(runtimeForContext, this, this.ctxStack, callName, args);
   }
 
-  public void SetVariable(string name, string val)
+  public void SetVariable(string name, string? val)
   {
     if (!this.variables.ContainsKey(name))
     {
@@ -70,6 +71,19 @@ public class Context : BaseContext, IRuntimeContext
     }
 
     this.variables[name] = new ContextValue(name, val, true);
+  }
+
+  public void DeleteVariable(string name)
+  {
+    if (this.variables.ContainsKey(name))
+    {
+      this.variables.Remove(name);
+
+      if (this.parent != null)
+      {
+        this.parent.DeleteVariable(name);
+      }
+    }
   }
 
   public ContextValue? GetVariable(string name)

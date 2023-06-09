@@ -8,25 +8,40 @@ class ServerProvider : INativeProvider
 {
   private readonly WebApplication app;
 
+  public string Namespace => "Server";
+
   internal ServerProvider(WebApplication app)
   {
     this.app = app;
   }
 
-  public string Namespace => "Server";
-
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new GetCmd(), };
+  public INativeInstruction[] Instructions => new INativeInstruction[] { new GetCmd(this.app), };
 }
 
 class GetCmd : INativeInstruction
 {
-  public string Key => "ServerGet";
+  private readonly WebApplication app;
+
+  public string Key => "Get";
+
+  internal GetCmd(WebApplication app)
+  {
+    this.app = app;
+  }
 
   public Action<ICurrentInstructionContext> Action
   {
     get
     {
-      return ctx => throw new NotImplementedException();
+      return ctx => 
+      {
+        var arg0 = ctx.GetRequiredArgument();
+        var arg1 = ctx.GetRequiredArgument(1);
+        var arg1Metadata = ctx.GetArgumentAt(1);
+
+        IUnsafeCurrentInstructionContext unsafeCtx = (IUnsafeCurrentInstructionContext)ctx;
+        this.app.MapGet(arg0, arg1Metadata.IsReference ? () => unsafeCtx.Runtime.RunCallReference(ctx, arg1) : () => arg1);
+      };
     }
   }
 }

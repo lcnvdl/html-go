@@ -1,3 +1,5 @@
+using HtmlRun.Common.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,11 +20,19 @@ if (app.Environment.IsDevelopment())
 
 var runtime = HtmlRun.WebApi.Startup.GetRuntime(app);
 
+var spider = new HtmlRun.Interpreter.Interpreters.SpiderInterpreter();
+
+string file = Path.Combine(Environment.CurrentDirectory, "../Examples/WebApi/01-hello_world.html");
+
+AppModel appModel = await spider.ParseString(File.ReadAllText(file));
+
 app.UseHttpsRedirection();
 
 // app.UseAuthorization();
 // app.MapControllers();
 
-app.MapGet("/", () => "Works");
+runtime.Run(appModel, null);
+
+// app.MapGet("/", () => "Works");
 
 app.Run();

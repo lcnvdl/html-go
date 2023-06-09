@@ -4,10 +4,11 @@ using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 using HtmlRun.Runtime.Providers;
 using HtmlRun.Runtime.RuntimeContext;
+using HtmlRun.Runtime.Utils;
 
 namespace HtmlRun.Runtime;
 
-public class HtmlRuntime
+public class HtmlRuntime : IHtmlRuntimeForContext
 {
   private Dictionary<string, Action<ICurrentInstructionContext>> instructions = new Dictionary<string, Action<ICurrentInstructionContext>>();
 
@@ -33,7 +34,7 @@ public class HtmlRuntime
 
     if (!string.IsNullOrEmpty(app.Title))
     {
-      this.RunInstruction(Runtime.Constants.BasicInstructionsSet.SetTitle, app.Title);
+      this.RunInstruction(Runtime.Constants.BasicInstructionsSet.SetTitle, new ParsedArgument(app.Title, ParsedArgumentType.String));
     }
 
     //  Load functions
@@ -131,11 +132,27 @@ public class HtmlRuntime
     }
   }
 
-  public ICurrentInstructionContext RunInstruction(string key, params string?[] args)
+  public string? RunCallReference(ICurrentInstructionContext ctx, string referenceId)
+  {
+    this.instructions[referenceId].Invoke(ctx);
+    var variable = ctx.GetVariable(referenceId);
+    if (variable == null)
+    {
+      throw new NotImplementedException();
+    }
+
+    var result = variable.Value;
+
+    ctx.DeleteVariable(referenceId);
+
+    return result;
+  }
+
+  public ICurrentInstructionContext RunInstruction(string key, params ParsedArgument[] args)
   {
     if (this.instructions.TryGetValue(key, out var action))
     {
-      var ctx = this.globalCtx.Fork(key, args);
+      var ctx = this.globalCtx.Fork(this, key, args);
 
       action(ctx);
 
@@ -190,9 +207,9 @@ public class HtmlRuntime
     }
   }
 
-  private string?[] ParseArguments(JavascriptParserWithContext jsParser, List<CallArgumentModel> arguments)
+  private ParsedArgument[] ParseArguments(JavascriptParserWithContext jsParser, List<CallArgumentModel> arguments)
   {
-    var result = new string?[arguments.Count];
+    var result = new ParsedArgument[arguments.Count];
 
     for (int i = 0; i < arguments.Count; i++)
     {
@@ -200,31 +217,58 @@ public class HtmlRuntime
       {
         if (string.IsNullOrEmpty(arguments[i].Content))
         {
-          result[i] = null;
+          result[i] = ParsedArgument.Null;
         }
         else
         {
-          result[i] = jsParser.ExecuteCode(arguments[i].Content!)?.ToString();
+          result[i] = new ParsedArgument(jsParser.ExecuteCode(arguments[i].Content!)?.ToString(), ParsedArgumentType.Native);
         }
       }
       else if (arguments[i].IsSolve)
       {
         if (string.IsNullOrEmpty(arguments[i].Content))
         {
-          result[i] = null;
+          result[i] = ParsedArgument.Null;
         }
         else
         {
-          result[i] = JavascriptParser.SimpleSolve(arguments[i].Content!)?.ToString();
+          result[i] = new ParsedArgument(JavascriptParser.SimpleSolve(arguments[i].Content!)?.ToString(), ParsedArgumentType.Native);
         }
       }
       else if (arguments[i].IsPrimitive)
       {
-        result[i] = arguments[i].Content;
+        result[i] = new ParsedArgument(arguments[i].Content, arguments[i].IsNumber ? ParsedArgumentType.Number : ParsedArgumentType.String);
+      }
+      else if (arguments[i].IsCallReference)
+      {
+        if (!string.IsNullOrEmpty(arguments[i].Content))
+        {
+          string code = arguments[i].Content!;
+          string keyId = CryptoUtils.HashWithSHA256(code);
+          string key = $"$callref_{keyId}";
+          this.instructions[key] = ctx =>
+          {
+            string? jsResult = jsParser.ExecuteCode(code)?.ToString();
+            string resultKey = key; //$"$callref_{keyId}";
+
+            if (!ctx.ExistsVariable(resultKey))
+            {
+              ctx.DeclareVariable(resultKey);
+            }
+
+            ctx.SetVariable(resultKey, jsResult);
+          };
+
+          result[i] = new ParsedArgument(key, ParsedArgumentType.Reference);
+        }
+        else
+        {
+          result[i] = ParsedArgument.Null;
+        }
       }
       else if (arguments[i].IsBranch)
       {
-        result[i] = null;
+        result[i] = ParsedArgument.Null;
       }
       else
       {

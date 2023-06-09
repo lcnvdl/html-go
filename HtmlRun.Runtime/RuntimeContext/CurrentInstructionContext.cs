@@ -1,14 +1,15 @@
+using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Interfaces;
 
 namespace HtmlRun.Runtime.RuntimeContext;
 
-public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
+public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext, IUnsafeCurrentInstructionContext
 {
   private Stack<Context> ctxStack;
 
   private string? callName;
 
-  private List<string?>? args;
+  private List<ParsedArgument>? args;
 
   public IRuntimeContext ParentContext { get; private set; }
 
@@ -18,12 +19,25 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
 
   public List<string> DirtyVariables { get; private set; } = new List<string>();
 
-  public CurrentInstructionContext(IRuntimeContext parent, Stack<Context> ctxStack, string callName, IEnumerable<string?> args)
+  public IHtmlRuntimeForContext Runtime { get; private set; }
+
+  public CurrentInstructionContext(IHtmlRuntimeForContext runtime, IRuntimeContext parent, Stack<Context> ctxStack, string callName, IEnumerable<ParsedArgument> args)
   {
+    this.Runtime = runtime;
     this.ParentContext = parent;
     this.ctxStack = ctxStack;
     this.callName = callName;
     this.args = args.ToList();
+  }
+
+  public ParsedArgument GetArgumentAt(int idx)
+  {
+    if (this.args == null)
+    {
+      throw new NullReferenceException();
+    }
+
+    return this.args[idx];
   }
 
   public T GetRequiredArgument<T>(int idx = 0, string? errorMessage = null)
@@ -33,12 +47,12 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
       throw new NullReferenceException();
     }
 
-    if (this.args[idx] == null)
+    if (this.args[idx].IsNull)
     {
       throw new ArgumentException(errorMessage ?? $"Argument {idx} is missing.");
     }
 
-    var newType = Convert.ChangeType(this.args[idx], typeof(T));
+    var newType = Convert.ChangeType(this.args[idx].Value, typeof(T));
 
     if (newType == null)
     {
@@ -55,12 +69,12 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
       throw new NullReferenceException();
     }
 
-    if (this.args[idx] == null)
+    if (this.args[idx].IsNull)
     {
       return default(T);
     }
 
-    var newType = Convert.ChangeType(this.args[idx], typeof(T));
+    var newType = Convert.ChangeType(this.args[idx].Value, typeof(T));
 
     if (newType == null)
     {
@@ -80,9 +94,9 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
     return this.args.Count;
   }
 
-  public string?[] GetArguments()
+  public ParsedArgument[] GetArguments()
   {
-    return this.args?.ToArray() ?? new string?[] { };
+    return this.args?.ToArray() ?? new ParsedArgument[] { };
   }
 
   public void Jump<T>(T jump) where T : class, IContextJump
@@ -90,7 +104,7 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
     this.CursorModification = jump;
   }
 
-  public void SetVariable(string name, string val)
+  public void SetVariable(string name, string? val)
   {
     this.ParentContext.SetVariable(name, val);
     this.SetDirty(name);
@@ -99,6 +113,12 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
   public void DeclareVariable(string name)
   {
     this.ParentContext.DeclareVariable(name);
+    this.SetDirty(name);
+  }
+
+  public void DeleteVariable(string name)
+  {
+    this.ParentContext.DeleteVariable(name);
     this.SetDirty(name);
   }
 

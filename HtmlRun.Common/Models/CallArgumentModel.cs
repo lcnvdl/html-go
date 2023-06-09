@@ -16,6 +16,8 @@ public class CallArgumentModel
 
   public bool IsCall => this.ArgumentType == "call";
 
+  public bool IsCallReference => this.ArgumentType == "callReference";
+
   public bool IsBranch => this.ArgumentType == "branch";
 
   public string? BranchCondition { get; set; }

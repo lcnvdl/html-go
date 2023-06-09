@@ -22,6 +22,10 @@ static class CallArgumentFactory
     {
       return new CallArgumentModel() { ArgumentType = "call", Content = content };
     }
+    else if (elementHtmlDefinition.HasClass("callReference", StringComparison.InvariantCultureIgnoreCase))
+    {
+      return new CallArgumentModel() { ArgumentType = "callReference", Content = content };
+    }
     else
     {
       return null;

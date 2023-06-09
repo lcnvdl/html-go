@@ -8,7 +8,11 @@ public interface IBaseContext
 
   ContextValue? GetVariable(string name);
 
-  void SetVariable(string name, string val);
+  void DeleteVariable(string name);
+
+  bool ExistsVariable(string name) => this.GetVariable(name) != null;
+
+  void SetVariable(string name, string? val);
   
   void DeclareVariable(string name);
   
