@@ -126,11 +126,14 @@ The calls should be enclosed within a `<u>` tag.
 
 ### Global calls
 * Const
+* Delete
 * Goto
 * GotoLine
 * Label
 * Log
 * Set
+* SetTitle
+* Using
 * Var
 
 ### Date calls
@@ -141,6 +144,10 @@ The calls should be enclosed within a `<u>` tag.
 * Threading.Sleep
 * Threading.Increment
 * Threading.Decrement
+
+### Server calls
+* Server.Get
+* Server.SetDefaultContentType
 
 ## CSS Keywords
 * call

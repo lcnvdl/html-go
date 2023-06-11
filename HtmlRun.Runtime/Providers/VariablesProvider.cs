@@ -8,7 +8,7 @@ class VariablesProvider : INativeProvider
 {
   public string Namespace => Runtime.Constants.Namespaces.Global;
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new SetCmd(), new ConstCmd(), new VarCmd(), };
+  public INativeInstruction[] Instructions => new INativeInstruction[] { new SetCmd(), new ConstCmd(), new VarCmd(), new DeleteCmd(), };
 }
 
 class SetCmd : INativeInstruction
@@ -19,7 +19,7 @@ class SetCmd : INativeInstruction
   {
     get
     {
-      return ctx => ctx.SetVariable(ctx.GetArgument(0)!, ctx.GetArgument(1)!);
+      return ctx => ctx.SetVariable(ctx.GetRequiredArgument(0), ctx.GetArgument(1)!);
     }
   }
 }
@@ -32,7 +32,7 @@ class ConstCmd : INativeInstruction
   {
     get
     {
-      return ctx => ctx.DeclareAndSetConst(ctx.GetArgument(0)!, ctx.GetArgument(1)!);
+      return ctx => ctx.DeclareAndSetConst(ctx.GetRequiredArgument(0), ctx.GetArgument(1)!);
     }
   }
 }
@@ -54,6 +54,19 @@ class VarCmd : INativeInstruction
           ctx.SetVariable(ctx.GetRequiredArgument(), ctx.GetRequiredArgument(1));
         }
       };
+    }
+  }
+}
+
+class DeleteCmd : INativeInstruction
+{
+  public string Key => Runtime.Constants.BasicInstructionsSet.Delete;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => ctx.DeleteVariable(ctx.GetRequiredArgument());
     }
   }
 }

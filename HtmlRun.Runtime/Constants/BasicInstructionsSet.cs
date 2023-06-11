@@ -22,5 +22,7 @@ public static class BasicInstructionsSet
 
   public const string Var = "Var";
 
+  public const string Delete = "Delete";
+
   public const string Const = "Const";
 }
