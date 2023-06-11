@@ -1,0 +1,40 @@
+<html>
+
+<head>
+  <title>HtmlGo! - WebApi - Hello world example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <h1>WebApi - Hello world example</h1>
+
+  <h2>Main</h2>
+  <ul>
+    <li class="comment">Settings</li>
+    <li style="padding-left:1em;"><u>Server.SetDefaultContentType</u> <i class="string">text</i></li>
+    
+    <li class="ignore"><br></li>
+    
+    <li class="comment">Static text</li>
+    <li style="padding-left:1em;">
+      <u>Server.Get</u> on <i class="string">/text</i>, respond <i class="string">Hello world</i>.
+    </li>
+    
+    <li class="ignore"><br></li>
+    
+    <li class="comment">Static JSON</li>
+    <li style="padding-left:1em;">
+      <u>Server.Get</u> on <i class="string">/json</i>, respond <i class="string">{ "message": "Hello world" }</i> in <i class="string">json</i> format.
+    </li>
+  </ul>
+
+  <h2>Toolbox</h2>
+  <div>
+    <a href="https://localhost:7266/swagger/index.html" target="_blank">Open website (https)</a>
+    -
+    <a href="http://localhost:5200/swagger/index.html" target="_blank">Open website (http)</a>
+  </div>
+</body>
+
+</html>

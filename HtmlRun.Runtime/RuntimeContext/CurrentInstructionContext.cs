@@ -69,7 +69,7 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
       throw new NullReferenceException();
     }
 
-    if (this.args[idx].IsNull)
+    if (this.args.Count <= idx || this.args[idx].IsNull)
     {
       return default(T);
     }

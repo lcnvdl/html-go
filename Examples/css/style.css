@@ -139,3 +139,18 @@ table td[colspan="2"].section {
 .code h3:after {
   content: ":";
 }
+
+pre.string {
+  overflow: auto;
+  max-height: 200px;
+  max-width: 600px;
+  border: 1px lightgray solid;
+  font-size: 0.8em;
+  font-family: monospace;
+  color: #676767;
+}
+
+pre.string:before,
+pre.string:after {
+  content: none;
+}

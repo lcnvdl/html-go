@@ -1,0 +1,54 @@
+<html>
+
+<head>
+  <title>HtmlGo! - WebApi - Hello world example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <h1>WebApi - Hello world example</h1>
+
+  <h2>Main</h2>
+  <ul>
+    <li class="comment">Stream file</li>
+    <li><u>Server.Get</u>, Url: <i class="string">/download</i>, File: <i class="string">../README.md</i>, Format: <i class="string">stream</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment">Static HTML</li>
+    <li>
+      <u>Server.Get</u>, Url:
+      <i class="string">/html</i>,
+      Content: <pre class="string">
+        &lt;html&gt;
+          &lt;head&gt;
+            &lt;title&gt;HtmlGo! - Hello world example&lt;/title&gt;
+            &lt;meta charset=&quot;UTF-8&quot; /&gt;
+            &lt;link rel=&quot;stylesheet&quot; href=&quot;./css/style.css&quot; /&gt;
+          &lt;/head&gt;
+          
+          &lt;body&gt;
+            &lt;h1&gt;Hello world example&lt;/h1&gt;
+          
+            &lt;h2&gt;Main&lt;/h2&gt;
+            &lt;ul&gt;
+              &lt;li class=&quot;comment&quot;&gt;&lt;i&gt;This is a comment&lt;/i&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;u&gt;Log&lt;/u&gt; &lt;i class=&quot;string&quot;&gt;Hello world&lt;/i&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/body&gt;
+        &lt;/html&gt;
+      </pre>
+      Format: <i class="string">html</i>
+    </li>
+  </ul>
+
+  <h2>Toolbox</h2>
+  <div>
+    <a href="https://localhost:7266/swagger/index.html" target="_blank">Open website (https)</a>
+    -
+    <a href="http://localhost:5200/swagger/index.html" target="_blank">Open website (http)</a>
+  </div>
+</body>
+
+</html>
