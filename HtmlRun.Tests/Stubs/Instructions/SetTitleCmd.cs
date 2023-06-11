@@ -1,10 +1,12 @@
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 
-namespace HtmlRun.Terminal.Instructions;
+namespace HtmlRun.Tests.Stubs.Instructions;
 
 class SetTitleCmd : INativeInstruction
 {
+  public static string? LastTitle { get; set; }
+
   public string Key => Runtime.Constants.BasicInstructionsSet.SetTitle;
 
   public Action<ICurrentInstructionContext> Action
@@ -13,11 +15,7 @@ class SetTitleCmd : INativeInstruction
     {
       return ctx =>
       {
-        string arg = ctx.GetArgument();
-        if (!string.IsNullOrEmpty(arg))
-        {
-          Console.Title = arg!;
-        }
+        LastTitle = ctx.GetRequiredArgument();
       };
     }
   }

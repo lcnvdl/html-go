@@ -41,6 +41,12 @@ dotnet add HtmlRun.Terminal reference HtmlRun.Runtime
 dotnet add HtmlRun.WebApi reference HtmlRun.Interpreter
 dotnet add HtmlRun.WebApi reference HtmlRun.Runtime
 
+dotnet new xunit --name HtmlRun.Tests
+dotnet sln add HtmlRun.Tests
+dotnet add HtmlRun.Tests reference HtmlRun.Common
+dotnet add HtmlRun.Tests reference HtmlRun.Interpreter
+dotnet add HtmlRun.Tests reference HtmlRun.Runtime
+
 @REM DIFFERENT COMPILATION WAYS
 @REM dotnet publish HtmlRun.sln -c Release -r win-x64  -p:PublishSingleFile=true --output ./bin
 @REM dotnet publish HtmlRun.sln -c Release --self-contained -r win-x64 -p:PublishSingleFile=true --output ./bin/win-x64

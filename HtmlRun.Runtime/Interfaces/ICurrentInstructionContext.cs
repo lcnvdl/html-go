@@ -20,6 +20,8 @@ public interface ICurrentInstructionContext : IBaseContext
 
   ParsedArgument[] GetArguments();
 
+  string?[] GetArgumentsValues() => GetArguments().Select(m => m.Value).ToArray();
+
   void Jump<T>(T jump) where T : class, IContextJump;
 
   Interfaces.IContextJump? CursorModification { get; set; }

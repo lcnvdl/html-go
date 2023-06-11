@@ -19,7 +19,7 @@ static class Program
 
     if (file == "run" || file == "--run-example")
     {
-      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 4);
+      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 0);
       Console.WriteLine($"DEBUG MODE. Running example {file}...");
     }
 

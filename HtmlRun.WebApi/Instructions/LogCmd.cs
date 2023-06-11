@@ -18,7 +18,7 @@ internal class LogCmd : INativeInstruction, INativeJSInstruction
   {
     get
     {
-      return ctx => this.app.Logger.LogInformation(string.Join(" ", ctx.GetArguments().Select(m => m == null ? Runtime.Constants.Strings.Null : m.ToString())));
+      return ctx => this.app.Logger.LogInformation(string.Join(" ", ctx.GetArgumentsValues().Select(m => m == null ? Runtime.Constants.Strings.Null : m.ToString())));
     }
   }
 
