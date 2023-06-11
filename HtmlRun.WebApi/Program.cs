@@ -1,38 +1,87 @@
 using HtmlRun.Common.Models;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace HtmlRun.WebApi;
 
-// Add services to the container.
-
-// builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+static class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  async static Task Main(string[] args)
+  {
+    var builder = WebApplication.CreateBuilder(args);
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
+    var app = builder.Build();
+
+    //  HtmlGo
+
+    var runtime = HtmlRun.WebApi.Startup.GetRuntime(app);
+
+    string? file = args.FirstOrDefault();
+
+    if (string.IsNullOrEmpty(file))
+    {
+      app.Logger.LogError("Missing input file.");
+      Environment.Exit(1);
+      return;
+    }
+
+    if (file == "run" || file == "--run-example")
+    {
+      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 0);
+      app.Logger.LogInformation("DEBUG MODE. Running example...");
+    }
+
+    if (!File.Exists(file))
+    {
+      app.Logger.LogError($"File not found: {Path.GetFileName(file)}.");
+      Environment.Exit(1);
+      return;
+    }
+
+    if (!Path.GetExtension(file).Equals(".html", StringComparison.InvariantCultureIgnoreCase))
+    {
+      app.Logger.LogError($"Extension of \"{Path.GetFileName(file)}\" must be .html.");
+      Environment.Exit(1);
+      return;
+    }
+
+    AppModel appModel = await ReadAppFromFile(file);
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment() || file == "run" || args.Contains("--swagger"))
+    {
+      app.UseSwagger();
+      app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+
+    // app.UseAuthorization();
+    // app.MapControllers();
+
+    runtime.Run(appModel, null);
+
+    // app.MapGet("/", () => "Works");
+
+    app.Run();
+  }
+
+  private static async Task<AppModel> ReadAppFromFile(string file)
+  {
+    var spider = new HtmlRun.Interpreter.Interpreters.SpiderInterpreter();
+
+    AppModel app = await spider.ParseString(File.ReadAllText(file));
+
+    return app;
+  }
+
+  private static string GetExample(int number)
+  {
+    return new DirectoryInfo(
+      Directory.Exists(
+        Path.Combine(Environment.CurrentDirectory, "../Examples/WebApi")) ?
+        Path.Combine(Environment.CurrentDirectory, "../Examples/WebApi") :
+        Path.Combine(Environment.CurrentDirectory, "./Examples/WebApi")).GetFiles("*.html")[number].FullName;
+  }
 }
 
-var runtime = HtmlRun.WebApi.Startup.GetRuntime(app);
-
-var spider = new HtmlRun.Interpreter.Interpreters.SpiderInterpreter();
-
-string file = Path.Combine(Environment.CurrentDirectory, "../Examples/WebApi/01-hello_world.html");
-
-AppModel appModel = await spider.ParseString(File.ReadAllText(file));
-
-app.UseHttpsRedirection();
-
-// app.UseAuthorization();
-// app.MapControllers();
-
-runtime.Run(appModel, null);
-
-// app.MapGet("/", () => "Works");
-
-app.Run();

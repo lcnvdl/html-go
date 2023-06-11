@@ -1,5 +1,7 @@
 ﻿using HtmlRun.Common.Models;
 
+namespace HtmlRun.Terminal;
+
 static class Program
 {
   async static Task Main(string[] args)
