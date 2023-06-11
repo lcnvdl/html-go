@@ -1,5 +1,7 @@
 # HtmlGo!
 
+![Build Status](https://github.com/lcnvdl/html-go/actions/workflows/build.yml/badge.svg)
+
 The interpreter that lets you 'program' in HTML! Now you can finally join the fun and proudly say you're an HTML programmer (sort of)!
 
 ¡El intérprete que te permite 'programar' en HTML! Ahora puedes unirte a la diversión y decir con orgullo que eres un programador de HTML (más o menos)!
