@@ -3,7 +3,7 @@ using HtmlRun.Runtime.Code;
 using HtmlRun.Tests.Stubs;
 using HtmlRun.Tests.Stubs.Instructions;
 
-public class HtmlRuntimeTests
+public class HtmlRuntimeTests: IDisposable
 {
   private HtmlRuntime runtime;
 
@@ -11,6 +11,12 @@ public class HtmlRuntimeTests
   {
     this.runtime = new HtmlRuntime();
     this.runtime.RegisterProvider(new InstructionsProvider());
+    LogCmd.Logs.Clear();
+  }
+
+  public void Dispose()
+  {
+    LogCmd.Logs.Clear();
   }
 
   [Fact]
