@@ -140,4 +140,9 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
       this.DirtyVariables.Add(name);
     }
   }
+
+  public void AddUsing(string namesp)
+  {
+    this.ParentContext.AddUsing(namesp);
+  }
 }

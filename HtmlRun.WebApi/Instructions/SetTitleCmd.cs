@@ -1,4 +1,3 @@
-using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 
 namespace HtmlRun.WebApi.Instructions;

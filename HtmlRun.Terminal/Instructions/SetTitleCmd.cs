@@ -13,7 +13,7 @@ class SetTitleCmd : INativeInstruction
     {
       return ctx =>
       {
-        string arg = ctx.GetArgument();
+        string? arg = ctx.GetArgument();
         if (!string.IsNullOrEmpty(arg))
         {
           Console.Title = arg!;

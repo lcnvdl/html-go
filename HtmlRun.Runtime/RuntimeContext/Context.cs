@@ -12,6 +12,8 @@ public class Context : BaseContext, IRuntimeContext
 
   private Stack<Context> ctxStack;
 
+  public List<string> Usings { get; private set; } = new();
+
   public ContextValue[] AllVariables
   {
     get => this.variables.Values.ToArray<ContextValue>();
@@ -94,5 +96,13 @@ public class Context : BaseContext, IRuntimeContext
     }
 
     return null;
+  }
+
+  public void AddUsing(string namesp)
+  {
+    if (!this.Usings.Contains(namesp))
+    {
+      this.Usings.Add(namesp);
+    }
   }
 }

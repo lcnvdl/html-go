@@ -12,6 +12,8 @@ public static class BasicInstructionsSet
 
   public const string Goto = "Goto";
 
+  public const string Using = "Using";
+
   public const string Label = "Label";
 
   public const string GotoLine = "GotoLine";
