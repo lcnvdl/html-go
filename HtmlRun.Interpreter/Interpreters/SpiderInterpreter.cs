@@ -11,7 +11,7 @@ public class SpiderInterpreter : IInterpreter
 
   public async Task<AppModel> ParseString(string content)
   {
-    var parser = new AngleSharpParser();
+    IParser parser = new AngleSharpParser();
     await parser.Load(content);
 
     //  App
