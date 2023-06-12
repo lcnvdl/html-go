@@ -1,0 +1,24 @@
+@startuml "Components"
+
+package "Core" {
+  [Interpreter] - Model
+  [Runtime] - Executor
+}
+
+package "Presentation" {
+  [Terminal] - App
+  [WebApi] - WebApp
+}
+
+node "OS" {
+  [FileSystem] - App_html
+}
+
+[Interpreter] ..> App_html: read
+[Runtime] ..> Model: use
+[Terminal] ..> Executor: run
+[WebApi] ..> Executor: run
+
+User1 ..> [WebApp]: use
+User2 ..> [App]: use
+@enduml
