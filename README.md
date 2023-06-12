@@ -6,7 +6,7 @@ The interpreter that lets you 'program' in HTML! Now you can finally join the fu
 
 ¡El intérprete que te permite 'programar' en HTML! Ahora puedes unirte a la diversión y decir con orgullo que eres un programador de HTML (más o menos)!
 
-![alt text](./Docs/screenshot_1.png)
+![Screenshot1](./Docs/screenshot_1.png)
 
 ## What is HTML (HyperText __Machine__ Language)?
 The HTML (HyperText Machine Language) language is our new standard we've made to to create and structure applications inspired by HTML (HyperText Markup Language).
@@ -25,6 +25,7 @@ The `HtmlGo` interpreter reads your .html file and executes the instructions you
 Want to be part of this new way of programming? Join the `HtmlGo` developer community and discover how this language can bring a fun and refreshing twist to your projects. Say goodbye to monotony and welcome a more visual, creative, and HTML-infused programming experience!
 
 ## How to use?
+### Terminal mode
 Here's a quick guide on how to use `HtmlGo` with commands:
 
 1. Open your terminal or command prompt.
@@ -37,6 +38,25 @@ Make sure to replace "/path/to/app.html" with the actual path and name of your a
 `HtmlGo` will start interpreting the HTML file and executing the instructions you've created.
 
 And that's it! With these simple steps, you'll be able to run your Html application and see the results in action.
+
+### Server mode
+![WebApiExample1](./Docs/screenshot_webapi_example1.png)
+
+You can use `HtmlGo` as a WebAPI server:
+
+1. Open your terminal or command prompt.
+2. Run the following command:
+```bash
+htmlgo-server /path/to/app.html
+```
+
+You can add the `--swagger` parameter to enable Swagger UI:
+
+```bash
+htmlgo-server /path/to/app.html --swagger
+```
+
+![SwaggerUI](./Docs/screenshot_swagger.png)
 
 ## Getting Started for Users
 Before you can start using `HtmlGo` to compile and execute applications, you'll need to perform a simple setup process. This involves downloading the `HtmlGo` package, extracting it to a directory, and configuring your system's environment variables. Follow the steps below to get started:
