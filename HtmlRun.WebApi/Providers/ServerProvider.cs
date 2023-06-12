@@ -2,6 +2,7 @@ using System.Reflection;
 using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
+using Microsoft.Extensions.FileProviders;
 
 namespace HtmlRun.WebApi.Providers;
 
@@ -9,30 +10,71 @@ class ServerProvider : INativeProvider
 {
   private readonly WebApplication app;
 
+  private readonly WebApplicationBuilder builder;
+
   private readonly GlobalServerSettings settings;
 
   public string Namespace => "Server";
 
-  internal ServerProvider(WebApplication app)
+  internal ServerProvider(WebApplication app, WebApplicationBuilder builder)
   {
     this.app = app;
-    this.settings = new GlobalServerSettings(app);
+    this.builder = builder;
+    this.settings = new GlobalServerSettings(app, builder);
   }
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new GetCmd(this.settings), new SetDefaultContentType(this.settings), };
+  public INativeInstruction[] Instructions => new INativeInstruction[]
+  {
+    new GetCmd(this.settings),
+    new PostCmd(this.settings),
+    new DeleteCmd(this.settings),
+    new PutCmd(this.settings),
+    new SetDefaultContentType(this.settings),
+    new StaticFilesCmd(this.settings),
+    new GetCurrentDirectory(this.settings),
+    new StaticDirectoryCmd(this.settings),
+  };
 }
 
 class GlobalServerSettings
 {
   internal WebApplication App { get; private set; }
 
+  internal WebApplicationBuilder Builder { get; private set; }
+
   internal string DefaultContentType { get; set; } = "text"; // json or text or html or stream (path) or (any mime type)
 
-  public GlobalServerSettings(WebApplication app)
+  internal string CurrentDirectory => this.Builder.Environment.ContentRootPath;
+
+  public GlobalServerSettings(WebApplication app, WebApplicationBuilder builder)
   {
     this.App = app;
+    this.Builder = builder;
   }
 }
+
+class GetCurrentDirectory : BaseCmdWithSettings, INativeInstruction, INativeJSInstruction
+{
+  public string Key => "GetCurrentDirectory";
+
+  internal GetCurrentDirectory(GlobalServerSettings settings) : base(settings)
+  {
+  }
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+
+  public Delegate ToJSAction()
+  {
+    return new Func<string>(() => this.Settings.CurrentDirectory);
+  }
+}
+
 
 class SetDefaultContentType : BaseCmdWithSettings, INativeInstruction
 {
@@ -51,11 +93,11 @@ class SetDefaultContentType : BaseCmdWithSettings, INativeInstruction
   }
 }
 
-class GetCmd : BaseMethodCmd, INativeInstruction
+class StaticFilesCmd : BaseMethodCmd, INativeInstruction
 {
-  public string Key => "Get";
+  public string Key => "StaticFiles";
 
-  internal GetCmd(GlobalServerSettings settings) : base(settings)
+  internal StaticFilesCmd(GlobalServerSettings settings) : base(settings)
   {
   }
 
@@ -65,11 +107,104 @@ class GetCmd : BaseMethodCmd, INativeInstruction
     {
       return ctx =>
       {
-        this.App.MapGet(this.GetPattern(ctx), this.GetDelegate(ctx));
+        var options = new FileServerOptions
+        {
+          FileProvider = new PhysicalFileProvider(this.ParseDirectory(ctx.GetRequiredArgument(1))),
+          RequestPath = ctx.GetRequiredArgument(0),
+          EnableDirectoryBrowsing = false
+        };
+        this.App.UseFileServer(options);
       };
     }
   }
+
+  private string ParseDirectory(string argDir)
+  {
+    string dir = argDir;
+
+    if (dir.StartsWith("./") || dir.StartsWith("../"))
+    {
+      dir = Path.Combine(this.Settings.CurrentDirectory, dir);
+    }
+
+    return dir;
+  }
 }
+
+class StaticDirectoryCmd : BaseMethodCmd, INativeInstruction
+{
+  public string Key => "StaticDirectory";
+
+  internal StaticDirectoryCmd(GlobalServerSettings settings) : base(settings)
+  {
+  }
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx =>
+      {
+        var options = new FileServerOptions
+        {
+          FileProvider = new PhysicalFileProvider(this.ParseDirectory(ctx.GetRequiredArgument(1))),
+          RequestPath = ctx.GetRequiredArgument(0),
+          EnableDirectoryBrowsing = true
+        };
+        this.App.UseFileServer(options);
+      };
+    }
+  }
+
+  private string ParseDirectory(string argDir)
+  {
+    string dir = argDir;
+
+    if (dir.StartsWith("./") || dir.StartsWith("../"))
+    {
+      dir = Path.Combine(this.Settings.CurrentDirectory, dir);
+    }
+
+    return dir;
+  }
+}
+
+class GetCmd : BaseMethodCmd, INativeInstruction
+{
+  public string Key => "Get";
+
+  internal GetCmd(GlobalServerSettings settings) : base(settings) { }
+
+  public Action<ICurrentInstructionContext> Action => (ctx => this.App.MapGet(this.GetPattern(ctx), this.GetDelegate(ctx)));
+}
+
+class PostCmd : BaseMethodCmd, INativeInstruction
+{
+  public string Key => "Post";
+
+  internal PostCmd(GlobalServerSettings settings) : base(settings) { }
+
+  public Action<ICurrentInstructionContext> Action => (ctx => this.App.MapPost(this.GetPattern(ctx), this.GetDelegate(ctx)));
+}
+
+class PutCmd : BaseMethodCmd, INativeInstruction
+{
+  public string Key => "Put";
+
+  internal PutCmd(GlobalServerSettings settings) : base(settings) { }
+
+  public Action<ICurrentInstructionContext> Action => (ctx => this.App.MapPut(this.GetPattern(ctx), this.GetDelegate(ctx)));
+}
+
+class DeleteCmd : BaseMethodCmd, INativeInstruction
+{
+  public string Key => "Delete";
+
+  internal DeleteCmd(GlobalServerSettings settings) : base(settings) { }
+
+  public Action<ICurrentInstructionContext> Action => (ctx => this.App.MapDelete(this.GetPattern(ctx), this.GetDelegate(ctx)));
+}
+
 
 abstract class BaseMethodCmd : BaseCmdWithSettings
 {

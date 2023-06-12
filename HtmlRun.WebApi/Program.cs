@@ -14,7 +14,7 @@ static class Program
 
     //  HtmlGo
 
-    var runtime = HtmlRun.WebApi.Startup.GetRuntime(app);
+    var runtime = HtmlRun.WebApi.Startup.GetRuntime(app, builder);
 
     string? file = args.FirstOrDefault();
 
