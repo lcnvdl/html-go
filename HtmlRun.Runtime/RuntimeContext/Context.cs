@@ -6,11 +6,11 @@ namespace HtmlRun.Runtime;
 
 public class Context : BaseContext, IRuntimeContext
 {
-  private Dictionary<string, ContextValue> variables = new Dictionary<string, ContextValue>();
+  private readonly Dictionary<string, ContextValue> variables = new ();
 
-  private Context? parent = null;
+  private readonly Context? parent;
 
-  private Stack<Context> ctxStack;
+  private readonly Stack<Context> ctxStack;
 
   public List<string> Usings { get; private set; } = new();
 

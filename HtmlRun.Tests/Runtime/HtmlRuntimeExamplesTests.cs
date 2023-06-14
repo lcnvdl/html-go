@@ -1,7 +1,6 @@
 using HtmlRun.Common.Models;
 using HtmlRun.Interpreter.Interpreters;
 using HtmlRun.Runtime;
-using HtmlRun.Runtime.Code;
 using HtmlRun.Tests.Stubs;
 using HtmlRun.Tests.Stubs.Instructions;
 

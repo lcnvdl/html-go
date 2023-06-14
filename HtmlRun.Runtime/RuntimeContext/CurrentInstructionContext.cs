@@ -5,11 +5,11 @@ namespace HtmlRun.Runtime.RuntimeContext;
 
 public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext, IUnsafeCurrentInstructionContext
 {
-  private Stack<Context> ctxStack;
+  private readonly Stack<Context> ctxStack;
 
-  private string? callName;
+  private readonly string? callName;
 
-  private List<ParsedArgument>? args;
+  private readonly List<ParsedArgument>? args;
 
   public IRuntimeContext ParentContext { get; private set; }
 
@@ -71,14 +71,14 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
 
     if (this.args.Count <= idx || this.args[idx].IsNull)
     {
-      return default(T);
+      return default;
     }
 
     var newType = Convert.ChangeType(this.args[idx].Value, typeof(T));
 
     if (newType == null)
     {
-      return default(T);
+      return default;
     }
 
     return (T)newType;
@@ -96,7 +96,7 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
 
   public ParsedArgument[] GetArguments()
   {
-    return this.args?.ToArray() ?? new ParsedArgument[] { };
+    return this.args?.ToArray() ?? Array.Empty<ParsedArgument>();
   }
 
   public void Jump<T>(T jump) where T : class, IContextJump

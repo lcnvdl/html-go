@@ -3,21 +3,19 @@ using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Models;
 using HtmlRun.Runtime.Native;
-using HtmlRun.Runtime.Providers;
 using HtmlRun.Runtime.RuntimeContext;
-using HtmlRun.Runtime.Utils;
 
 namespace HtmlRun.Runtime;
 
 public class HtmlRuntime : IHtmlRuntimeForContext
 {
-  private Dictionary<string, Action<ICurrentInstructionContext>> instructions = new Dictionary<string, Action<ICurrentInstructionContext>>();
+  private readonly Dictionary<string, Action<ICurrentInstructionContext>> instructions = new();
 
-  private Dictionary<string, Delegate> jsInstructions = new Dictionary<string, Delegate>();
+  private readonly Dictionary<string, Delegate> jsInstructions = new();
 
-  private Stack<Context> ctxStack;
+  private readonly Stack<Context> ctxStack = new();
 
-  private Context globalCtx;
+  private readonly Context globalCtx;
 
   public HtmlRuntime()
   {
@@ -41,7 +39,7 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
     if (!string.IsNullOrEmpty(app.Title))
     {
-      this.RunInstruction(Runtime.Constants.BasicInstructionsSet.SetTitle, new ParsedArgument(app.Title, ParsedArgumentType.String));
+      this.RunInstruction(Constants.BasicInstructionsSet.SetTitle, new ParsedArgument(app.Title, ParsedArgumentType.String));
     }
 
     //  Load functions
@@ -54,16 +52,16 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
     //  Run instructions
 
-    int cursor = 0;
+    InstructionPointer cursor = new();
 
     this.ctxStack.Clear();
     this.ctxStack.Push(this.globalCtx);
 
-    while (cursor < app.Instructions.Count && (!token.HasValue || !token.Value.IsCancellationRequested))
+    while (cursor.Position < app.Instructions.Count && (!token.HasValue || !token.Value.IsCancellationRequested))
     {
       try
       {
-        CallModel instruction = app.Instructions[cursor];
+        CallModel instruction = app.Instructions[cursor.Position];
 
         ParsedArgument[] arguments = this.ParseArguments(jsParserWithContext, instruction.Arguments);
 
@@ -73,11 +71,11 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
         if (finalCtx.CursorModification != null && !finalCtx.CursorModification.IsEmpty)
         {
-          cursor = this.GetNewCursorPositionAfterJump(finalCtx, instruction, cursor, app);
+          cursor.ApplyJumpOrFail(finalCtx.CursorModification, instruction, app.Instructions);
           finalCtx.CursorModification = null;
         }
 
-        ++cursor;
+        cursor.MoveToNextPosition();
       }
       catch (Jurassic.JavaScriptException ex)
       {
@@ -126,9 +124,8 @@ public class HtmlRuntime : IHtmlRuntimeForContext
         this.instructions[$"{provider.Namespace}.{instruction.Key}"] = instruction.Action;
       }
 
-      if (instruction is INativeJSInstruction)
+      if (instruction is INativeJSInstruction jsInstruction)
       {
-        var jsInstruction = (INativeJSInstruction)instruction;
         if (provider.IsGlobal)
         {
           this.jsInstructions[instruction.Key] = jsInstruction.ToJSAction();
@@ -150,53 +147,6 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     action(instructionCtx);
 
     return instructionCtx;
-  }
-
-  private int GetNewCursorPositionAfterJump(ICurrentInstructionContext finalCtx, CallModel instruction, int cursor, AppModel app)
-  {
-    //  TODO  AppModel app is temporary. Should not be there.
-
-    if (finalCtx.CursorModification is JumpToBranch)
-    {
-      var jump = (JumpToBranch)finalCtx.CursorModification;
-      var newBranch = instruction.Arguments.Find(m => m.IsBranch && jump.IsBranch(m.BranchCondition));
-      if (newBranch == null)
-      {
-        // if (jump.IsBranchRequired) // Bug 01
-        // {
-        throw new NullReferenceException($"Missing branch {jump.Condition} in {instruction.FunctionName} call.");
-        // }
-      }
-      else
-      {
-        //  TODO Causa del Bug 01 (me obliga a tener el case false en el IF, sino quedan instrucciones sueltas)
-        app.Instructions.InsertRange(cursor + 1, newBranch.BranchInstructions!);
-      }
-    }
-    else if (finalCtx.CursorModification is JumpToLine)
-    {
-      var jump = (JumpToLine)finalCtx.CursorModification;
-      if (jump.JumpType == JumpToLine.JumpTypeEnum.LineNumber)
-      {
-        cursor = int.Parse(jump.Line!) - 1;
-      }
-      else
-      {
-        cursor = app.Instructions.FindIndex(m => m.CustomId != null && m.CustomId == jump.Line);
-        if (cursor < 0)
-        {
-          throw new IndexOutOfRangeException();
-        }
-
-        --cursor;
-      }
-    }
-    else
-    {
-      throw new InvalidCastException();
-    }
-
-    return cursor;
   }
 
   private Action<ICurrentInstructionContext> GetActionOrFail(IRuntimeContext ctx, string key)
@@ -239,6 +189,8 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     for (int i = 0; i < arguments.Count; i++)
     {
       result[i] = ParsedArgumentFactory.CreateFromCallArgumentModel(arguments[i], jsParser);
+
+      //  Extra parsing if it is a "callReference". TODO: Refactor this.
 
       if (arguments[i].IsCallReference && !string.IsNullOrEmpty(arguments[i].Content))
       {

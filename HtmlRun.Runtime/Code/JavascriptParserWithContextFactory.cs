@@ -8,7 +8,7 @@ static class JavascriptParserWithContextFactory
 
     foreach (var kv in jsInstructions)
     {
-      if (kv.Key.Contains("."))
+      if (kv.Key.Contains('.'))
       {
         string sanitizedKey = "call__" + kv.Key.Replace(".", "__");
         jsParserWithContext.RegisterInstruction(sanitizedKey, kv.Value);

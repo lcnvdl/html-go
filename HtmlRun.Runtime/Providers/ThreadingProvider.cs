@@ -43,6 +43,7 @@ class IncrementCmd : INativeInstruction
         }
 
         var cast = HtmlRun.Runtime.Utils.CastingUtils.ToNumber(meta.Value);
+        
         if (cast == null)
         {
           throw new InvalidCastException($"Variable {varName} is not a number.");

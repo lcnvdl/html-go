@@ -1,3 +1,5 @@
+namespace HtmlRun.Interpreter.Interpreters;
+
 public interface IHtmlElementAbstraction
 {
   string? ElementId { get; set; }
