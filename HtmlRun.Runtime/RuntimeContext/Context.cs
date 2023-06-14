@@ -45,14 +45,14 @@ public class Context : BaseContext, IRuntimeContext
     return new CurrentInstructionContext(runtimeForContext, this, this.ctxStack, callName, args);
   }
 
-  public void SetVariable(string name, string? val)
+  public void DeclareAndSetConst(string name, string val)
   {
-    if (!this.variables.ContainsKey(name))
+    if (this.variables.ContainsKey(name))
     {
-      throw new InvalidOperationException($"Variable {name} was not declared.");
+      throw new InvalidOperationException($"Variable or constant {name} was already declared.");
     }
 
-    this.variables[name].Value = val;
+    this.variables[name] = new ContextValue(name, val, true);
   }
 
   public void DeclareVariable(string name)
@@ -65,14 +65,29 @@ public class Context : BaseContext, IRuntimeContext
     this.variables[name] = new ContextValue(name);
   }
 
-  public void DeclareAndSetConst(string name, string val)
+  public void SetVariable(string name, string? val)
   {
-    if (this.variables.ContainsKey(name))
+    if (!this.variables.ContainsKey(name))
     {
-      throw new InvalidOperationException($"Variable or constant {name} was already declared.");
+      throw new InvalidOperationException($"Variable {name} was not declared.");
     }
 
-    this.variables[name] = new ContextValue(name, val, true);
+    this.variables[name].Value = val;
+  }
+
+  public void AddVariable(ContextValue value)
+  {
+    this.variables[value.Name] = value;
+  }
+
+  public ContextValue? GetVariable(string name)
+  {
+    if (this.variables.TryGetValue(name, out var metadata))
+    {
+      return metadata;
+    }
+
+    return null;
   }
 
   public void DeleteVariable(string name)
@@ -86,16 +101,6 @@ public class Context : BaseContext, IRuntimeContext
         this.parent.DeleteVariable(name);
       }
     }
-  }
-
-  public ContextValue? GetVariable(string name)
-  {
-    if (this.variables.TryGetValue(name, out var metadata))
-    {
-      return metadata;
-    }
-
-    return null;
   }
 
   public void AddUsing(string namesp)

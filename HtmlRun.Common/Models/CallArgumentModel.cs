@@ -24,6 +24,11 @@ public class CallArgumentModel
 
   public List<CallModel>? BranchInstructions { get; set; }
 
+  public static CallArgumentModel FromCall(string str)
+  {
+    return new CallArgumentModel() { ArgumentType = "call", Content = str };
+  }
+
   public static CallArgumentModel FromString(string str)
   {
     return new CallArgumentModel() { ArgumentType = "string", Content = str };

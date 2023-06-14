@@ -19,4 +19,8 @@ public class ParsedArgument
   }
 
   public static ParsedArgument Null => new ParsedArgument(null, ParsedArgumentType.Null);
+
+  public static ParsedArgument String(string? value) => new ParsedArgument(value, ParsedArgumentType.String);
+
+  public static ParsedArgument Call(string? value) => new ParsedArgument(value, ParsedArgumentType.Reference);
 }

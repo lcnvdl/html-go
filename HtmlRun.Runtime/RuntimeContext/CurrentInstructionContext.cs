@@ -145,4 +145,9 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
   {
     this.ParentContext.AddUsing(namesp);
   }
+
+  public void AddVariable(ContextValue value)
+  {
+    this.ParentContext.AddVariable(value);
+  }
 }

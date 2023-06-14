@@ -35,7 +35,7 @@ public class HtmlRuntime : IHtmlRuntimeForContext
   {
     //  JS Engine
 
-    var jsParserWithContext = this.CreateNewJavascriptParserAndAssignInstructions();
+    var jsParserWithContext = JavascriptParserWithContextFactory.CreateNewJavascriptParserAndAssignInstructions(this.jsInstructions);
 
     //  Title
 
@@ -141,15 +141,15 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     }
   }
 
-  private ICurrentInstructionContext RunInstruction(Context parentCtx, string key, params ParsedArgument[] args)
+  private ICurrentInstructionContext RunInstruction(IRuntimeContext parentCtx, string key, params ParsedArgument[] args)
   {
     var action = this.GetActionOrFail(parentCtx, key);
 
-    var ctx = parentCtx.Fork(this, key, args);
+    var instructionCtx = parentCtx.Fork(this, key, args);
 
-    action(ctx);
+    action(instructionCtx);
 
-    return ctx;
+    return instructionCtx;
   }
 
   private int GetNewCursorPositionAfterJump(ICurrentInstructionContext finalCtx, CallModel instruction, int cursor, AppModel app)
@@ -199,7 +199,7 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     return cursor;
   }
 
-  private Action<ICurrentInstructionContext> GetActionOrFail(Context ctx, string key)
+  private Action<ICurrentInstructionContext> GetActionOrFail(IRuntimeContext ctx, string key)
   {
     if (this.instructions.ContainsKey(key))
     {
@@ -263,42 +263,6 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     }
 
     return result;
-  }
-
-  private JavascriptParserWithContext CreateNewJavascriptParserAndAssignInstructions()
-  {
-    var jsParserWithContext = new JavascriptParserWithContext();
-
-    foreach (var kv in this.jsInstructions)
-    {
-      if (kv.Key.Contains("."))
-      {
-        string sanitizedKey = "call__" + kv.Key.Replace(".", "__");
-        jsParserWithContext.RegisterInstruction(sanitizedKey, kv.Value);
-
-        var split = kv.Key.Split('.');
-
-        for (int i = 0; i < split.Length; i++)
-        {
-          string curr = split[i];
-
-          for (int j = i - 1; j >= 0; j--)
-          {
-            curr = $"{split[j]}.{curr}";
-          }
-
-          jsParserWithContext.ExecuteCode($"window.{curr}=window.{curr}||{{}};");
-        }
-
-        jsParserWithContext.ExecuteCode($"window.{kv.Key}={sanitizedKey}");
-      }
-      else
-      {
-        jsParserWithContext.RegisterInstruction(kv.Key, kv.Value);
-      }
-    }
-
-    return jsParserWithContext;
   }
 
   private void SaveContextVariableChangesToJsEngine(ICurrentInstructionContext finalCtx, JavascriptParserWithContext jsParserWithContext)

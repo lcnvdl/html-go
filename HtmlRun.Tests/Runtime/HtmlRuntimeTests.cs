@@ -1,9 +1,10 @@
+using HtmlRun.Common.Models;
 using HtmlRun.Runtime;
 using HtmlRun.Runtime.Code;
 using HtmlRun.Tests.Stubs;
 using HtmlRun.Tests.Stubs.Instructions;
 
-public class HtmlRuntimeTests: IDisposable
+public class HtmlRuntimeTests : IDisposable
 {
   private HtmlRuntime runtime;
 
@@ -28,9 +29,25 @@ public class HtmlRuntimeTests: IDisposable
   [Fact]
   public void HtmlRuntime_RunInstruction_ShouldWorkFine()
   {
-    this.runtime.RunInstruction("Log", new ParsedArgument("this is a message", ParsedArgumentType.String));
+    this.runtime.RunInstruction("Log", ParsedArgument.String("this is a message"));
 
     Assert.Single(LogCmd.Logs);
     Assert.Equal("this is a message", LogCmd.Logs[0]);
+  }
+
+  [Fact]
+  public void HtmlRuntime_ShouldHaveVariablesSynchronizedWithJsEngine()
+  {
+    this.runtime.RegisterBasicProviders();
+
+    var app = new AppModel();
+    app.Instructions.Add("Var".AsCall(CallArgumentModel.FromString("name")));
+    app.Instructions.Add("Set".AsCall(CallArgumentModel.FromString("name"), CallArgumentModel.FromString("Lucho")));
+    app.Instructions.Add("Log".AsCall(CallArgumentModel.FromCall("name")));
+
+    this.runtime.Run(app, null);
+
+    Assert.Single(LogCmd.Logs);
+    Assert.Equal("Lucho", LogCmd.Logs[0]);
   }
 }

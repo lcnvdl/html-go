@@ -13,6 +13,7 @@ public static class RegisterBasicProvidersExtension
     runtime.RegisterProvider(new VariablesProvider());
 
     //  Tools
+    runtime.RegisterProvider(new EnvironmentProvider());
     runtime.RegisterProvider(new DateProvider());
 
     //  TODO  Threading is not a basic provider

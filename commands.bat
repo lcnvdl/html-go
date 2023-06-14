@@ -22,11 +22,6 @@ dotnet sln add HtmlRun.Interpreter
 dotnet add HtmlRun.Interpreter reference HtmlRun.Common
 dotnet add HtmlRun.Interpreter package AngleSharp --version 1.0.2
 
-dotnet new classlib --name HtmlRun.Interpreter
-dotnet sln add HtmlRun.Interpreter
-dotnet add HtmlRun.Interpreter reference HtmlRun.Common
-dotnet add HtmlRun.Interpreter package AngleSharp --version 1.0.2
-
 dotnet new classlib --name HtmlRun.Runtime
 dotnet sln add HtmlRun.Runtime
 dotnet add HtmlRun.Runtime reference HtmlRun.Common
