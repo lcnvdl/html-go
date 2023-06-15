@@ -11,9 +11,9 @@ class ThreadingProvider : INativeProvider
   public INativeInstruction[] Instructions => new INativeInstruction[] { new SleepCmd(), new IncrementCmd(), new DecrementCmd(), };
 }
 
-class SleepCmd : INativeInstruction
+class SleepCmd : INativeInstruction, INativeJSInstruction
 {
-  public string Key => Runtime.Constants.ThreadingInstructionsSet.Sleep;
+  public string Key => Constants.ThreadingInstructionsSet.Sleep;
 
   public Action<ICurrentInstructionContext> Action
   {
@@ -21,6 +21,11 @@ class SleepCmd : INativeInstruction
     {
       return ctx => Thread.Sleep(ctx.GetRequiredArgument<int>());
     }
+  }
+
+  public Delegate ToJSAction()
+  {
+    return new Action<int>(Thread.Sleep);
   }
 }
 

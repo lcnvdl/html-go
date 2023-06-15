@@ -8,16 +8,8 @@ using HtmlRun.Tests.Stubs.Instructions;
 
 public class ImportsProviderTests : BaseProviderTests
 {
-  private Context ctx;
-  private HtmlRuntime runtime;
-
   public ImportsProviderTests() : base(new ImportsProvider())
   {
-    this.ctx = new Context(null, new Stack<Context>());
-    this.runtime = new HtmlRuntime();
-    this.runtime.RegisterProvider(new InstructionsProvider());
-    this.runtime.RegisterBasicProviders();
-    LogCmd.Logs.Clear();
   }
 
   [Fact]
@@ -29,13 +21,13 @@ public class ImportsProviderTests : BaseProviderTests
   [Fact]
   public void ImportsProvider_Using_ShouldWorkFine()
   {
-    Assert.DoesNotContain("Threading", this.ctx.Usings);
+    Assert.DoesNotContain("Threading", this.Ctx.Usings);
 
     var instruction = this.GetInstruction(BasicInstructionsSet.Using);
     Assert.NotNull(instruction);
-    instruction.Action.Invoke(this.ctx.Fork(this.runtime, instruction.Key, new[] { ParsedArgument.String("Threading") }));
+    instruction.Action.Invoke(this.Ctx.Fork(this.Runtime, instruction.Key, new[] { ParsedArgument.String("Threading") }));
 
-    Assert.Contains("Threading", this.ctx.Usings);
+    Assert.Contains("Threading", this.Ctx.Usings);
   }
 
   [Fact]
@@ -43,6 +35,6 @@ public class ImportsProviderTests : BaseProviderTests
   {
     var instruction = this.GetInstruction(BasicInstructionsSet.Using);
     Assert.NotNull(instruction);
-    Assert.Throws<Exception>(() => instruction.Action.Invoke(this.ctx.Fork(this.runtime, instruction.Key, new[] { ParsedArgument.String("Threadinggg") })));
+    Assert.Throws<Exception>(() => instruction.Action.Invoke(this.Ctx.Fork(this.Runtime, instruction.Key, new[] { ParsedArgument.String("Threadinggg") })));
   }
 }

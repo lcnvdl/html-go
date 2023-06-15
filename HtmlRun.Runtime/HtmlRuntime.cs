@@ -114,6 +114,7 @@ public class HtmlRuntime : IHtmlRuntimeForContext
   {
     foreach (INativeInstruction instruction in provider.Instructions)
     {
+      //  Instructions
       if (provider.IsGlobal)
       {
         this.instructions[instruction.Key] = instruction.Action;
@@ -124,6 +125,7 @@ public class HtmlRuntime : IHtmlRuntimeForContext
         this.instructions[$"{provider.Namespace}.{instruction.Key}"] = instruction.Action;
       }
 
+      //  JS Engine Instructions
       if (instruction is INativeJSInstruction jsInstruction)
       {
         if (provider.IsGlobal)

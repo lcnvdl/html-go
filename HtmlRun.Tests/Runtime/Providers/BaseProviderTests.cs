@@ -2,14 +2,29 @@ using HtmlRun.Runtime;
 using HtmlRun.Runtime.Native;
 using HtmlRun.Runtime.Providers;
 using HtmlRun.Runtime.RuntimeContext;
+using HtmlRun.Tests.Stubs;
+using HtmlRun.Tests.Stubs.Instructions;
 
 public abstract class BaseProviderTests
 {
   protected INativeProvider Provider { get; private set; }
 
+  private Context ctx;
+
+  private HtmlRuntime runtime;
+
+  protected Context Ctx => this.ctx;
+
+  protected HtmlRuntime Runtime => this.runtime;
+
   public BaseProviderTests(INativeProvider provider)
   {
     this.Provider = provider;
+    this.ctx = new Context(null, new Stack<Context>());
+    this.runtime = new HtmlRuntime();
+    this.runtime.RegisterProvider(new InstructionsProvider());
+    this.runtime.RegisterBasicProviders();
+    LogCmd.Logs.Clear();
   }
 
   protected void TestGetInstructions()

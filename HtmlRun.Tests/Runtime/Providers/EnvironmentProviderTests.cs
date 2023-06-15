@@ -1,4 +1,5 @@
 using HtmlRun.Runtime;
+using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Constants;
 using HtmlRun.Runtime.Providers;
 using HtmlRun.Runtime.RuntimeContext;
@@ -13,6 +14,53 @@ public class EnvironmentProviderTests : BaseProviderTests
   public void EnvironmentProvider_GetInstructions_ShouldWorkFine()
   {
     base.TestGetInstructions();
+  }
+
+  [Fact]
+  public void EnvironmentProvider_SetEnvironmentVariable_ShouldWorkFine()
+  {
+    var instruction = this.GetInstruction(EnvironmentInstructionsSet.SetEnvironmentVariable);
+    Assert.NotNull(instruction);
+
+    var action = instruction!.Action;
+
+    action.Invoke(this.Ctx.Fork(this.Runtime, instruction.Key, new[] { ParsedArgument.String("NewVar"), ParsedArgument.String("qwerty") }));
+
+    Assert.Equal("qwerty", Environment.GetEnvironmentVariable("NewVar"));
+  }
+
+  [Fact]
+  public void EnvironmentProvider_SetEnvironmentVariableJS_ShouldWorkFine()
+  {
+    var setEnvVar = this.GetJSInstruction(EnvironmentInstructionsSet.SetEnvironmentVariable);
+    Assert.NotNull(setEnvVar);
+
+    var jsAction = setEnvVar!.ToJSAction();
+
+    jsAction.DynamicInvoke("NewJSVar", "qwerty");
+
+    Assert.Equal("qwerty", Environment.GetEnvironmentVariable("NewJSVar"));
+  }
+
+  [Fact]
+  public void EnvironmentProvider_GetEnvironmentVariable_ShouldWorkFine()
+  {
+    var getEnvVar = this.GetJSInstruction(EnvironmentInstructionsSet.GetEnvironmentVariable);
+    Assert.NotNull(getEnvVar);
+
+    var jsAction = getEnvVar!.ToJSAction();
+
+    Environment.SetEnvironmentVariable("NewEnvVar", "abc");
+
+    var result = jsAction.DynamicInvoke("NewEnvVar");
+
+    Assert.NotNull(result);
+    Assert.IsAssignableFrom<string>(result);
+    Assert.Equal("abc", result!.ToString());
+
+    var resultForNonExistingVars = jsAction.DynamicInvoke("NewEnvVarB");
+
+    Assert.Null(resultForNonExistingVars);
   }
 
   [Fact]
