@@ -12,7 +12,7 @@ public class EnvironmentProvider : INativeProvider
 
 class GetArgsCmd : INativeInstruction, INativeJSInstruction
 {
-  public string Key => Runtime.Constants.EnvironmentInstructionsSet.GetArgs;
+  public string Key => Constants.EnvironmentInstructionsSet.GetArgs;
 
   public Action<ICurrentInstructionContext> Action
   {
@@ -30,7 +30,7 @@ class GetArgsCmd : INativeInstruction, INativeJSInstruction
 
 class GetCurrentDirectoryCmd : INativeInstruction, INativeJSInstruction
 {
-  public string Key => Runtime.Constants.EnvironmentInstructionsSet.CurrentDirectory;
+  public string Key => Constants.EnvironmentInstructionsSet.CurrentDirectory;
 
   public Action<ICurrentInstructionContext> Action
   {

@@ -14,7 +14,7 @@ class TimestampCmd : INativeInstruction, INativeJSInstruction
 {
   private long Value => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 
-  public string Key => Runtime.Constants.DateInstructionsSet.Timestamp;
+  public string Key => Constants.DateInstructionsSet.Timestamp;
 
   public Action<ICurrentInstructionContext> Action
   {
@@ -34,7 +34,7 @@ class TimestampInSecondsCmd : INativeInstruction
 {
   private long Value => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
 
-  public string Key => Runtime.Constants.DateInstructionsSet.TimestampInSeconds;
+  public string Key => Constants.DateInstructionsSet.TimestampInSeconds;
 
   public Action<ICurrentInstructionContext> Action
   {

@@ -3,16 +3,16 @@ using HtmlRun.Runtime.Native;
 
 namespace HtmlRun.Runtime.Providers;
 
-class ImportsProvider : INativeProvider
+public class ImportsProvider : INativeProvider
 {
-  public string Namespace => Runtime.Constants.Namespaces.Global;
+  public string Namespace => Constants.Namespaces.Global;
 
   public INativeInstruction[] Instructions => new INativeInstruction[] { new UsingCmd(), };
 }
 
 class UsingCmd : INativeInstruction
 {
-  public string Key => Runtime.Constants.BasicInstructionsSet.Using;
+  public string Key => Constants.BasicInstructionsSet.Using;
 
   public Action<ICurrentInstructionContext> Action
   {
@@ -20,7 +20,7 @@ class UsingCmd : INativeInstruction
     {
       return ctx =>
       {
-        var unsafeCtx = ((IUnsafeCurrentInstructionContext)ctx);
+        var unsafeCtx = (IUnsafeCurrentInstructionContext)ctx;
         string namesp = ctx.GetRequiredArgument();
 
         if (!unsafeCtx.Runtime.Namespaces.Contains(namesp))

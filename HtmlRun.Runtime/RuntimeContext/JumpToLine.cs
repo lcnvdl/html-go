@@ -8,6 +8,10 @@ class JumpToLine : Interfaces.IContextJump
     LineId,
   }
 
+  public JumpToLine(int line) : this(line.ToString(), JumpTypeEnum.LineNumber)
+  {
+  }
+
   public JumpToLine(string line, JumpTypeEnum jumpType)
   {
     this.Line = line;

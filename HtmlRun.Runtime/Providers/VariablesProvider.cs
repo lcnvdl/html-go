@@ -1,19 +1,18 @@
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
-using HtmlRun.Runtime.RuntimeContext;
 
 namespace HtmlRun.Runtime.Providers;
 
 class VariablesProvider : INativeProvider
 {
-  public string Namespace => Runtime.Constants.Namespaces.Global;
+  public string Namespace => Constants.Namespaces.Global;
 
   public INativeInstruction[] Instructions => new INativeInstruction[] { new SetCmd(), new ConstCmd(), new VarCmd(), new DeleteCmd(), };
 }
 
 class SetCmd : INativeInstruction
 {
-  public string Key => Runtime.Constants.BasicInstructionsSet.Set;
+  public string Key => Constants.BasicInstructionsSet.Set;
 
   public Action<ICurrentInstructionContext> Action
   {
@@ -26,7 +25,7 @@ class SetCmd : INativeInstruction
 
 class ConstCmd : INativeInstruction
 {
-  public string Key => Runtime.Constants.BasicInstructionsSet.Const;
+  public string Key => Constants.BasicInstructionsSet.Const;
 
   public Action<ICurrentInstructionContext> Action
   {
@@ -39,7 +38,7 @@ class ConstCmd : INativeInstruction
 
 class VarCmd : INativeInstruction
 {
-  public string Key => Runtime.Constants.BasicInstructionsSet.Var;
+  public string Key => Constants.BasicInstructionsSet.Var;
 
   public Action<ICurrentInstructionContext> Action
   {
@@ -60,7 +59,7 @@ class VarCmd : INativeInstruction
 
 class DeleteCmd : INativeInstruction
 {
-  public string Key => Runtime.Constants.BasicInstructionsSet.Delete;
+  public string Key => Constants.BasicInstructionsSet.Delete;
 
   public Action<ICurrentInstructionContext> Action
   {

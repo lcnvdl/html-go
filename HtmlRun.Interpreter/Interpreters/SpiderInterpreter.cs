@@ -1,4 +1,3 @@
-using System.Linq;
 using HtmlRun.Common.Models;
 using HtmlRun.Interpreter.Factories;
 using HtmlRun.Interpreter.HtmlParser;
@@ -34,6 +33,16 @@ public class SpiderInterpreter : IInterpreter
 
     program.Functions = parser.BodyQuerySelectorAll(".code").Select(this.ParseCode).Where(m => m != null).Cast<FunctionModel>().ToList();
 
+    //  * Classes
+
+    //  TODO  Read classes from <table>
+
+    //  * Entities
+
+    //  TODO  Read entities from <table>
+
+    //  Result
+
     return program;
   }
 
@@ -57,7 +66,6 @@ public class SpiderInterpreter : IInterpreter
     List<IHtmlElementAbstraction> callArguments = li.Children.Skip(1).ToList();
 
     var model = new CallModel();
-
     model.Index = Interlocked.Increment(ref this.nextCallModelIdx);
     model.CustomId = li.GetData("id") ?? call.GetData("id");
     model.FunctionName = call.InnerHtml.Trim();

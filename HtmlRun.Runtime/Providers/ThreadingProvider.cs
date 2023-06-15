@@ -26,7 +26,7 @@ class SleepCmd : INativeInstruction
 
 class IncrementCmd : INativeInstruction
 {
-  public string Key => Runtime.Constants.ThreadingInstructionsSet.Increment;
+  public string Key => Constants.ThreadingInstructionsSet.Increment;
 
   public Action<ICurrentInstructionContext> Action
   {
@@ -42,7 +42,7 @@ class IncrementCmd : INativeInstruction
           throw new NullReferenceException($"Variable {varName} not found.");
         }
 
-        var cast = HtmlRun.Runtime.Utils.CastingUtils.ToNumber(meta.Value);
+        var cast = Utils.CastingUtils.ToNumber(meta.Value);
         
         if (cast == null)
         {
@@ -59,7 +59,7 @@ class IncrementCmd : INativeInstruction
 
 class DecrementCmd : INativeInstruction
 {
-  public string Key => Runtime.Constants.ThreadingInstructionsSet.Decrement;
+  public string Key => Constants.ThreadingInstructionsSet.Decrement;
 
   public Action<ICurrentInstructionContext> Action
   {
@@ -75,7 +75,8 @@ class DecrementCmd : INativeInstruction
           throw new NullReferenceException($"Variable {varName} not found.");
         }
 
-        var cast = HtmlRun.Runtime.Utils.CastingUtils.ToNumber(meta.Value);
+        var cast = Utils.CastingUtils.ToNumber(meta.Value);
+        
         if (cast == null)
         {
           throw new InvalidCastException($"Variable {varName} is not a number.");
