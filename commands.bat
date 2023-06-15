@@ -17,6 +17,12 @@ dotnet sln add HtmlRun.Terminal
 dotnet new classlib --name HtmlRun.Common
 dotnet sln add HtmlRun.Common
 
+dotnet new classlib --name HtmlRun.SQL.NHibernate
+dotnet sln add HtmlRun.SQL.NHibernate
+dotnet add HtmlRun.SQL.NHibernate reference HtmlRun.Common
+dotnet add HtmlRun.SQL.NHibernate package FluentNHibernate --version 3.2.1
+dotnet add HtmlRun.SQL.NHibernate package System.Data.SQLite
+
 dotnet new classlib --name HtmlRun.Interpreter
 dotnet sln add HtmlRun.Interpreter
 dotnet add HtmlRun.Interpreter reference HtmlRun.Common

@@ -1,4 +1,6 @@
 ﻿using HtmlRun.Common.Models;
+using HtmlRun.Common.Plugins;
+using HtmlRun.Common.Plugins.Models;
 using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Models;
@@ -15,11 +17,12 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
   private readonly Stack<Context> ctxStack = new();
 
+  private readonly List<PluginBase> plugins = new();
+
   private readonly Context globalCtx;
 
   public HtmlRuntime()
   {
-    this.ctxStack = new Stack<Context>();
     this.globalCtx = new Context(null, this.ctxStack);
   }
 
@@ -31,6 +34,14 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
   public void Run(AppModel app, CancellationToken? token)
   {
+    //  Plugins: IBeforeApplicationLoadPluginEvent
+
+    if (this.plugins.Count > 0)
+    {
+      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables());
+      this.TriggerPlugins<IBeforeApplicationLoadPluginEvent>(plugin => plugin.BeforeApplicationLoad(startInfo));
+    }
+
     //  JS Engine
 
     var jsParserWithContext = JavascriptParserWithContextFactory.CreateNewJavascriptParserAndAssignInstructions(this.jsInstructions);
@@ -48,6 +59,21 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     {
       // Console.WriteLine("Function loaded" + fn.Id);
       jsParserWithContext.RegisterFunction($"function {fn.Id}({string.Join(",", fn.Arguments)}) {{ {fn.Code} }}");
+    }
+
+    //  Load entities
+
+    foreach (EntityModel entity in app.Entities)
+    {
+      this.TriggerPlugins<IOnLoadEntityPluginEvent>(plugin => plugin.OnLoadEntity(entity));
+    }
+
+    //  Plugins: IOnApplicationStartPluginEvent
+
+    if (this.plugins.Count > 0)
+    {
+      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables());
+      this.TriggerPlugins<IOnApplicationStartPluginEvent>(plugin => plugin.OnApplicationStart(startInfo));
     }
 
     //  Run instructions
@@ -110,6 +136,11 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     return this.RunInstruction(this.globalCtx, key, args);
   }
 
+  public void RegisterPlugin(PluginBase plugin)
+  {
+    this.plugins.Add(plugin);
+  }
+
   public void RegisterProvider(INativeProvider provider)
   {
     foreach (INativeInstruction instruction in provider.Instructions)
@@ -118,7 +149,7 @@ public class HtmlRuntime : IHtmlRuntimeForContext
       if (provider.IsGlobal)
       {
         this.instructions[instruction.Key] = instruction.Action;
-        this.instructions[$"{Runtime.Constants.Namespaces.Global}.{instruction.Key}"] = instruction.Action;
+        this.instructions[$"{Constants.Namespaces.Global}.{instruction.Key}"] = instruction.Action;
       }
       else
       {
@@ -217,6 +248,11 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     }
 
     return result;
+  }
+
+  private void TriggerPlugins<T>(Action<T> action)
+  {
+    this.plugins.Where(plugin => plugin is T).Cast<T>().ToList().ForEach(action);
   }
 
   private void SaveContextVariableChangesToJsEngine(ICurrentInstructionContext finalCtx, JavascriptParserWithContext jsParserWithContext)

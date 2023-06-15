@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.WebApi", "HtmlRun.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.Tests", "HtmlRun.Tests\HtmlRun.Tests.csproj", "{34731892-33BB-4756-ADD2-6E9A0C9B5034}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.SQL.NHibernate", "HtmlRun.SQL.NHibernate\HtmlRun.SQL.NHibernate.csproj", "{C2A100E4-77E8-4B67-8835-A5B5DA86CB09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{34731892-33BB-4756-ADD2-6E9A0C9B5034}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34731892-33BB-4756-ADD2-6E9A0C9B5034}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34731892-33BB-4756-ADD2-6E9A0C9B5034}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2A100E4-77E8-4B67-8835-A5B5DA86CB09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2A100E4-77E8-4B67-8835-A5B5DA86CB09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2A100E4-77E8-4B67-8835-A5B5DA86CB09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2A100E4-77E8-4B67-8835-A5B5DA86CB09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

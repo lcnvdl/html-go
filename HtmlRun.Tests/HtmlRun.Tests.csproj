@@ -25,6 +25,7 @@
     <ProjectReference Include="..\HtmlRun.Common\HtmlRun.Common.csproj" />
     <ProjectReference Include="..\HtmlRun.Interpreter\HtmlRun.Interpreter.csproj" />
     <ProjectReference Include="..\HtmlRun.Runtime\HtmlRun.Runtime.csproj" />
+    <ProjectReference Include="..\HtmlRun.SQL.NHibernate\HtmlRun.SQL.NHibernate.csproj" />
   </ItemGroup>
   
   <ItemGroup>
