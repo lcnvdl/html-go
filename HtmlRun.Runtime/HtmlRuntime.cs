@@ -38,7 +38,7 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
     if (this.plugins.Count > 0)
     {
-      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables());
+      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
       this.TriggerPlugins<IBeforeApplicationLoadPluginEvent>(plugin => plugin.BeforeApplicationLoad(startInfo));
     }
 
@@ -72,7 +72,7 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
     if (this.plugins.Count > 0)
     {
-      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables());
+      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
       this.TriggerPlugins<IOnApplicationStartPluginEvent>(plugin => plugin.OnApplicationStart(startInfo));
     }
 

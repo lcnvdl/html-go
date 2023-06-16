@@ -3,10 +3,8 @@ using HtmlRun.Common.Models;
 using HtmlRun.Common.Plugins;
 using HtmlRun.Common.Plugins.Models;
 using HtmlRun.Common.Plugins.SQL;
+using HtmlRun.SQL.NHibernate.Factories;
 using NHibernate;
-using NHibernate.Cfg;
-using NHibernate.Dialect;
-using NHibernate.Driver;
 
 namespace HtmlRun.SQL.NHibernate;
 
@@ -16,30 +14,39 @@ public class Plugin : PluginBase, ISQLPlugin, IOnApplicationStartPluginEvent, IB
 
   private readonly List<EntityRepository> repositories = new();
 
+  private readonly PluginSettings settings = new();
+
   public Plugin(Assembly appAssembly) : base(appAssembly)
   {
   }
 
   public void BeforeApplicationLoad(ApplicationStartEventModel data)
   {
+    //  Load settings
+
+    this.settings.Load(data.EnvironmentVariables);
   }
 
   public void OnApplicationStart(ApplicationStartEventModel data)
   {
     //  After entities are loaded
 
-    this.sessionFactory = CreateSessionFactory();
+    this.sessionFactory = FactoryForISessionFactory.CreateSessionFactory(this.settings);
 
     //  Test
-    using var session = this.sessionFactory.OpenSession();
-    using var transaction = session.BeginTransaction();
 
-    var query = session.CreateSQLQuery("select 1+1");
-    int number = Convert.ToInt32(query.UniqueResult());
-
-    if (number != 2)
+    if (this.settings.TestDatabaseAfterConnection)
     {
-      throw new Exception();
+      using var session = this.sessionFactory.OpenSession();
+      using var transaction = session.BeginTransaction();
+
+      var query = session.CreateSQLQuery("select 1+1");
+      int number = Convert.ToInt32(query.UniqueResult());
+
+      if (number != 2)
+      {
+        throw new Exception();
+      }
     }
   }
 
@@ -63,23 +70,19 @@ public class Plugin : PluginBase, ISQLPlugin, IOnApplicationStartPluginEvent, IB
     return new TransactionFactory(this.sessionFactory!.OpenSession());
   }
 
-  public void Dispose()
+  public void RunAndCommitTransaction(Action<Common.Plugins.SQL.ITransaction, ISessionWrapper> transactionToRun)
   {
-    this.sessionFactory?.Dispose();
+    using var factory = this.GetNewTransactionFactory();
+    factory.RunAndCommitTransaction(transactionToRun);
   }
 
-  private ISessionFactory CreateSessionFactory()
+  public void Dispose()
   {
-    var cfg = new Configuration().DataBaseIntegration(db =>
-      {
-        db.ConnectionString = "FullUri=file:memorydb.db?mode=memory&cache=shared";
-        db.Dialect<SQLiteDialect>();
-        db.Driver<SQLite20Driver>();
-      })
-      .AddAssembly(this.AppAssembly);
+    this.sessionFactory?.Close();
+    this.sessionFactory?.Dispose();
+    this.sessionFactory = null;
 
-    return cfg.BuildSessionFactory();
-    // return Fluently.Configure().BuildSessionFactory();
+    GC.SuppressFinalize(this);
   }
 }
 

@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Dynamic;
 using HtmlRun.Common.Models;
 using HtmlRun.Common.Plugins.SQL;
+using HtmlRun.SQL.NHibernate.Extensions;
 using HtmlRun.SQL.NHibernate.Utils;
 using NHibernate;
 
@@ -16,6 +17,10 @@ public class EntityRepository
   {
     this.Entity = model;
   }
+
+  private IEnumerable<string> AttributeNames => this.Entity.Attributes.Select(m => m.Name);
+
+  private string MergedAttributeNames => string.Join(',', this.AttributeNames);
 
   private IDictionary<string, object> Defaults
   {
@@ -41,24 +46,12 @@ public class EntityRepository
     return obj;
   }
 
-  public void RunNoSQL(ISessionWrapper sessionWrapper, string query)
-  {
-    var session = ((SessionWrapper)sessionWrapper).NativeSession;
-
-    var command = session.Connection.CreateCommand();
-    command.CommandText = query;
-
-    this.Enlist(session, command);
-
-    command.ExecuteNonQuery();
-  }
-
-  public void Insert(ISessionWrapper sessionWrapper, ExpandoObject obj)
+  public ExpandoObject Insert(ISessionWrapper sessionWrapper, ExpandoObject obj)
   {
     var session = ((SessionWrapper)sessionWrapper).NativeSession;
     var dictionary = new Dictionary<string, object?>(obj);
 
-    string keys = string.Join(',', this.Entity.Attributes.Select(m => m.Name));
+    string keys = this.MergedAttributeNames;
     string paramNames = string.Join(',', this.Entity.Attributes.Select(m => $":{m.Name}"));
 
     string query = $"INSERT INTO {this.Entity.Name} ({keys}) VALUES ({paramNames})";
@@ -74,9 +67,35 @@ public class EntityRepository
       command.Parameters.Add(parameter);
     }
 
-    this.Enlist(session, command);
+    session.Enlist(command);
 
     command.ExecuteNonQuery();
+
+    return obj;
+  }
+
+  public IEnumerable<ExpandoObject> FindAll(ISessionWrapper sessionWrapper)
+  {
+    var session = ((SessionWrapper)sessionWrapper).NativeSession;
+    var query = session.CreateSQLQuery($"SELECT {MergedAttributeNames} FROM {this.Entity.Name}");
+
+    var list = query.List();
+
+
+    var rows = list.Cast<object[]>().ToArray();
+    var names = this.AttributeNames.ToArray();
+
+    foreach (var row in rows)
+    {
+      var entity = new Dictionary<string, object>();
+      
+      for (int i = 0; i < names.Length; i++)
+      {
+        entity[names[i]] = row[i];
+      }
+
+      yield return ExpandoUtils.ToExpando(entity);
+    }
   }
 
   public void Update(ISessionWrapper sessionWrapper, ExpandoObject obj)
@@ -96,22 +115,6 @@ public class EntityRepository
     }
 
     insert.ExecuteUpdate();
-  }
-
-  private bool Enlist(ISession session, DbCommand command, bool verifyTransactionStatus = false)
-  {
-    if (session.GetCurrentTransaction() != null)
-    {
-      if (verifyTransactionStatus && !session.GetCurrentTransaction().IsActive)
-      {
-        session.GetCurrentTransaction().Begin();
-        return true;
-      }
-
-      session.GetCurrentTransaction().Enlist(command);
-    }
-
-    return false;
   }
 }
 

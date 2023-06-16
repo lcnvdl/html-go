@@ -1,7 +1,7 @@
 using HtmlRun.Common.Plugins.SQL;
 using NH = NHibernate;
 
-class SessionWrapper : ISessionWrapper, IDisposable
+sealed class SessionWrapper : ISessionWrapper, IDisposable
 {
   public NH.ISession NativeSession { get; private set; }
 
@@ -12,6 +12,11 @@ class SessionWrapper : ISessionWrapper, IDisposable
 
   public void Dispose()
   {
+    // this.NativeSession.Flush();
     this.NativeSession.Dispose();
+
+    this.NativeSession = null!;
+
+    GC.SuppressFinalize(this);
   }
 }

@@ -25,6 +25,7 @@ public class Transaction : ITransaction, IDisposable
   public void Dispose()
   {
     this.transaction.Dispose();
+    GC.SuppressFinalize(this);
   }
 }
 

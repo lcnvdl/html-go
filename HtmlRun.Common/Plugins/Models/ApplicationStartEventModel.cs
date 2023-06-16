@@ -1,14 +1,10 @@
-using System.Collections;
-using System.Reflection;
-using HtmlRun.Common.Models;
-
 namespace HtmlRun.Common.Plugins.Models;
 
 public class ApplicationStartEventModel
 {
-  public IDictionary EnvironmentVariables { get; private set; }
+  public IDictionary<string, string> EnvironmentVariables { get; private set; }
 
-  public ApplicationStartEventModel(IDictionary env)
+  public ApplicationStartEventModel(IDictionary<string, string> env)
   {
     this.EnvironmentVariables = env;
   }
