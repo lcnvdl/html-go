@@ -40,7 +40,7 @@ public class SpiderInterpreter : IInterpreter
 
     //  * Entities
 
-    program.Entities = parser.BodyQuerySelectorAll("table.entity").Select(SqlParser.ParseTable).Where(m => m != null).Cast<EntityModel>().ToList();
+    program.Entities = parser.BodyQuerySelectorAll("table.entity").Select(EntityParser.ParseTable).Where(m => m != null).Cast<EntityModel>().ToList();
 
     //  Result
 
