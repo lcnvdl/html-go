@@ -30,3 +30,4 @@ cd ..\..\standalone\linux-x64
 move /y HtmlRun.WebApi htmlgo-server
 cd ..\..\..\..
 
+call publish-plugins.bat

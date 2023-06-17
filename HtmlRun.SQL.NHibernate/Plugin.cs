@@ -3,21 +3,29 @@ using HtmlRun.Common.Models;
 using HtmlRun.Common.Plugins;
 using HtmlRun.Common.Plugins.Models;
 using HtmlRun.Common.Plugins.SQL;
+using HtmlRun.Runtime.Native;
 using HtmlRun.SQL.NHibernate.Factories;
+using HtmlRun.SQL.NHibernate.Providers;
 using NHibernate;
 
 namespace HtmlRun.SQL.NHibernate;
 
 public class Plugin : PluginBase, ISQLPlugin, IOnApplicationStartPluginEvent, IBeforeApplicationLoadPluginEvent, IOnLoadEntityPluginEvent, IDisposable
 {
+  //  TODO: Improve the plugin system to get the plugin instance in the context (useful for providers).
+  internal static Plugin Instance { get; private set; }
+
   private ISessionFactory? sessionFactory;
 
   private readonly Dictionary<string, IEntityRepository> repositories = new();
 
   private readonly PluginSettings settings = new();
 
+  public override INativeProvider[]? Providers => new INativeProvider[] { new QueryRunnerProvider(), };
+
   public Plugin(Assembly appAssembly) : base(appAssembly)
   {
+    Instance = this;
   }
 
   public void BeforeApplicationLoad(ApplicationStartEventModel data)
@@ -25,6 +33,15 @@ public class Plugin : PluginBase, ISQLPlugin, IOnApplicationStartPluginEvent, IB
     //  Load settings
 
     this.settings.Load(data.EnvironmentVariables);
+
+    //  Load DLLs
+
+    //  TODO  Remove this verification
+
+    if (System.Data.SQLite.SQLiteFactory.Instance == null)
+    {
+      throw new Exception("SQLite not installed.");
+    }
   }
 
   public void OnApplicationStart(ApplicationStartEventModel data)

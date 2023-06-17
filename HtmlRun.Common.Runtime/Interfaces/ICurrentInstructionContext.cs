@@ -24,7 +24,7 @@ public interface ICurrentInstructionContext : IBaseContext
 
   void Jump<T>(T jump) where T : class, IContextJump;
 
-  Interfaces.IContextJump? CursorModification { get; set; }
+  IContextJump? CursorModification { get; set; }
 
   List<string> DirtyVariables { get; }
 }

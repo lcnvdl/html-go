@@ -12,6 +12,9 @@ public static class RegisterBasicProvidersExtension
     runtime.RegisterProvider(new ImportsProvider());
     runtime.RegisterProvider(new VariablesProvider());
 
+    //  Plugins
+    runtime.RegisterProvider(new PluginsProvider());
+
     //  Tools
     runtime.RegisterProvider(new EnvironmentProvider());
     runtime.RegisterProvider(new DateProvider());

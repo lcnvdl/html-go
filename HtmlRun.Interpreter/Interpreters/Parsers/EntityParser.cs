@@ -31,7 +31,14 @@ public static class EntityParser
     string defaultKeyword = "DEFAULT";
 
     model.Name = children[0].InnerText;
-    model.SqlType = children[1].InnerText;
+    model.SqlType = Regex.Match(children[1].InnerText, "^\\w+").Value;
+
+    var lengthMatch = Regex.Match(children[1].InnerText, "\\d+");
+    if (lengthMatch.Success)
+    {
+      model.Length = int.Parse(lengthMatch.Value);
+    }
+
     model.IsNull = !Regex.IsMatch(children[2].InnerText, "NOT\\s+NULL", RegexOptions.IgnoreCase);
     model.IsPK = children[3].InnerText.Contains("PK");
 

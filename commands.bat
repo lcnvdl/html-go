@@ -17,9 +17,14 @@ dotnet sln add HtmlRun.Terminal
 dotnet new classlib --name HtmlRun.Common
 dotnet sln add HtmlRun.Common
 
+dotnet new classlib --name HtmlRun.Common.Runtime
+dotnet sln add HtmlRun.Common.Runtime
+dotnet add HtmlRun.Common.Runtime reference HtmlRun.Common
+
 dotnet new classlib --name HtmlRun.SQL.NHibernate
 dotnet sln add HtmlRun.SQL.NHibernate
 dotnet add HtmlRun.SQL.NHibernate reference HtmlRun.Common
+dotnet add HtmlRun.SQL.NHibernate reference HtmlRun.Common.Runtime
 dotnet add HtmlRun.SQL.NHibernate package FluentNHibernate --version 3.2.1
 dotnet add HtmlRun.SQL.NHibernate package System.Data.SQLite
 
@@ -31,6 +36,7 @@ dotnet add HtmlRun.Interpreter package AngleSharp --version 1.0.2
 dotnet new classlib --name HtmlRun.Runtime
 dotnet sln add HtmlRun.Runtime
 dotnet add HtmlRun.Runtime reference HtmlRun.Common
+dotnet add HtmlRun.Runtime reference HtmlRun.Common.Runtime
 dotnet add HtmlRun.Runtime package Jurassic --version 3.2.6
 
 dotnet add HtmlRun.Terminal reference HtmlRun.Interpreter
@@ -45,6 +51,7 @@ dotnet add HtmlRun.WebApi reference HtmlRun.Runtime
 dotnet new xunit --name HtmlRun.Tests
 dotnet sln add HtmlRun.Tests
 dotnet add HtmlRun.Tests reference HtmlRun.Common
+dotnet add HtmlRun.Tests reference HtmlRun.Common.Runtime
 dotnet add HtmlRun.Tests reference HtmlRun.Interpreter
 dotnet add HtmlRun.Tests reference HtmlRun.Runtime
 

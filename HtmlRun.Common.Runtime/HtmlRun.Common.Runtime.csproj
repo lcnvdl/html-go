@@ -2,18 +2,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HtmlRun.Common\HtmlRun.Common.csproj" />
-    <ProjectReference Include="..\HtmlRun.Common.Runtime\HtmlRun.Common.Runtime.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="FluentNHibernate" Version="3.2.1" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
   </ItemGroup>
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
- </PropertyGroup>
+  </PropertyGroup>
 
 </Project>

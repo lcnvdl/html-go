@@ -21,7 +21,7 @@ static class Program
 
     if (file == "run" || file == "--run-example")
     {
-      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 8);
+      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 9);
       Console.WriteLine($"DEBUG MODE. Running example {file}...");
     }
 
@@ -44,8 +44,14 @@ static class Program
 
   private static async Task RunAppFromFile(string file, CancellationToken? token = null)
   {
-    var runtime = HtmlRun.Terminal.Startup.GetRuntime();
-    runtime.Run(await ReadAppFromFile(file), token);
+    var runtime = Startup.GetRuntime();
+
+    var appModel = await ReadAppFromFile(file);
+
+    Environment.SetEnvironmentVariable("ENTRY_FILE", file);
+    Environment.SetEnvironmentVariable("ENTRY_DIRECTORY", Path.GetDirectoryName(file));
+
+    runtime.Run(appModel, token);
   }
 
   private static async Task<AppModel> ReadAppFromFile(string file)

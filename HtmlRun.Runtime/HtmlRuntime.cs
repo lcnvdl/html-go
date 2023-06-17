@@ -9,7 +9,7 @@ using HtmlRun.Runtime.RuntimeContext;
 
 namespace HtmlRun.Runtime;
 
-public class HtmlRuntime : IHtmlRuntimeForContext
+public class HtmlRuntime : IHtmlRuntimeForContext, IHtmlRuntimeForUnsafeContext
 {
   private readonly Dictionary<string, Action<ICurrentInstructionContext>> instructions = new();
 
@@ -20,6 +20,12 @@ public class HtmlRuntime : IHtmlRuntimeForContext
   private readonly List<PluginBase> plugins = new();
 
   private readonly Context globalCtx;
+
+  private bool isApplicationStarted = false;
+
+  private AppModel? application;
+
+  private JavascriptParserWithContext? applicationJsContext;
 
   public HtmlRuntime()
   {
@@ -34,6 +40,15 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
   public void Run(AppModel app, CancellationToken? token)
   {
+    //  Application
+
+    if (this.application != null)
+    {
+      throw new InvalidOperationException("There was an application already loaded for this runtime.");
+    }
+
+    this.application = app;
+
     //  Plugins: IBeforeApplicationLoadPluginEvent
 
     if (this.plugins.Count > 0)
@@ -45,6 +60,8 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     //  JS Engine
 
     var jsParserWithContext = JavascriptParserWithContextFactory.CreateNewJavascriptParserAndAssignInstructions(this.jsInstructions);
+
+    this.applicationJsContext = jsParserWithContext;
 
     //  Title
 
@@ -77,6 +94,8 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     }
 
     //  Run instructions
+
+    this.isApplicationStarted = true;
 
     InstructionPointer cursor = new();
 
@@ -139,6 +158,41 @@ public class HtmlRuntime : IHtmlRuntimeForContext
   public void RegisterPlugin(PluginBase plugin)
   {
     this.plugins.Add(plugin);
+    plugin.Providers?.ToList().ForEach(this.RegisterProvider);
+
+    //  For information
+    string key = $"Plugin.{plugin.Name}";
+    if (!this.globalCtx.IsDeclared(key))
+    {
+      this.globalCtx.DeclareAndSetConst(key, "true");
+    }
+
+    //  Trigger events if app was already running
+    if (this.isApplicationStarted)
+    {
+      //  TODO  Optimization: assign only new instructions
+      if (this.applicationJsContext != null)
+      {
+        JavascriptParserWithContextFactory.AssignInstructions(this.applicationJsContext, this.jsInstructions);
+      }
+
+      if (plugin is IBeforeApplicationLoadPluginEvent beforeLoadListener)
+      {
+        var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
+        beforeLoadListener.BeforeApplicationLoad(startInfo);
+      }
+
+      if (plugin is IOnApplicationStartPluginEvent onStartListener)
+      {
+        var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
+        onStartListener.OnApplicationStart(startInfo);
+      }
+
+      if (plugin is IOnLoadEntityPluginEvent entityListener)
+      {
+        this.application?.Entities.ForEach(entityListener.OnLoadEntity);
+      }
+    }
   }
 
   public void RegisterProvider(INativeProvider provider)

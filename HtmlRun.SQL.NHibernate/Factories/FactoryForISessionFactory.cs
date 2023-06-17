@@ -69,11 +69,11 @@ public static class FactoryForISessionFactory
         break;
     }
 
-    // .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Person>())
-
     cfg.Database(dbSettings);
 
-    return cfg.ExposeConfiguration(BuildSchema).BuildSessionFactory();
+    // cfg.ExposeConfiguration(BuildSchema);
+
+    return cfg.BuildSessionFactory();
 
     /*var cfg = new Configuration().DataBaseIntegration(db =>
       {

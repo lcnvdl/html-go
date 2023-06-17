@@ -6,6 +6,22 @@ namespace HtmlRun.SQL.NHibernate.Extensions;
 
 public static class SessionQueryRunner
 {
+  public static object ExecuteSQLQueryAndGetUniqueResult(this ISessionWrapper sessionWrapper, string query)
+  {
+    var session = ((SessionWrapper)sessionWrapper).NativeSession;
+
+    var queryInstance = session.CreateSQLQuery(query);
+    return queryInstance.UniqueResult();
+  }
+
+  public static object?[]?[] ExecuteSQLQuery(this ISessionWrapper sessionWrapper, string query)
+  {
+    var session = ((SessionWrapper)sessionWrapper).NativeSession;
+
+    var queryInstance = session.CreateSQLQuery(query);
+    return queryInstance.List().Cast<object?[]?>().ToArray();
+  }
+
   public static void ExecuteNonQuery(this ISessionWrapper sessionWrapper, string query)
   {
     var session = ((SessionWrapper)sessionWrapper).NativeSession;

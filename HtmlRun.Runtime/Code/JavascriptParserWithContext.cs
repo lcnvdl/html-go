@@ -30,6 +30,13 @@ public class JavascriptParserWithContext
 
   public object ExecuteCode(string code)
   {
-    return this.Engine.Evaluate(code);
+    try
+    {
+      return this.Engine.Evaluate(code);
+    }
+    catch (Exception ex)
+    {
+      throw new Exception($"{ex.GetType().Name} error running the code {code}. {ex.Message}.");
+    }
   }
 }

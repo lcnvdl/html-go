@@ -11,6 +11,8 @@ public class EnvironmentProvider : INativeProvider
   {
     new GetArgsCmd(),
     new GetCurrentDirectoryCmd(),
+    new GetEntryFileCmd(),
+    new GetEntryDirectoryCmd(),
     new GetEnvironmentVariableCmd(),
     new SetEnvironmentVariableCmd(),
   };
@@ -49,6 +51,42 @@ class GetEnvironmentVariableCmd : INativeInstruction, INativeJSInstruction
   public Delegate ToJSAction()
   {
     return new Func<string, string?>(name => Environment.GetEnvironmentVariable(name));
+  }
+}
+
+class GetEntryFileCmd : INativeInstruction, INativeJSInstruction
+{
+  public string Key => Constants.EnvironmentInstructionsSet.GetEntryFile;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+
+  public Delegate ToJSAction()
+  {
+    return new Func<string, string?>(name => Environment.GetEnvironmentVariable("ENTRY_FILE"));
+  }
+}
+
+class GetEntryDirectoryCmd : INativeInstruction, INativeJSInstruction
+{
+  public string Key => Constants.EnvironmentInstructionsSet.GetEntryDirectory;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+
+  public Delegate ToJSAction()
+  {
+    return new Func<string, string?>(name => Environment.GetEnvironmentVariable("ENTRY_DIRECTORY"));
   }
 }
 
