@@ -12,7 +12,7 @@ public class Plugin : PluginBase, ISQLPlugin, IOnApplicationStartPluginEvent, IB
 {
   private ISessionFactory? sessionFactory;
 
-  private readonly List<EntityRepository> repositories = new();
+  private readonly Dictionary<string, IEntityRepository> repositories = new();
 
   private readonly PluginSettings settings = new();
 
@@ -52,22 +52,22 @@ public class Plugin : PluginBase, ISQLPlugin, IOnApplicationStartPluginEvent, IB
 
   public void OnLoadEntity(EntityModel entity)
   {
-    repositories.Add(new EntityRepository(entity));
+    repositories[entity.Name] = new EntityRepository(entity);
   }
 
-  public EntityRepository GetRepository(string name)
+  public IEntityRepository GetRepository(string name)
   {
-    return this.repositories.First(m => m.Entity.Name == name);
+    return this.repositories[name];
   }
 
   public ISessionWrapper GetNewSession()
   {
-    return new SessionWrapper(this.sessionFactory!.OpenSession());
+    return new SessionWrapper(this.sessionFactory!.OpenSession(), this.settings.DatabaseLibrary);
   }
 
   public ITransactionFactory GetNewTransactionFactory()
   {
-    return new TransactionFactory(this.sessionFactory!.OpenSession());
+    return new TransactionFactory(this.sessionFactory!.OpenSession(), this.settings.DatabaseLibrary);
   }
 
   public void RunAndCommitTransaction(Action<Common.Plugins.SQL.ITransaction, ISessionWrapper> transactionToRun)

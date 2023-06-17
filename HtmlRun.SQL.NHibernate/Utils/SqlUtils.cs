@@ -1,9 +1,49 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace HtmlRun.SQL.NHibernate.Utils;
 
 public static class SqlUtils
 {
+  public static string SelectLimitRows(string engine, string selectQuery, int limit)
+  {
+    switch (engine)
+    {
+      case Constants.DatabaseEngines.SQLServer:
+        {
+          var distinctMatch = Regex.Match(selectQuery, "^(SELECT\\s+DISTINCT)", RegexOptions.IgnoreCase);
+
+          string keyword;
+
+          if (distinctMatch.Success)
+          {
+            keyword = distinctMatch.Value;
+          }
+          else
+          {
+            keyword = "SELECT";
+          }
+
+          int index = selectQuery.IndexOf(keyword);
+
+          string left = selectQuery.Remove(index + keyword.Length);
+          string right = selectQuery.Substring(index + keyword.Length);
+
+          return $"{left} TOP {limit}{right}";
+        }
+
+      case Constants.DatabaseEngines.Oracle:
+        return $"SELECT * FROM ({selectQuery}) WHERE ROWNUM<={limit}";
+
+      case Constants.DatabaseEngines.SQLite:
+      case Constants.DatabaseEngines.MySQL:
+        return $"{selectQuery} LIMIT {limit}";
+
+      default:
+        throw new NotImplementedException();
+    }
+  }
+
   public static object SqlCast(string value, string sqlType)
   {
     string toLower = sqlType.ToLower();

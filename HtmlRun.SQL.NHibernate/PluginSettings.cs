@@ -2,7 +2,7 @@ namespace HtmlRun.SQL.NHibernate;
 
 public sealed class PluginSettings
 {
-  public string? DatabaseLibrary { get; set; }
+  public string DatabaseLibrary { get; set; } = "";
 
   public string? DatabaseLibraryVersion { get; set; }
 

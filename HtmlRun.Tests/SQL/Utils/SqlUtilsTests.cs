@@ -1,7 +1,54 @@
+using HtmlRun.SQL.NHibernate.Constants;
 using HtmlRun.SQL.NHibernate.Utils;
 
 public class SqlUtilsTests
 {
+  private const string SelectForTest = "SELECT A, B, C FROM Abecedary";
+
+  private const string SelectDistinctForTest = "SELECT DISTINCT A FROM Abecedary";
+
+  [Fact]
+  public void SqlUtils_SelectLimitRows_ShouldCoverAllEngines()
+  {
+    var fields = TypeUtilities.GetAllPublicConstantValues<string?>(typeof(DatabaseEngines));
+  
+    Assert.NotEmpty(fields);
+  
+    foreach (string? field in fields)
+    {
+      Assert.NotEmpty(SqlUtils.SelectLimitRows(field!, "SELECT 1", 1));
+    }
+  }
+
+  [Fact]
+  public void SqlUtils_SelectLimitRows_SQLServer()
+  {
+    Assert.Equal("SELECT TOP 1 A, B, C FROM Abecedary", SqlUtils.SelectLimitRows(DatabaseEngines.SQLServer, SelectForTest, 1));
+  }
+
+  [Fact]
+  public void SqlUtils_SelectLimitRows_SQLServer_Distinct()
+  {
+    Assert.Equal("SELECT DISTINCT TOP 1 A FROM Abecedary", SqlUtils.SelectLimitRows(DatabaseEngines.SQLServer, SelectDistinctForTest, 1));
+  }
+
+  [Fact]
+  public void SqlUtils_SelectLimitRows_SQLite()
+  {
+    Assert.Equal("SELECT A, B, C FROM Abecedary LIMIT 1", SqlUtils.SelectLimitRows(DatabaseEngines.SQLite, SelectForTest, 1));
+  }
+
+  [Fact]
+  public void SqlUtils_SelectLimitRows_MySQL()
+  {
+    Assert.Equal("SELECT A, B, C FROM Abecedary LIMIT 1", SqlUtils.SelectLimitRows(DatabaseEngines.MySQL, SelectForTest, 1));
+  }
+
+  [Fact]
+  public void SqlUtils_SelectLimitRows_Oracle()
+  {
+    Assert.Equal("SELECT * FROM (SELECT A, B, C FROM Abecedary) WHERE ROWNUM<=1", SqlUtils.SelectLimitRows(DatabaseEngines.Oracle, SelectForTest, 1));
+  }
 
   [Fact]
   public void SqlUtils_SqlCast_Bool()

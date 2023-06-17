@@ -1,6 +1,6 @@
 namespace HtmlRun.SQL.NHibernate.Constants;
 
-static class DatabaseEngines
+public static class DatabaseEngines
 {
   public const string SQLServer = "sqlserver";
 

@@ -9,12 +9,15 @@ public class TransactionFactory : ITransactionFactory, IDisposable
 
   private ISessionWrapper? sessionWrapper;
 
-  public TransactionFactory(NH.ISession session)
+  private readonly string dbEngine;
+
+  public TransactionFactory(NH.ISession session, string dbEngine)
   {
     this.session = session;
+    this.dbEngine = dbEngine;
   }
 
-  public ISessionWrapper Session => this.sessionWrapper ?? (this.sessionWrapper = new SessionWrapper(session));
+  public ISessionWrapper Session => this.sessionWrapper ?? (this.sessionWrapper = new SessionWrapper(session, this.dbEngine));
 
   public void Dispose()
   {
