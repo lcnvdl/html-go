@@ -82,6 +82,21 @@ public class EntityRepository : IEntityRepository
     return obj;
   }
 
+  public ExpandoObject Save(ISessionWrapper sessionWrapper, ExpandoObject entity)
+  {
+    Dictionary<string, object?> entityAsDict = new(entity);
+    var pks = this.GetValuesFromObjectPKs(entityAsDict);
+
+    var existing = this.Find(sessionWrapper, pks);
+
+    if (existing == null)
+    {
+      return this.Insert(sessionWrapper, entity);
+    }
+
+    return this.UpdateSet(sessionWrapper, existing, entityAsDict);
+  }
+
   public ExpandoObject? Find(ISessionWrapper sessionWrapper, Dictionary<string, object> where)
   {
     var session = ((SessionWrapper)sessionWrapper).NativeSession;
@@ -110,28 +125,34 @@ public class EntityRepository : IEntityRepository
     return this.RowToObject(row);
   }
 
-  public ExpandoObject Save(ISessionWrapper sessionWrapper, ExpandoObject entity)
-  {
-    Dictionary<string, object?> entityAsDict = new(entity);
-    var pks = this.GetValuesFromObjectPKs(entityAsDict);
-
-    var existing = this.Find(sessionWrapper, pks);
-
-    if (existing == null)
-    {
-      return this.Insert(sessionWrapper, entity);
-    }
-
-    return this.UpdateSet(sessionWrapper, existing, entityAsDict);
-  }
-
-  public IEnumerable<ExpandoObject> FindAll(ISessionWrapper sessionWrapper)
+  public IEnumerable<ExpandoObject> FindAll(ISessionWrapper sessionWrapper, Dictionary<string, object?>? where = null)
   {
     var session = ((SessionWrapper)sessionWrapper).NativeSession;
-    var query = session.CreateSQLQuery($"SELECT {this.MergedAttributeNames} FROM {this.Entity.Name}");
+
+    string querySql = $"SELECT {this.MergedAttributeNames} FROM {this.Entity.Name}";
+
+    if (where != null)
+    {
+      var ands = new List<string>();
+      foreach (var kv in where)
+      {
+        ands.Add($"{kv.Key}=:{kv.Key}");
+      }
+
+      querySql += " WHERE (" + string.Join(" AND ", ands) + ")";
+    }
+
+    var query = session.CreateSQLQuery(querySql);
+
+    if (where != null)
+    {
+      foreach (var kv in where)
+      {
+        query.SetParameter(kv.Key, kv.Value);
+      }
+    }
 
     var list = query.List();
-
 
     var rows = list.Cast<object[]>().ToArray();
 

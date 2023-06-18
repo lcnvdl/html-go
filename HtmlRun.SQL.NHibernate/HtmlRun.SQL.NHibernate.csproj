@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="FluentNHibernate" Version="3.2.1" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+    <PackageReference Include="Jurassic" Version="3.2.6" />
   </ItemGroup>
 
   <PropertyGroup>

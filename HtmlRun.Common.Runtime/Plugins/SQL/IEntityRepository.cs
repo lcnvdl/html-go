@@ -10,7 +10,7 @@ public interface IEntityRepository
 
   ExpandoObject? Find(ISessionWrapper sessionWrapper, Dictionary<string, object> where);
 
-  IEnumerable<ExpandoObject> FindAll(ISessionWrapper sessionWrapper);
+  IEnumerable<ExpandoObject> FindAll(ISessionWrapper sessionWrapper, Dictionary<string, object?>? where = null);
 
   ExpandoObject Insert(ISessionWrapper sessionWrapper, ExpandoObject obj);
 

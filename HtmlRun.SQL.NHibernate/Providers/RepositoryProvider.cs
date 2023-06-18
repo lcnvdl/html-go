@@ -1,8 +1,11 @@
+using System.Dynamic;
 using System.Text.Json;
 using HtmlRun.Common.Models;
+using HtmlRun.Common.Plugins.SQL;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 using HtmlRun.Runtime.RuntimeContext;
+using HtmlRun.Runtime.Utils;
 using HtmlRun.SQL.NHibernate.Extensions;
 using HtmlRun.SQL.NHibernate.Utils;
 
@@ -14,8 +17,108 @@ public class RepositoryProvider : INativeProvider
 
   public INativeInstruction[] Instructions => new INativeInstruction[]
   {
+    new GetListCmd(),
+    new FindOneCmd(),
+    new FindAllCmd(),
     new SaveEntityCmd(),
   };
+}
+
+class GetListCmd : INativeInstruction, INativeJSInstruction
+{
+  public string Key => "GetList";
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+
+  public Delegate ToJSAction()
+  {
+    return new Func<string, string>((entity) =>
+    {
+      IEntityRepository repo = Plugin.Instance.GetRepository(entity);
+      using var session = Plugin.Instance.GetNewSession();
+
+      List<ExpandoObject> entities = repo.FindAll(session).ToList();
+
+      return JsonSerializer.Serialize(entities);
+    });
+  }
+}
+
+class FindOneCmd : INativeInstruction, INativeJSInstruction
+{
+  public string Key => "FindOne";
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+
+  public Delegate ToJSAction()
+  {
+    return new Func<string, Jurassic.Library.ObjectInstance, string>((entityName, where) =>
+    {
+      IEntityRepository repo = Plugin.Instance.GetRepository(entityName);
+      using var session = Plugin.Instance.GetNewSession();
+
+      ExpandoObject? entity;
+
+      if (where != null)
+      {
+        entity = repo.Find(session, JurassicUtils.ToDictionary(where));
+      }
+      else
+      {
+        throw new NotImplementedException();
+      }
+
+      return JsonSerializer.Serialize(entity);
+    });
+  }
+}
+
+
+class FindAllCmd : INativeInstruction, INativeJSInstruction
+{
+  public string Key => "FindAll";
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+
+  public Delegate ToJSAction()
+  {
+    return new Func<string, Jurassic.Library.ObjectInstance, string>((entityName, where) =>
+    {
+      IEntityRepository repo = Plugin.Instance.GetRepository(entityName);
+      using var session = Plugin.Instance.GetNewSession();
+
+      List<ExpandoObject> entities;
+
+      if (where != null)
+      {
+        entities = repo.FindAll(session, JurassicUtils.ToDictionary(where)).ToList();
+      }
+      else
+      {
+        entities = repo.FindAll(session).ToList();
+      }
+
+      return JsonSerializer.Serialize(entities);
+    });
+  }
 }
 
 class SaveEntityCmd : INativeInstruction
@@ -36,22 +139,14 @@ class SaveEntityCmd : INativeInstruction
 
         // Fill dictionaries with in-memory values
 
+        Dictionary<string, object?> valuesFromInstance = this.AttributeValuesFromContextToInstance(ctx, varNameOfInstanceToSave, entityModel);
         Dictionary<string, object> notNullValuesFromInstance = new();
-        Dictionary<string, object?> valuesFromInstance = new();
 
-        foreach (var attribute in entityModel.Attributes)
+        foreach (var kv in valuesFromInstance)
         {
-          string attributeNameInContext = $"{varNameOfInstanceToSave}.{attribute.Name}";
-          var savedValueVariable = ctx.GetVariable(attributeNameInContext);
-
-          if (savedValueVariable != null)
+          if (kv.Value != null)
           {
-            valuesFromInstance[attribute.Name] = (savedValueVariable.Value == null) ? null : SqlUtils.SqlCast(savedValueVariable.Value, attribute.SqlType);
-
-            if (valuesFromInstance[attribute.Name] != null)
-            {
-              notNullValuesFromInstance[attribute.Name] = valuesFromInstance[attribute.Name]!;
-            }
+            notNullValuesFromInstance[kv.Key] = kv.Value;
           }
         }
 
@@ -109,6 +204,24 @@ class SaveEntityCmd : INativeInstruction
 
       };
     }
+  }
+
+  private Dictionary<string, object?> AttributeValuesFromContextToInstance(ICurrentInstructionContext ctx, string varNameOfInstanceInMemory, EntityModel model)
+  {
+    Dictionary<string, object?> valuesFromInstance = new();
+
+    foreach (var attribute in model.Attributes)
+    {
+      string attributeNameInContext = $"{varNameOfInstanceInMemory}.{attribute.Name}";
+      var savedValueVariable = ctx.GetVariable(attributeNameInContext);
+
+      if (savedValueVariable != null)
+      {
+        valuesFromInstance[attribute.Name] = (savedValueVariable.Value == null) ? null : SqlUtils.SqlCast(savedValueVariable.Value, attribute.SqlType);
+      }
+    }
+
+    return valuesFromInstance;
   }
 
   private EntityModel GetEntityModel(ICurrentInstructionContext ctx, string entityName, string instanceName)

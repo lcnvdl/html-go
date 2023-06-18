@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HtmlRun.Common\HtmlRun.Common.csproj" />
+    <PackageReference Include="Jurassic" Version="3.2.6" />
   </ItemGroup>
 
   <PropertyGroup>
