@@ -21,7 +21,9 @@ public class Plugin : PluginBase, ISQLPlugin, IOnApplicationStartPluginEvent, IB
 
   private readonly PluginSettings settings = new();
 
-  public override INativeProvider[]? Providers => new INativeProvider[] { new QueryRunnerProvider(), };
+  public override INativeProvider[]? Providers => new INativeProvider[] { new QueryRunnerProvider(), new RepositoryProvider(), new DDLProvider(), };
+
+  internal PluginSettings Settings => this.settings;
 
   public Plugin(Assembly appAssembly) : base(appAssembly)
   {

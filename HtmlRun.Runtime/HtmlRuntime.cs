@@ -6,6 +6,7 @@ using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Models;
 using HtmlRun.Runtime.Native;
 using HtmlRun.Runtime.RuntimeContext;
+using HtmlRun.Runtime.Utils;
 
 namespace HtmlRun.Runtime;
 
@@ -82,6 +83,7 @@ public class HtmlRuntime : IHtmlRuntimeForContext, IHtmlRuntimeForUnsafeContext
 
     foreach (EntityModel entity in app.Entities)
     {
+      this.globalCtx.DeclareAndSetConst($"Entities.{entity.Name}", System.Text.Json.JsonSerializer.Serialize(entity));
       this.TriggerPlugins<IOnLoadEntityPluginEvent>(plugin => plugin.OnLoadEntity(entity));
     }
 
@@ -231,7 +233,20 @@ public class HtmlRuntime : IHtmlRuntimeForContext, IHtmlRuntimeForUnsafeContext
 
     var instructionCtx = parentCtx.Fork(this, key, args);
 
-    action(instructionCtx);
+    try
+    {
+      action(instructionCtx);
+    }
+    catch (Exception ex)
+    {
+      if (EnvironmentUtils.IsDevelopment)
+      {
+        string argsDetails = string.Join(", ", args.Select(m => m.Value));
+        throw new Exception($"{ex.GetType().Name} error at call {key}({argsDetails}). {ex.Message}.", ex);
+      }
+
+      throw;
+    }
 
     return instructionCtx;
   }

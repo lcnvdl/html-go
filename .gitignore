@@ -401,3 +401,5 @@ FodyWeavers.xsd
 dist
 out
 .ignore
+Examples/*.db
+Examples/dbs/*.db

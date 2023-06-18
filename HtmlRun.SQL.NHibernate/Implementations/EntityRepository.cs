@@ -18,17 +18,19 @@ public class EntityRepository : IEntityRepository
     this.Entity = model;
   }
 
-  private IEnumerable<string> PKNames => this.Entity.Attributes.Where(m => m.IsPK).Select(m => m.Name);
+  private IEnumerable<EntityAttributeModel> PKs => this.Entity.Attributes.Where(m => m.IsPK);
+
+  private IEnumerable<string> PKNames => this.PKs.Select(m => m.Name);
 
   private IEnumerable<string> AttributeNames => this.Entity.Attributes.Select(m => m.Name);
 
   private string MergedAttributeNames => string.Join(',', this.AttributeNames);
 
-  private IDictionary<string, object> Defaults
+  private IDictionary<string, object?> Defaults
   {
     get
     {
-      var defaults = new Dictionary<string, object>();
+      var defaults = new Dictionary<string, object?>();
 
       foreach (var attribute in this.Entity.Attributes)
       {
@@ -36,15 +38,19 @@ public class EntityRepository : IEntityRepository
         {
           defaults[attribute.Name] = SqlUtils.SqlCast(attribute.DefaultValue, attribute.SqlType);
         }
+        else if (attribute.IsNull)
+        {
+          defaults[attribute.Name] = null;
+        }
       }
 
       return defaults;
     }
   }
 
-  public ExpandoObject Create(IDictionary<string, object>? dictionary = null)
+  public ExpandoObject Create(IDictionary<string, object?>? dictionary = null)
   {
-    dynamic obj = ExpandoUtils.ToExpando(dictionary ?? this.Defaults);
+    dynamic obj = ExpandoUtils.ToExpandoWithNullableValues(dictionary ?? this.Defaults);
     return obj;
   }
 
@@ -240,6 +246,11 @@ public class EntityRepository : IEntityRepository
   private string DictionaryKeysToWhere(IDictionary objectId, string prefix = "")
   {
     return string.Join(" AND ", objectId.Keys.Cast<object>().Select(m => m.ToString()).Select(key => $"{key}=:{prefix}{key}"));
+  }
+
+  public bool SatisfiesPK(Dictionary<string, object> where)
+  {
+    return this.PKs.All(pk => where.ContainsKey(pk.Name) && where[pk.Name] != null);
   }
 }
 

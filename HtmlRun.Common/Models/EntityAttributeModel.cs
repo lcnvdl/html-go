@@ -11,7 +11,9 @@ public class EntityAttributeModel
   public bool IsPK { get; set; } = false;
 
   public int Length { get; set; } = 0;
-  
+
   public string? DefaultValue { get; set; }
+
+  public string SqlTypeWithLength => this.Length > 0 ? $"{SqlType}({Length})" : SqlType;
 }
 

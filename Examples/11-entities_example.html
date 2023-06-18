@@ -1,0 +1,54 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Entities example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+  <h1>Entities example</h1>
+
+  <h2>Settings</h2>
+  <ul>
+    <li><u>Environment.SetEnvironmentVariable</u> <i class="string">DatabaseLibrary</i> <i class="string">sqlite</i></li>
+    <li><u>Environment.SetEnvironmentVariable</u> <i class="string">ConnectionString</i> <i class="string preprocess">Data Source=$ENTRY_DIRECTORY/dbs/example11.db; Version=3; New=True;</i></li>
+  </ul>
+
+  <h2>Imports</h2>
+  <ul>
+    <li><u>Plugins.Load</u> <i class="string preprocess">$ENTRY_DIRECTORY/../dist/plugins/HtmlRun.SQL.NHibernate/win-x64/HtmlRun.SQL.NHibernate.dll</i></li>
+  </ul>
+
+  <h2>Main</h2>
+  <ul>
+    <li style="color:red"><u style="color:darkgray">DDL.EnsureEntityTable</u> <i class="string">User</i>. FEATURE NOT RECOMMENDED. USED ONLY FOR TESTING PURPOSES.</li>
+    
+    <li class="ignore"><br /></li>
+    
+    <li><u>New</u> <i class="string">Entities.User</i> as <i class="string">newUser</i></li>
+    <li><u>Set</u> <i class="string">newUser.Email</i> <i class="string">htmlgo@example.com</i></li>
+    <li><u>Set</u> <i class="string">newUser.Name</i> <i class="string">HacheTe EmeEle</i></li>
+    
+    <li class="ignore"><br /></li>
+    
+    <li><u>Repository.Save</u> <i class="string">newUser</i></li>
+
+    <li class="ignore"><br /></li>
+
+    <li><u>Log</u> <i class="string">User saved!</i></li>
+  </ul>
+
+  <h2>Entities</h2>
+  <table class="entity">
+    <thead><tr><th colspan="5">User</th></tr></thead>
+    <tbody>
+      <tr class="ignore"><td><b>Column</b></td><td><b>Type</b></td><td><b>Nullable?</b></td><td><b>Index</b></td><td><b>Default value?</b></td></tr>
+      <tr><td>Id</td><td>INTEGER</td><td>NOT NULL</td><td>PK</td><td></td></tr>
+      <tr><td>Email</td><td>VARCHAR(40)</td><td>NOT NULL</td><td>Unique</td><td></td></tr>
+      <tr><td>Name</td><td>VARCHAR(100)</td><td>NULL</td><td></td><td></td></tr>
+    </tbody>
+  </table>
+</body>
+
+</html>

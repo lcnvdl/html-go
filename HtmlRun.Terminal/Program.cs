@@ -23,6 +23,7 @@ static class Program
     {
       file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 9);
       Console.WriteLine($"DEBUG MODE. Running example {file}...");
+      Runtime.Utils.EnvironmentUtils.IsDevelopment = true;
     }
 
     if (!File.Exists(file))
@@ -46,10 +47,10 @@ static class Program
   {
     var runtime = Startup.GetRuntime();
 
-    var appModel = await ReadAppFromFile(file);
-
     Environment.SetEnvironmentVariable("ENTRY_FILE", file);
     Environment.SetEnvironmentVariable("ENTRY_DIRECTORY", Path.GetDirectoryName(file));
+
+    var appModel = await ReadAppFromFile(file);
 
     runtime.Run(appModel, token);
   }

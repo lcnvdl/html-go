@@ -4,7 +4,9 @@ namespace HtmlRun.Common.Plugins.SQL;
 
 public interface IEntityRepository
 {
-  ExpandoObject Create(IDictionary<string, object>? dictionary = null);
+  bool SatisfiesPK(Dictionary<string, object> where);
+
+  ExpandoObject Create(IDictionary<string, object?>? dictionary = null);
 
   ExpandoObject? Find(ISessionWrapper sessionWrapper, Dictionary<string, object> where);
 

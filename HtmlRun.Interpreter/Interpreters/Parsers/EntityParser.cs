@@ -12,11 +12,14 @@ public static class EntityParser
 
     EntityModel model = new();
 
-    model.Name = thead.FindChildByTag("tr")?.FindChildByTag("th")?.InnerText ?? throw new Exception("Table name is required.");
+    model.Name = thead.FindChildByTag("tr")?.FindChildByTag("th")?.InnerText?.Trim() ?? throw new Exception("Table name is required.");
 
-    foreach (var tr in tbody.Children.Where(m => m.TagName.Equals("tr", StringComparison.InvariantCultureIgnoreCase)))
+    foreach (IHtmlElementAbstraction tr in tbody.Children.Where(m => m.TagName.Equals("tr", StringComparison.InvariantCultureIgnoreCase)))
     {
-      model.Attributes.Add(ParseTableAttribute(tr));
+      if (!tr.HasClass("ignore", StringComparison.InvariantCultureIgnoreCase))
+      {
+        model.Attributes.Add(ParseTableAttribute(tr));
+      }
     }
 
     return model;
@@ -28,9 +31,7 @@ public static class EntityParser
 
     EntityAttributeModel model = new();
 
-    string defaultKeyword = "DEFAULT";
-
-    model.Name = children[0].InnerText;
+    model.Name = children[0].InnerText.Trim();
     model.SqlType = Regex.Match(children[1].InnerText, "^\\w+").Value;
 
     var lengthMatch = Regex.Match(children[1].InnerText, "\\d+");
@@ -46,9 +47,18 @@ public static class EntityParser
     {
       string defaultVal = children[4].InnerText.Trim();
 
-      if (defaultVal.StartsWith(defaultKeyword, StringComparison.InvariantCultureIgnoreCase))
+      if (!string.IsNullOrEmpty(defaultVal))
       {
-        model.DefaultValue = defaultVal.Substring(defaultKeyword.Length).Trim();
+        string defaultKeyword = "DEFAULT";
+
+        if (defaultVal.StartsWith(defaultKeyword, StringComparison.InvariantCultureIgnoreCase))
+        {
+          model.DefaultValue = defaultVal.Substring(defaultKeyword.Length).Trim();
+        }
+        else
+        {
+          model.DefaultValue = defaultVal;
+        }
       }
     }
 

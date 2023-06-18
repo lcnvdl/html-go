@@ -60,14 +60,14 @@ public class NHibernateTests : IDisposable
   public void NHibernate_Insert()
   {
     // using var session = plugin.GetNewSession();
-    repo.Insert(session, repo.Create(new Dictionary<string, object>() { { "Id", 1 }, { "Name", "Test" } }));
+    repo.Insert(session, repo.Create(new Dictionary<string, object?>() { { "Id", 1 }, { "Name", "Test" } }));
   }
 
   [Fact]
   public void NHibernate_Update()
   {
     // using var session = plugin.GetNewSession();
-    dynamic newEntity = repo.Insert(session, repo.Create(new Dictionary<string, object>() { { "Id", 5 }, { "Name", "Tst" } }));
+    dynamic newEntity = repo.Insert(session, repo.Create(new Dictionary<string, object?>() { { "Id", 5 }, { "Name", "Tst" } }));
     newEntity.Name = "Test";
     repo.Update(session, newEntity);
 
@@ -80,7 +80,7 @@ public class NHibernateTests : IDisposable
   public void NHibernate_UpdateSet()
   {
     // using var session = plugin.GetNewSession();
-    dynamic original = repo.Insert(session, repo.Create(new Dictionary<string, object>() { { "Id", 6 }, { "Name", "Tst" } }));
+    dynamic original = repo.Insert(session, repo.Create(new Dictionary<string, object?>() { { "Id", 6 }, { "Name", "Tst" } }));
     dynamic final = repo.UpdateSet(session, original, new Dictionary<string, object?>() { { "Id", 10 }, { "Name", "Onix" } });
 
     Assert.NotNull(final);
@@ -106,7 +106,7 @@ public class NHibernateTests : IDisposable
   [Fact]
   public void NHibernate_Find_ShouldWorkFine()
   {
-    repo.Insert(session, repo.Create(new Dictionary<string, object>() { { "Id", 6 }, { "Name", "Seis" } }));
+    repo.Insert(session, repo.Create(new Dictionary<string, object?>() { { "Id", 6 }, { "Name", "Seis" } }));
     dynamic? entity = repo.Find(session, new Dictionary<string, object>() { { "Id", 6 } });
     Assert.NotNull(entity);
     Assert.Equal(6, entity!.Id);
@@ -116,7 +116,7 @@ public class NHibernateTests : IDisposable
   [Fact]
   public void NHibernate_FindAll()
   {
-    repo.Insert(session, repo.Create(new Dictionary<string, object>() { { "Id", 2 }, { "Name", "Test" } }));
+    repo.Insert(session, repo.Create(new Dictionary<string, object?>() { { "Id", 2 }, { "Name", "Test" } }));
 
     var all = repo.FindAll(session).Cast<dynamic>().ToList();
     Assert.NotEmpty(all);

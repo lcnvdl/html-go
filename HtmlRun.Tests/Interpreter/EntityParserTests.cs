@@ -31,6 +31,43 @@ public class EntityParserTests
   }
 
   [Fact]
+  public async void EntityParser_TableName_ShouldBeTrimmed()
+  {
+    string page = PrepareTestPage("  Employees ");
+
+    await this.htmlParser.Load(page);
+
+    var entities = this.htmlParser.BodyQuerySelectorAll("table.entity")
+      .Select(EntityParser.ParseTable)
+      .Where(m => m != null)
+      .Cast<EntityModel>()
+      .ToList();
+
+    Assert.NotNull(entities);
+    Assert.Single(entities);
+    Assert.Equal("Employees", entities[0].Name);
+  }
+
+  [Fact]
+  public async void EntityParser_Should_IgnoreAttributesWithIgnoreClass()
+  {
+    string page = PrepareTestPageForIgnoreRow();
+
+    await this.htmlParser.Load(page);
+
+    var entities = this.htmlParser.BodyQuerySelectorAll("table.entity")
+      .Select(EntityParser.ParseTable)
+      .Where(m => m != null)
+      .Cast<EntityModel>()
+      .ToList();
+
+    Assert.NotNull(entities);
+    Assert.Single(entities);
+
+    Assert.Empty(entities[0].Attributes);
+  }
+
+  [Fact]
   public async void EntityParser_Attributes_Name()
   {
     string page = PrepareTestPage();
@@ -66,7 +103,7 @@ public class EntityParserTests
 
     Assert.NotNull(entities);
     Assert.Single(entities);
-    
+
     Assert.Equal("INT", entities[0].Attributes[0].SqlType);
     Assert.Equal("VARCHAR", entities[0].Attributes[1].SqlType);
     Assert.Equal("VARCHAR", entities[0].Attributes[2].SqlType);
@@ -108,7 +145,7 @@ public class EntityParserTests
 
     Assert.NotNull(entities);
     Assert.Single(entities);
-    
+
     Assert.True(entities[0].Attributes[0].IsPK);
     Assert.False(entities[0].Attributes[1].IsPK);
     Assert.False(entities[0].Attributes[2].IsPK);
@@ -134,15 +171,26 @@ public class EntityParserTests
     Assert.Equal("NULL", entities[0].Attributes[2].DefaultValue);
   }
 
-  private static string PrepareTestPage()
+  private static string PrepareTestPage(string tableName = "Users")
+  {
+    string page = HtmlUtils.DefaultHtmlPage
+        .Replace("$head", "")
+        .Replace("$body", "<table class='entity'><thead><tr><th colspan='5'>$tname</th></tr></thead><tbody>$tbody</tbody></table>")
+        .Replace("$tname", tableName)
+        .Replace("$tbody", "<tr> <td>Id</td>    <td>INT</td>          <td>NOT NULL</td> <td>PK</td>     <td></td>  </tr>$tbody")
+        .Replace("$tbody", "<tr> <td>Email</td> <td>VARCHAR(100)</td> <td>NOT NULL</td> <td>Unique</td> <td></td>  </tr>$tbody")
+        .Replace("$tbody", "<tr> <td>Name</td>  <td>VARCHAR(40)</td>  <td>NULL</td>     <td></td>       <td>NULL</td>  </tr>$tbody")
+        .Replace("$tbody", "<!- tbody end -->");
+    return page;
+  }
+
+  private static string PrepareTestPageForIgnoreRow()
   {
     string page = HtmlUtils.DefaultHtmlPage
         .Replace("$head", "")
         .Replace("$body", "<table class='entity'><thead><tr><th colspan='5'>$tname</th></tr></thead><tbody>$tbody</tbody></table>")
         .Replace("$tname", "Users")
-        .Replace("$tbody", "<tr> <td>Id</td>    <td>INT</td>          <td>NOT NULL</td> <td>PK</td>     <td></td>  </tr>$tbody")
-        .Replace("$tbody", "<tr> <td>Email</td> <td>VARCHAR(100)</td> <td>NOT NULL</td> <td>Unique</td> <td></td>  </tr>$tbody")
-        .Replace("$tbody", "<tr> <td>Name</td>  <td>VARCHAR(40)</td>  <td>NULL</td>     <td></td>       <td>DEFAULT NULL</td>  </tr>$tbody")
+        .Replace("$tbody", "<tr class='ignore'> <td>Id</td>    <td>INT</td>          <td>NOT NULL</td> <td>PK</td>     <td></td>  </tr>$tbody")
         .Replace("$tbody", "<!- tbody end -->");
     return page;
   }

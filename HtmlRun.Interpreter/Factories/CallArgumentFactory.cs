@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using HtmlRun.Common.Models;
 using HtmlRun.Interpreter.Interpreters;
 
@@ -7,6 +8,20 @@ static class CallArgumentFactory
 {
   internal static CallArgumentModel? NewInstance(IHtmlElementAbstraction elementHtmlDefinition, string content)
   {
+    if (elementHtmlDefinition.HasClass("preprocess", StringComparison.InvariantCultureIgnoreCase))
+    {
+      var matches = Regex.Matches(content, @"([\$](\w+))\b");
+      foreach (Match match in matches)
+      {
+        string varName = match.Value.Substring(1);
+        var envVar = Environment.GetEnvironmentVariable(varName);
+        if (envVar != null)
+        {
+          content = content.Replace(match.Value, envVar);
+        }
+      }
+    }
+
     if (elementHtmlDefinition.HasClass("string", StringComparison.InvariantCultureIgnoreCase))
     {
       return new CallArgumentModel() { ArgumentType = "string", Content = content };

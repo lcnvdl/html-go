@@ -1,5 +1,5 @@
 # HTML Language Specifications
-Last updated: 2023-06-08.
+Last updated: 2023-06-18.
 
 ## Introduction
 The HTML (HyperText Machine Language) language is the standard used to create and structure applications inspired by HTML (HyperText Markup Language), referred to as "HTML Classic" or "HTMLC" in this document. This document describes the specifications of the HTML language, including its syntax, elements, attributes, and key features.
@@ -140,6 +140,20 @@ The calls should be enclosed within a `<u>` tag.
 * Date.Timestamp
 * Date.TimestampInSeconds
 
+### Environment calls
+* Environment.CurrentDirectory
+* Environment.GetArgs
+* Environment.GetEntryFile
+* Environment.GetEntryDirectory
+* Environment.GetEnvironmentVariable
+* Environment.SetEnvironmentVariable
+
+### OOP calls
+* New
+
+### Plugins calls
+* Plugins.Load
+
 ### Threading calls
 * Threading.Sleep
 * Threading.Increment
@@ -164,6 +178,8 @@ The calls should be enclosed within a `<u>` tag.
   * Used to set static math-operation arguments. For example `<i class='solve'>1 + 1</i>`.
 * string
   * Used to set the type of the argument. For example `<i class='string'>I am an HTML developer.</i>`.
+* preprocess
+  * When using the 'preprocess' parameter, any word starting with $ will be replaced by the corresponding environment variable, if it exists. For example `<i class='string preprocess'>The value of the PATH variable is $PATH.</i>`.
 
 ## Specialized Tags
 * ul -

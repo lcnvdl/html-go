@@ -8,10 +8,37 @@ namespace HtmlRun.SQL.NHibernate.Factories;
 
 public static class FactoryForISessionFactory
 {
+
   public static ISessionFactory CreateSessionFactory(PluginSettings settings)
   {
     var cfg = FluentNHibernate.Cfg.Fluently.Configure();
 
+    IPersistenceConfigurer dbSettings = CreateNHDbSettingsInstance(settings);
+
+    cfg.Database(dbSettings);
+
+    // cfg.ExposeConfiguration(BuildSchema);
+
+    return cfg.BuildSessionFactory();
+
+    /*var cfg = new Configuration().DataBaseIntegration(db =>
+      {
+        // db.ConnectionString = "FullUri=file:memorydb.db?mode=memory&cache=shared";
+        db.ConnectionString = "Data Source=:memory:;Version=3;New=True;";
+        db.Dialect<SQLiteDialect>();
+        db.Driver<SQLite20Driver>();
+        db.ConnectionReleaseMode = ConnectionReleaseMode.OnClose;
+        db.LogSqlInConsole = true;
+        db.LogFormattedSql = true;
+      });
+    // .AddAssembly(this.AppAssembly);
+
+    return cfg.BuildSessionFactory();*/
+    // return Fluently.Configure().BuildSessionFactory();
+  }
+
+  private static IPersistenceConfigurer CreateNHDbSettingsInstance(PluginSettings settings)
+  {
     IPersistenceConfigurer dbSettings;
 
     switch (settings.DatabaseLibrary)
@@ -69,26 +96,7 @@ public static class FactoryForISessionFactory
         break;
     }
 
-    cfg.Database(dbSettings);
-
-    // cfg.ExposeConfiguration(BuildSchema);
-
-    return cfg.BuildSessionFactory();
-
-    /*var cfg = new Configuration().DataBaseIntegration(db =>
-      {
-        // db.ConnectionString = "FullUri=file:memorydb.db?mode=memory&cache=shared";
-        db.ConnectionString = "Data Source=:memory:;Version=3;New=True;";
-        db.Dialect<SQLiteDialect>();
-        db.Driver<SQLite20Driver>();
-        db.ConnectionReleaseMode = ConnectionReleaseMode.OnClose;
-        db.LogSqlInConsole = true;
-        db.LogFormattedSql = true;
-      });
-    // .AddAssembly(this.AppAssembly);
-
-    return cfg.BuildSessionFactory();*/
-    // return Fluently.Configure().BuildSessionFactory();
+    return dbSettings;
   }
 
   private static void BuildSchema(Configuration cfg)

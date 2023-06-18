@@ -45,10 +45,10 @@ static class Program
       return;
     }
 
-    AppModel appModel = await ReadAppFromFile(file);
-
     Environment.SetEnvironmentVariable("ENTRY_FILE", file);
     Environment.SetEnvironmentVariable("ENTRY_DIRECTORY", Path.GetDirectoryName(file));
+
+    AppModel appModel = await ReadAppFromFile(file);
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment() || file == "run" || args.Contains("--swagger"))

@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
 namespace HtmlRun.SQL.NHibernate.Utils;
@@ -60,21 +59,41 @@ public static class SqlUtils
 
     if (toLower.Contains("big") || toLower.Contains("long"))
     {
+      if (string.IsNullOrEmpty(value))
+      {
+        return 0L;
+      }
+
       return long.Parse(value);
     }
 
     if (toLower.Contains("small") || toLower == "short" || toLower == "tinyint")
     {
+      if (string.IsNullOrEmpty(value))
+      {
+        return (short)0;
+      }
+
       return short.Parse(value);
     }
 
     if (toLower.Contains("int") || (toLower == "number" && !value.Contains('.')))
     {
+      if (string.IsNullOrEmpty(value))
+      {
+        return 0;
+      }
+
       return int.Parse(value);
     }
 
     if (toLower.Contains("float") || toLower.Contains("numeric") || toLower.Contains("double") || toLower.Contains("real") || toLower.Contains("decimal") || (toLower == "number" && value.Contains('.')))
     {
+      if (string.IsNullOrEmpty(value))
+      {
+        return 0m;
+      }
+
       return decimal.Parse(value);
     }
 
