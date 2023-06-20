@@ -1,4 +1,5 @@
 using HtmlRun.Common.Models;
+using HtmlRun.Interpreter.Interpreters;
 
 namespace HtmlRun.WebApi;
 
@@ -71,7 +72,7 @@ static class Program
 
   private static async Task<AppModel> ReadAppFromFile(string file)
   {
-    var spider = new HtmlRun.Interpreter.Interpreters.SpiderInterpreter();
+    IInterpreter spider = new SpiderInterpreter();
 
     AppModel app = await spider.ParseString(File.ReadAllText(file));
 

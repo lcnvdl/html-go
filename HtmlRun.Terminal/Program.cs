@@ -1,4 +1,5 @@
 ﻿using HtmlRun.Common.Models;
+using HtmlRun.Interpreter.Interpreters;
 
 namespace HtmlRun.Terminal;
 
@@ -21,7 +22,7 @@ static class Program
 
     if (file == "run" || file == "--run-example")
     {
-      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 9);
+      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 10);
       Console.WriteLine($"DEBUG MODE. Running example {file}...");
       Runtime.Utils.EnvironmentUtils.IsDevelopment = true;
     }
@@ -57,7 +58,7 @@ static class Program
 
   private static async Task<AppModel> ReadAppFromFile(string file)
   {
-    var spider = new HtmlRun.Interpreter.Interpreters.SpiderInterpreter();
+    IInterpreter spider = new SpiderInterpreter();
 
     AppModel app = await spider.ParseString(File.ReadAllText(file));
 

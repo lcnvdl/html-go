@@ -10,7 +10,7 @@ using HtmlRun.Runtime.Utils;
 
 namespace HtmlRun.Runtime;
 
-public class HtmlRuntime : IHtmlRuntimeForContext, IHtmlRuntimeForUnsafeContext
+public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRuntimeForUnsafeContext
 {
   private readonly Dictionary<string, Action<ICurrentInstructionContext>> instructions = new();
 
@@ -75,7 +75,6 @@ public class HtmlRuntime : IHtmlRuntimeForContext, IHtmlRuntimeForUnsafeContext
 
     foreach (var fn in app.Functions)
     {
-      // Console.WriteLine("Function loaded" + fn.Id);
       jsParserWithContext.RegisterFunction($"function {fn.Id}({string.Join(",", fn.Arguments)}) {{ {fn.Code} }}");
     }
 
