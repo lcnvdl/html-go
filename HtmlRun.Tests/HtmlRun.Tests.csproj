@@ -19,12 +19,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HtmlRun.Common\HtmlRun.Common.csproj" />
     <ProjectReference Include="..\HtmlRun.Interpreter\HtmlRun.Interpreter.csproj" />
     <ProjectReference Include="..\HtmlRun.Runtime\HtmlRun.Runtime.csproj" />
+    <ProjectReference Include="..\HtmlRun.SQL.NHibernate\HtmlRun.SQL.NHibernate.csproj" />
+    <ProjectReference Include="..\HtmlRun.Common.Runtime\HtmlRun.Common.Runtime.csproj" />
   </ItemGroup>
   
   <ItemGroup>

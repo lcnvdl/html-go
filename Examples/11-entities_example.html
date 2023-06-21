@@ -1,0 +1,108 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Entities example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+  <h1>Entities example</h1>
+
+  <h2>Settings</h2>
+  <ul>
+    <li><u>Environment.SetEnvironmentVariable</u> <i class="string">DatabaseLibrary</i> <i class="string">sqlite</i></li>
+    <li><u>Environment.SetEnvironmentVariable</u> <i class="string">ConnectionString</i> <i class="string preprocess">Data Source=$ENTRY_DIRECTORY/dbs/example11.db; Version=3; New=True;</i></li>
+  </ul>
+
+  <hr>
+
+  <h2>Main</h2>
+
+  <h2>1. Initialization</h2>
+  <ul>
+    <li><u>Plugins.Load</u> <i class="string preprocess">$ENTRY_DIRECTORY/../dist/plugins/HtmlRun.SQL.NHibernate/win-x64/HtmlRun.SQL.NHibernate.dll</i></li>
+    <li style="color:red"><u style="color:darkgray">DDL.EnsureEntityTable</u> <i class="string">User</i>. FEATURE NOT RECOMMENDED. USED ONLY FOR TESTING PURPOSES.</li>
+  </ul>
+
+  <h2>2. Create a new user <small>(or edit if user 1 already exists)</small></h2>
+  <ul>
+    <li><u>New</u> <i class="string">Entities.User</i> as <i class="string">newUser</i></li>
+    <li><u>Set</u> <i class="string">newUser.Id</i> <i class="string">1</i></li>
+    <li><u>Set</u> <i class="string">newUser.Email</i> <i class="string">htmlgo@example.com</i></li>
+    <li><u>Set</u> <i class="string">newUser.Name</i> <i class="string">HacheTe EmeEle</i></li>
+    
+    <li class="ignore"><br /></li>
+    
+    <li class="comment">Save means: insert if row doesn't exists, update if it exists.</li>
+    <li><u>Repository.Save</u> <i class="string">newUser</i></li>
+
+    <li class="ignore"><br /></li>
+
+    <li><u>Log</u> <i class="string">User 1 saved!</i></li>
+  </ul>
+
+  <h2>3. Create another user <small>(or edit if user 2 already exists)</small></h2>
+  <ul>
+    <li><u>New</u> <i class="string">Entities.User</i> as <i class="string">anotherUser</i></li>
+    <li><u>Set</u> <i class="string">anotherUser.Id</i> <i class="string">2</i></li>
+    <li><u>Set</u> <i class="string">anotherUser.Email</i> <i class="string">htmlgorules@example.com</i></li>
+    <li><u>Set</u> <i class="string">anotherUser.Name</i> <i class="string">HtmlGoRules!</i></li>
+    
+    <li class="ignore"><br /></li>
+    
+    <li><u>Repository.Save</u> <i class="string">anotherUser</i></li>
+
+    <li class="ignore"><br /></li>
+
+    <li><u>Log</u> <i class="string">User 2 saved!</i></li>
+  </ul>
+
+  <h2>4. Show all users</h2>
+  <ul>
+    <li><u>Log</u> <i class="string">All users in database:</i> <i class="call">Repository.GetList('User')</i></li>
+
+    <li class="ignore"><br /></li>
+  </ul>
+
+  <h2>5. Show only users with Id 1</h2>
+  <ul>
+    <li><u>Log</u> <i class="string">Users "1" in database:</i> <i class="call">Repository.FindAll('User', { Id: 1 })</i></li>
+
+    <li class="ignore"><br /></li>
+  </ul>
+
+  <h2>6. Find one user with Id 2</h2>
+  <ul>
+    <li><u>Log</u> <i class="string">User "2" in database:</i> <i class="call">Repository.FindOne('User', { Id: 2 })</i></li>
+
+    <li class="ignore"><br /></li>
+  </ul>
+
+  <h2>7. Find one user with Id 100</h2>
+  <ul>
+    <li><u>Log</u> <i class="string">User "100" in database:</i> <i class="call">Repository.FindOne('User', { Id: 100 })</i></li>
+
+    <li class="ignore"><br /></li>
+  </ul>
+
+  <hr>
+
+  <h2>Entities definitions</h2>
+
+  <br>
+
+  <table class="entity">
+    <thead><tr><th colspan="5">User</th></tr></thead>
+    <tbody>
+      <tr class="ignore"><td><b>Column</b></td><td><b>Type</b></td><td><b>Nullable?</b></td><td><b>Index</b></td><td><b>Default value?</b></td></tr>
+      <tr><td>Id</td><td>INTEGER</td><td>NOT NULL</td><td>PK</td><td></td></tr>
+      <tr><td>Email</td><td>VARCHAR(40)</td><td>NOT NULL</td><td>Unique</td><td></td></tr>
+      <tr><td>Name</td><td>VARCHAR(100)</td><td>NULL</td><td></td><td></td></tr>
+    </tbody>
+  </table>
+  
+  <br>
+</body>
+
+</html>

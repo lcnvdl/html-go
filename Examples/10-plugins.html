@@ -1,0 +1,21 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Plugins example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+  <h1>Plugins example</h1>
+  <h2 style="color:darkred">Important: run 'publish.bat' before run this example.</h2>
+
+  <h2>Main</h2>
+  <ul>
+    <li><u>Plugins.Load</u> <i class="string preprocess">$ENTRY_DIRECTORY/../dist/plugins/HtmlRun.SQL.NHibernate/win-x64/HtmlRun.SQL.NHibernate.dll</i></li>
+    <li><u>Log</u> <i class="string">Plugins loaded</i></li>
+    <li><u>Log</u> <i class="string">The result of "SELECT 1 + 1" is</i> <i class="call">QueryRunner.RunQueryAndGetUniqueValue('SELECT 1+1')</i></li>
+  </ul>
+</body>
+
+</html>

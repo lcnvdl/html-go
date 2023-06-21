@@ -10,6 +10,8 @@ public static class BasicInstructionsSet
   
   public const string SetTitle = "SetTitle";
 
+  public const string New = "New";
+  
   public const string Goto = "Goto";
 
   public const string Using = "Using";

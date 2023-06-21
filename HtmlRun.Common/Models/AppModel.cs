@@ -4,8 +4,10 @@ public class AppModel
 {
   public string Title { get; set; } = string.Empty;
 
-  public List<CallModel> Instructions { get; set; } = new List<CallModel>();
+  public List<CallModel> Instructions { get; set; } = new();
 
-  public List<FunctionModel> Functions { get; set; } = new List<FunctionModel>();
+  public List<FunctionModel> Functions { get; set; } = new();
+
+  public List<EntityModel> Entities { get; set; } = new();
 }
 

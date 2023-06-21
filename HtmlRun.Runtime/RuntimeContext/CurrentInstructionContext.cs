@@ -21,6 +21,8 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
 
   public IHtmlRuntimeForContext Runtime { get; private set; }
 
+  public IHtmlRuntimeForUnsafeContext UnsafeRuntime => (IHtmlRuntimeForUnsafeContext)this.Runtime;
+
   public CurrentInstructionContext(IHtmlRuntimeForContext runtime, IRuntimeContext parent, Stack<Context> ctxStack, string callName, IEnumerable<ParsedArgument> args)
   {
     this.Runtime = runtime;

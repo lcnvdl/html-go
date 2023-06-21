@@ -1,6 +1,7 @@
 using HtmlRun.Common.Models;
 using HtmlRun.Interpreter.Factories;
 using HtmlRun.Interpreter.HtmlParser;
+using HtmlRun.Interpreter.Interpreters.Parsers;
 
 namespace HtmlRun.Interpreter.Interpreters;
 
@@ -39,7 +40,7 @@ public class SpiderInterpreter : IInterpreter
 
     //  * Entities
 
-    //  TODO  Read entities from <table>
+    program.Entities = parser.BodyQuerySelectorAll("table.entity").Select(EntityParser.ParseTable).Where(m => m != null).Cast<EntityModel>().ToList();
 
     //  Result
 
@@ -81,7 +82,7 @@ public class SpiderInterpreter : IInterpreter
     foreach (var argHtmlDefinition in callArguments)
     {
       //  Branched instructions
-      
+
       if (isSpecialModel && argHtmlDefinition.TagName.Equals("ul", StringComparison.InvariantCultureIgnoreCase))
       {
         CallArgumentModel branch = CallArgumentFactory.NewInstanceFromBranch(

@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HtmlRun.Common\HtmlRun.Common.csproj" />
+    <ProjectReference Include="..\HtmlRun.Common.Runtime\HtmlRun.Common.Runtime.csproj" />
   </ItemGroup>
 
 </Project>

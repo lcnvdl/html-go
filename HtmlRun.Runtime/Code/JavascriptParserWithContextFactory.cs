@@ -6,6 +6,13 @@ static class JavascriptParserWithContextFactory
   {
     var jsParserWithContext = new JavascriptParserWithContext();
 
+    AssignInstructions(jsParserWithContext, jsInstructions);
+
+    return jsParserWithContext;
+  }
+
+  internal static void AssignInstructions(JavascriptParserWithContext jsParserWithContext, Dictionary<string, Delegate> jsInstructions)
+  {
     foreach (var kv in jsInstructions)
     {
       if (kv.Key.Contains('.'))
@@ -34,7 +41,5 @@ static class JavascriptParserWithContextFactory
         jsParserWithContext.RegisterInstruction(kv.Key, kv.Value);
       }
     }
-
-    return jsParserWithContext;
   }
 }

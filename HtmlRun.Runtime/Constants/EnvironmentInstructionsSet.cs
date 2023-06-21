@@ -9,4 +9,8 @@ public static class EnvironmentInstructionsSet
   public const string SetEnvironmentVariable = "SetEnvironmentVariable";
   
   public const string CurrentDirectory = "CurrentDirectory";
+
+  public const string GetEntryFile = "GetEntryFile";
+  
+  public const string GetEntryDirectory = "GetEntryDirectory";
 }

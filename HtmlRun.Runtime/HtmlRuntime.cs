@@ -1,13 +1,16 @@
 ﻿using HtmlRun.Common.Models;
+using HtmlRun.Common.Plugins;
+using HtmlRun.Common.Plugins.Models;
 using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Models;
 using HtmlRun.Runtime.Native;
 using HtmlRun.Runtime.RuntimeContext;
+using HtmlRun.Runtime.Utils;
 
 namespace HtmlRun.Runtime;
 
-public class HtmlRuntime : IHtmlRuntimeForContext
+public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRuntimeForUnsafeContext
 {
   private readonly Dictionary<string, Action<ICurrentInstructionContext>> instructions = new();
 
@@ -15,11 +18,18 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
   private readonly Stack<Context> ctxStack = new();
 
+  private readonly List<PluginBase> plugins = new();
+
   private readonly Context globalCtx;
+
+  private bool isApplicationStarted = false;
+
+  private AppModel? application;
+
+  private JavascriptParserWithContext? applicationJsContext;
 
   public HtmlRuntime()
   {
-    this.ctxStack = new Stack<Context>();
     this.globalCtx = new Context(null, this.ctxStack);
   }
 
@@ -31,9 +41,28 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
   public void Run(AppModel app, CancellationToken? token)
   {
+    //  Application
+
+    if (this.application != null)
+    {
+      throw new InvalidOperationException("There was an application already loaded for this runtime.");
+    }
+
+    this.application = app;
+
+    //  Plugins: IBeforeApplicationLoadPluginEvent
+
+    if (this.plugins.Count > 0)
+    {
+      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
+      this.TriggerPlugins<IBeforeApplicationLoadPluginEvent>(plugin => plugin.BeforeApplicationLoad(startInfo));
+    }
+
     //  JS Engine
 
     var jsParserWithContext = JavascriptParserWithContextFactory.CreateNewJavascriptParserAndAssignInstructions(this.jsInstructions);
+
+    this.applicationJsContext = jsParserWithContext;
 
     //  Title
 
@@ -46,11 +75,28 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
     foreach (var fn in app.Functions)
     {
-      // Console.WriteLine("Function loaded" + fn.Id);
       jsParserWithContext.RegisterFunction($"function {fn.Id}({string.Join(",", fn.Arguments)}) {{ {fn.Code} }}");
     }
 
+    //  Load entities
+
+    foreach (EntityModel entity in app.Entities)
+    {
+      this.globalCtx.DeclareAndSetConst($"Entities.{entity.Name}", System.Text.Json.JsonSerializer.Serialize(entity));
+      this.TriggerPlugins<IOnLoadEntityPluginEvent>(plugin => plugin.OnLoadEntity(entity));
+    }
+
+    //  Plugins: IOnApplicationStartPluginEvent
+
+    if (this.plugins.Count > 0)
+    {
+      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
+      this.TriggerPlugins<IOnApplicationStartPluginEvent>(plugin => plugin.OnApplicationStart(startInfo));
+    }
+
     //  Run instructions
+
+    this.isApplicationStarted = true;
 
     InstructionPointer cursor = new();
 
@@ -110,6 +156,46 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     return this.RunInstruction(this.globalCtx, key, args);
   }
 
+  public void RegisterPlugin(PluginBase plugin)
+  {
+    this.plugins.Add(plugin);
+    plugin.Providers?.ToList().ForEach(this.RegisterProvider);
+
+    //  For information
+    string key = $"Plugin.{plugin.Name}";
+    if (!this.globalCtx.IsDeclared(key))
+    {
+      this.globalCtx.DeclareAndSetConst(key, "true");
+    }
+
+    //  Trigger events if app was already running
+    if (this.isApplicationStarted)
+    {
+      //  TODO  Optimization: assign only new instructions
+      if (this.applicationJsContext != null)
+      {
+        JavascriptParserWithContextFactory.AssignInstructions(this.applicationJsContext, this.jsInstructions);
+      }
+
+      if (plugin is IBeforeApplicationLoadPluginEvent beforeLoadListener)
+      {
+        var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
+        beforeLoadListener.BeforeApplicationLoad(startInfo);
+      }
+
+      if (plugin is IOnApplicationStartPluginEvent onStartListener)
+      {
+        var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
+        onStartListener.OnApplicationStart(startInfo);
+      }
+
+      if (plugin is IOnLoadEntityPluginEvent entityListener)
+      {
+        this.application?.Entities.ForEach(entityListener.OnLoadEntity);
+      }
+    }
+  }
+
   public void RegisterProvider(INativeProvider provider)
   {
     foreach (INativeInstruction instruction in provider.Instructions)
@@ -118,7 +204,7 @@ public class HtmlRuntime : IHtmlRuntimeForContext
       if (provider.IsGlobal)
       {
         this.instructions[instruction.Key] = instruction.Action;
-        this.instructions[$"{Runtime.Constants.Namespaces.Global}.{instruction.Key}"] = instruction.Action;
+        this.instructions[$"{Constants.Namespaces.Global}.{instruction.Key}"] = instruction.Action;
       }
       else
       {
@@ -146,7 +232,20 @@ public class HtmlRuntime : IHtmlRuntimeForContext
 
     var instructionCtx = parentCtx.Fork(this, key, args);
 
-    action(instructionCtx);
+    try
+    {
+      action(instructionCtx);
+    }
+    catch (Exception ex)
+    {
+      if (EnvironmentUtils.IsDevelopment)
+      {
+        string argsDetails = string.Join(", ", args.Select(m => m.Value));
+        throw new Exception($"{ex.GetType().Name} error at call {key}({argsDetails}). {ex.Message}.", ex);
+      }
+
+      throw;
+    }
 
     return instructionCtx;
   }
@@ -217,6 +316,11 @@ public class HtmlRuntime : IHtmlRuntimeForContext
     }
 
     return result;
+  }
+
+  private void TriggerPlugins<T>(Action<T> action)
+  {
+    this.plugins.Where(plugin => plugin is T).Cast<T>().ToList().ForEach(action);
   }
 
   private void SaveContextVariableChangesToJsEngine(ICurrentInstructionContext finalCtx, JavascriptParserWithContext jsParserWithContext)

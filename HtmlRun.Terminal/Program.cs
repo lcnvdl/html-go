@@ -1,4 +1,5 @@
 ﻿using HtmlRun.Common.Models;
+using HtmlRun.Interpreter.Interpreters;
 
 namespace HtmlRun.Terminal;
 
@@ -21,8 +22,9 @@ static class Program
 
     if (file == "run" || file == "--run-example")
     {
-      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 8);
+      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 10);
       Console.WriteLine($"DEBUG MODE. Running example {file}...");
+      Runtime.Utils.EnvironmentUtils.IsDevelopment = true;
     }
 
     if (!File.Exists(file))
@@ -44,13 +46,19 @@ static class Program
 
   private static async Task RunAppFromFile(string file, CancellationToken? token = null)
   {
-    var runtime = HtmlRun.Terminal.Startup.GetRuntime();
-    runtime.Run(await ReadAppFromFile(file), token);
+    var runtime = Startup.GetRuntime();
+
+    Environment.SetEnvironmentVariable("ENTRY_FILE", file);
+    Environment.SetEnvironmentVariable("ENTRY_DIRECTORY", Path.GetDirectoryName(file));
+
+    var appModel = await ReadAppFromFile(file);
+
+    runtime.Run(appModel, token);
   }
 
   private static async Task<AppModel> ReadAppFromFile(string file)
   {
-    var spider = new HtmlRun.Interpreter.Interpreters.SpiderInterpreter();
+    IInterpreter spider = new SpiderInterpreter();
 
     AppModel app = await spider.ParseString(File.ReadAllText(file));
 

@@ -6,7 +6,7 @@ namespace HtmlRun.Runtime;
 
 public class Context : BaseContext, IRuntimeContext
 {
-  private readonly Dictionary<string, ContextValue> variables = new ();
+  private readonly Dictionary<string, ContextValue> variables = new();
 
   private readonly Context? parent;
 
@@ -78,6 +78,11 @@ public class Context : BaseContext, IRuntimeContext
   public void AddVariable(ContextValue value)
   {
     this.variables[value.Name] = value;
+  }
+
+  public bool IsDeclared(string name)
+  {
+    return this.variables.ContainsKey(name);
   }
 
   public ContextValue? GetVariable(string name)

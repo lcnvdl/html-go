@@ -1,4 +1,5 @@
 using HtmlRun.Common.Models;
+using HtmlRun.Interpreter.Interpreters;
 
 namespace HtmlRun.WebApi;
 
@@ -45,6 +46,9 @@ static class Program
       return;
     }
 
+    Environment.SetEnvironmentVariable("ENTRY_FILE", file);
+    Environment.SetEnvironmentVariable("ENTRY_DIRECTORY", Path.GetDirectoryName(file));
+
     AppModel appModel = await ReadAppFromFile(file);
 
     // Configure the HTTP request pipeline.
@@ -68,7 +72,7 @@ static class Program
 
   private static async Task<AppModel> ReadAppFromFile(string file)
   {
-    var spider = new HtmlRun.Interpreter.Interpreters.SpiderInterpreter();
+    IInterpreter spider = new SpiderInterpreter();
 
     AppModel app = await spider.ParseString(File.ReadAllText(file));
 
