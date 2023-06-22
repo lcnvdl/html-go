@@ -10,7 +10,7 @@ public static class EntityParser
     IHtmlElementAbstraction thead = e.FindChildByTag("thead") ?? throw new Exception("Table tag thead is missing for entity.");
     IHtmlElementAbstraction tbody = e.FindChildByTag("tbody") ?? throw new Exception("Table tag tbody is missing for entity.");
 
-    EntityModel model = new();
+    var model = new EntityModel();
 
     model.Name = thead.FindChildByTag("tr")?.FindChildByTag("th")?.InnerText?.Trim() ?? throw new Exception("Table name is required.");
 
@@ -29,7 +29,7 @@ public static class EntityParser
   {
     var children = tr.Children.ToList();
 
-    EntityAttributeModel model = new();
+    var model = new EntityAttributeModel();
 
     model.Name = children[0].InnerText.Trim();
     model.SqlType = Regex.Match(children[1].InnerText, "^\\w+").Value;

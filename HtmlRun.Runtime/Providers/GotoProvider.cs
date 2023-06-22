@@ -32,7 +32,7 @@ class GotoCmd : INativeInstruction
   {
     get
     {
-      return ctx => ctx.Jump(new JumpToLine(ctx.GetArgument()!, JumpToLine.JumpTypeEnum.LineId));
+      return ctx => ctx.Jump(new JumpToLine(ctx.GetArgument()!, JumpToLine.JumpTypeEnum.LineId, ctx.GetArgument(1) == null ? 0 : int.Parse(ctx.GetRequiredArgument(1))));
     }
   }
 }
