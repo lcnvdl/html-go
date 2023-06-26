@@ -1,0 +1,105 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Conditionals example III</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+  <h1>Conditionals example III</h1>
+
+  <h2>Main</h2>
+  <ul>
+    <li><u>Const</u> <i class="string">pet</i> <i class="string">dog</i></li>
+
+    <li class="ignore"><br/></li>
+    
+    <li>
+      <b>Switch</b>
+      <i class="call">pet</i>
+      <ul data-condition="bat">
+        <li class="comment"><i>Case 'bat':</i></li>
+        <li><u>Log</u> <i class="string">Squeek!</i></li>
+      </ul>
+      <ul data-condition="cat">
+        <li class="comment"><i>Case 'cat':</i></li>
+        <li><u>Log</u> <i class="string">Meow!</i></li>
+      </ul>
+      <ul data-condition="dog">
+        <li class="comment"><i>Case 'dog':</i></li>
+        <li><u>Log</u> <i class="string">Arf arf!</i></li>
+      </ul>
+      <ul data-condition="pig">
+        <li class="comment"><i>Case 'pig':</i></li>
+        <li><u>Log</u> <i class="string">Oink!</i></li>
+      </ul>
+      <ul data-condition="">
+        <li class="comment"><i>Default:</i></li>
+        <li><u>Log</u> <i class="string">Moo!</i></li>
+      </ul>
+    </li>
+
+    <li class="comment">Expected result: Arf arf!</li>
+
+    <li class="ignore"><hr/></li>
+    
+    <li>
+      <b>Switch</b>
+      <i class="string">bat</i>
+      <ul data-condition="bat">
+        <li class="comment"><i>Case 'bat':</i></li>
+        <li><u>Log</u> <i class="string">Squeek!</i></li>
+      </ul>
+      <ul data-condition="cat">
+        <li class="comment"><i>Case 'cat':</i></li>
+        <li><u>Log</u> <i class="string">Meow!</i></li>
+      </ul>
+      <ul data-condition="dog">
+        <li class="comment"><i>Case 'dog':</i></li>
+        <li><u>Log</u> <i class="string">Arf arf!</i></li>
+      </ul>
+      <ul data-condition="pig">
+        <li class="comment"><i>Case 'pig':</i></li>
+        <li><u>Log</u> <i class="string">Oink!</i></li>
+      </ul>
+      <ul data-condition="">
+        <li class="comment"><i>Default:</i></li>
+        <li><u>Log</u> <i class="string">Moo!</i></li>
+      </ul>
+    </li>
+
+    <li class="comment">Expected result: Squeek!</li>
+
+    <li class="ignore"><hr/></li>
+    
+    <li>
+      <b>Switch</b>
+      <i class="string">cow</i>
+      <ul data-condition="bat">
+        <li class="comment"><i>Case 'bat':</i></li>
+        <li><u>Log</u> <i class="string">Squeek!</i></li>
+      </ul>
+      <ul data-condition="cat">
+        <li class="comment"><i>Case 'cat':</i></li>
+        <li><u>Log</u> <i class="string">Meow!</i></li>
+      </ul>
+      <ul data-condition="dog">
+        <li class="comment"><i>Case 'dog':</i></li>
+        <li><u>Log</u> <i class="string">Arf arf!</i></li>
+      </ul>
+      <ul data-condition="pig">
+        <li class="comment"><i>Case 'pig':</i></li>
+        <li><u>Log</u> <i class="string">Oink!</i></li>
+      </ul>
+      <ul data-condition="">
+        <li class="comment"><i>Default:</i></li>
+        <li><u>Log</u> <i class="string">Moo!</i></li>
+      </ul>
+    </li>
+
+    <li class="comment">Expected result: Moo!</li>
+  </ul>
+</body>
+
+</html>

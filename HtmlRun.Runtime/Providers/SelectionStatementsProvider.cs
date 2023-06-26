@@ -4,11 +4,11 @@ using HtmlRun.Runtime.RuntimeContext;
 
 namespace HtmlRun.Runtime.Providers;
 
-class ConditionalProvider : INativeProvider
+class SelectionStatementsProvider : INativeProvider
 {
   public string Namespace => Constants.Namespaces.Global;
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new IfCmd(), new EndIfCmd(), new TestGotoCmd() };
+  public INativeInstruction[] Instructions => new INativeInstruction[] { new IfCmd(), new EndIfCmd(), new SwitchCmd(), new EndSwitchCmd(), new TestGotoCmd(), };
 }
 
 class IfCmd : INativeInstruction
@@ -19,12 +19,27 @@ class IfCmd : INativeInstruction
   {
     get
     {
-      return ctx => ctx.Jump(new JumpToBranch(ctx.GetArgument<bool>().ToString()));
+      //  Empty because is replaced for TestGoto after compilation.
+      return ctx => { };
     }
   }
 }
 
-class TestGotoCmd : INativeInstruction
+class SwitchCmd : INativeInstruction
+{
+  public string Key => Constants.BasicInstructionsSet.Switch;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      //  Empty because is replaced for TestGoto after compilation.
+      return ctx => { };
+    }
+  }
+}
+
+class TestGotoCmd : INativeInstruction, IInternalInstruction
 {
   public string Key => Constants.BasicInstructionsSet.TestAndGoto;
 
@@ -48,15 +63,17 @@ class TestGotoCmd : INativeInstruction
   }
 }
 
-class EndIfCmd : INativeInstruction
+class EndIfCmd : VoidInstruction
 {
-  public string Key => Constants.BasicInstructionsSet.EndIf;
-
-  public Action<ICurrentInstructionContext> Action
+  public EndIfCmd() : base(Constants.BasicInstructionsSet.EndIf)
   {
-    get
-    {
-      return ctx => { };
-    }
+  }
+}
+
+
+class EndSwitchCmd : VoidInstruction
+{
+  public EndSwitchCmd() : base(Constants.BasicInstructionsSet.EndSwitch)
+  {
   }
 }

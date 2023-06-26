@@ -4,7 +4,7 @@ using HtmlRun.Runtime.RuntimeContext;
 
 namespace HtmlRun.Runtime.Providers;
 
-class GotoProvider : INativeProvider
+class JumpStatementsProvider : INativeProvider
 {
   public string Namespace => Constants.Namespaces.Global;
 

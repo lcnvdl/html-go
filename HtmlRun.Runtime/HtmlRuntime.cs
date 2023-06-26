@@ -126,7 +126,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
         if (finalCtx.CursorModification != null && !finalCtx.CursorModification.IsEmpty)
         {
-          cursor.ApplyJumpOrFail(finalCtx.CursorModification, instruction, appInstructions);
+          cursor.ApplyJumpOrFail(finalCtx.CursorModification, appInstructions);
           finalCtx.CursorModification = null;
         }
 

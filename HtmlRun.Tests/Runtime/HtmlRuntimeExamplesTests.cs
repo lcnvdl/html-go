@@ -133,8 +133,21 @@ public class HtmlRuntimeExamplesTests: IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(1, LogCmd.Logs.Count);
+    Assert.Single(LogCmd.Logs);
     Assert.Equal("3 > 2... Yep", LogCmd.Logs[0]);
+  }
+
+  [Fact]
+  public async void HtmlRuntime_Example_13()
+  {
+    var app = await this.ReadApp("13-conditionals_switch");
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(3, LogCmd.Logs.Count);
+    Assert.Equal("Arf arf!", LogCmd.Logs[0]);
+    Assert.Equal("Squeek!", LogCmd.Logs[1]);
+    Assert.Equal("Moo!", LogCmd.Logs[2]);
   }
 
   private async Task<AppModel> ReadApp(string exampleName)
