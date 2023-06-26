@@ -2,6 +2,7 @@
 using HtmlRun.Common.Plugins;
 using HtmlRun.Common.Plugins.Models;
 using HtmlRun.Runtime.Code;
+using HtmlRun.Runtime.Factories;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Models;
 using HtmlRun.Runtime.Native;
@@ -94,20 +95,28 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
       this.TriggerPlugins<IOnApplicationStartPluginEvent>(plugin => plugin.OnApplicationStart(startInfo));
     }
 
+    //  Compile instructions
+
+    HtmlRuntimeCompiler.CompileInstructions(app);
+
     //  Run instructions
 
     this.isApplicationStarted = true;
 
     InstructionPointer cursor = new();
 
+    InstructionsGroup main = app.InstructionGroups.First(m => m.Label == InstructionsGroup.Main.Label);
+
+    List<CallModel> appInstructions = main.Instructions;
+
     this.ctxStack.Clear();
     this.ctxStack.Push(this.globalCtx);
 
-    while (cursor.Position < app.Instructions.Count && (!token.HasValue || !token.Value.IsCancellationRequested))
+    while (cursor.Position < appInstructions.Count && (!token.HasValue || !token.Value.IsCancellationRequested))
     {
       try
       {
-        CallModel instruction = app.Instructions[cursor.Position];
+        CallModel instruction = appInstructions[cursor.Position];
 
         ParsedArgument[] arguments = this.ParseArguments(jsParserWithContext, instruction.Arguments);
 
@@ -117,7 +126,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
         if (finalCtx.CursorModification != null && !finalCtx.CursorModification.IsEmpty)
         {
-          cursor.ApplyJumpOrFail(finalCtx.CursorModification, instruction, app.Instructions);
+          cursor.ApplyJumpOrFail(finalCtx.CursorModification, instruction, appInstructions);
           finalCtx.CursorModification = null;
         }
 

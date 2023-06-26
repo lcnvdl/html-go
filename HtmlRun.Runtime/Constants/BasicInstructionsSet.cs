@@ -12,6 +12,8 @@ public static class BasicInstructionsSet
 
   public const string New = "New";
   
+  public const string TestAndGoto = "TestGo";
+
   public const string Goto = "Goto";
 
   public const string Using = "Using";

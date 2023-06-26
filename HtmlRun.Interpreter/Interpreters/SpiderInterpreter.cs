@@ -28,7 +28,7 @@ public class SpiderInterpreter : IInterpreter
       possibleCalls = parser.BodyQuerySelectorAll("body > ul > li");
     }
 
-    program.Instructions = possibleCalls.Select(this.ParseCall).Where(m => m != null).Cast<CallModel>().ToList();
+    program.InstructionGroups.AddRange(this.ParseInstructionGroupsAndCalls(possibleCalls));
 
     //  * Functions
 
@@ -45,6 +45,18 @@ public class SpiderInterpreter : IInterpreter
     //  Result
 
     return program;
+  }
+
+  private List<InstructionsGroup> ParseInstructionGroupsAndCalls(IEnumerable<IHtmlElementAbstraction> possibleCalls)
+  {
+    var groups = new List<InstructionsGroup>();
+
+    var mainGroup = InstructionsGroup.Main;
+    mainGroup.Instructions = possibleCalls.Select(this.ParseCall).Where(m => m != null).Cast<CallModel>().ToList();
+
+    groups.Add(mainGroup);
+
+    return groups;
   }
 
   private CallModel? ParseCall(IHtmlElementAbstraction li)

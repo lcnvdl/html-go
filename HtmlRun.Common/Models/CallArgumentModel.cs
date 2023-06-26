@@ -20,6 +20,8 @@ public class CallArgumentModel
 
   public bool IsBranch => this.ArgumentType == "branch";
 
+  public bool BranchIsEmpty => this.BranchInstructions == null || this.BranchInstructions.Count == 0;
+
   public string? BranchCondition { get; set; }
 
   public List<CallModel>? BranchInstructions { get; set; }

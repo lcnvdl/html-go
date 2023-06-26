@@ -1,5 +1,6 @@
 namespace HtmlRun.Runtime.RuntimeContext;
 
+[Obsolete]
 class JumpToBranch : Interfaces.IContextJump
 {
   public string? Condition { get; set; }

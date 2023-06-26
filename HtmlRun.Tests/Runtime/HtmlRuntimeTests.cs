@@ -41,9 +41,10 @@ public class HtmlRuntimeTests : IDisposable
     this.runtime.RegisterBasicProviders();
 
     var app = new AppModel();
-    app.Instructions.Add("Var".AsCall(CallArgumentModel.FromString("name")));
-    app.Instructions.Add("Set".AsCall(CallArgumentModel.FromString("name"), CallArgumentModel.FromString("Lucho")));
-    app.Instructions.Add("Log".AsCall(CallArgumentModel.FromCall("name")));
+    app.InstructionGroups.Add(InstructionsGroup.Main);
+    app.InstructionGroups[0].Instructions.Add("Var".AsCall(CallArgumentModel.FromString("name")));
+    app.InstructionGroups[0].Instructions.Add("Set".AsCall(CallArgumentModel.FromString("name"), CallArgumentModel.FromString("Lucho")));
+    app.InstructionGroups[0].Instructions.Add("Log".AsCall(CallArgumentModel.FromCall("name")));
 
     this.runtime.Run(app, null);
 

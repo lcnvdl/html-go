@@ -59,7 +59,7 @@ class InstructionPointer
       this.Position = instructions.FindIndex(m => m.CustomId != null && m.CustomId == jump.Line);
       if (this.Position < 0)
       {
-        throw new IndexOutOfRangeException();
+        throw new IndexOutOfRangeException($"Label {jump.Line} not found.");
       }
 
       --this.Position;

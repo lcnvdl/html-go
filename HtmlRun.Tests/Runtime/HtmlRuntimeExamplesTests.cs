@@ -100,6 +100,22 @@ public class HtmlRuntimeExamplesTests: IDisposable
   }
 
   [Fact]
+  public async void HtmlRuntime_Example_8()
+  {
+    var app = await this.ReadApp("08-while_using_goto_if");
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(6, LogCmd.Logs.Count);
+    Assert.Equal("Current iteration: 0", LogCmd.Logs[0]);
+    Assert.Equal("Current iteration: 1", LogCmd.Logs[1]);
+    Assert.Equal("Current iteration: 2", LogCmd.Logs[2]);
+    Assert.Equal("Current iteration: 3", LogCmd.Logs[3]);
+    Assert.Equal("Current iteration: 4", LogCmd.Logs[4]);
+    Assert.Equal("Exit", LogCmd.Logs[5]);
+  }
+
+  [Fact]
   public async void HtmlRuntime_Example_9()
   {
     var app = await this.ReadApp("09-using");
@@ -108,6 +124,17 @@ public class HtmlRuntimeExamplesTests: IDisposable
 
     Assert.Single(LogCmd.Logs);
     Assert.Equal("Sleep was called without the namespace (Threading.Sleep).", LogCmd.Logs[0]);
+  }
+
+  [Fact]
+  public async void HtmlRuntime_Example_12()
+  {
+    var app = await this.ReadApp("12-conditionals_II");
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(1, LogCmd.Logs.Count);
+    Assert.Equal("3 > 2... Yep", LogCmd.Logs[0]);
   }
 
   private async Task<AppModel> ReadApp(string exampleName)
