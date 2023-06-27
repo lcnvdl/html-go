@@ -11,11 +11,11 @@ public static class BasicInstructionsSet
   public const string EndSwitch = "EndSwitch";
 
   public const string Log = "Log";
-  
+
   public const string SetTitle = "SetTitle";
 
   public const string New = "New";
-  
+
   public const string TestAndGoto = "TestGo";
 
   public const string Goto = "Goto";
@@ -33,4 +33,6 @@ public static class BasicInstructionsSet
   public const string Delete = "Delete";
 
   public const string Const = "Const";
+
+  public const string While = "While";
 }

@@ -9,6 +9,7 @@ public static class RegisterBasicProvidersExtension
     //  Language instructions
     runtime.RegisterProvider(new SelectionStatementsProvider());
     runtime.RegisterProvider(new JumpStatementsProvider());
+    runtime.RegisterProvider(new IterationStatementsProvider());
     runtime.RegisterProvider(new ImportsProvider());
     runtime.RegisterProvider(new VariablesProvider());
     runtime.RegisterProvider(new OOPProvider());
