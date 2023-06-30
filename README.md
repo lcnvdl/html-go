@@ -87,6 +87,7 @@ https://www.youtube.com/@ACodearla
 * Commands (list of commands I've used) - `commands.bat`
 * Watch (compile and run with hot-reload feature) - `watch.bat`
 * Watch-sv (compile and run in server mode with hot-reload feature) - `watch-sv.bat`
+* Watch-test (compile and run tests with hot-reload feature) - `watch-test.bat`
 * Publish (release build) - `publish.bat`
 
 ## License
