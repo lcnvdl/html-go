@@ -4,7 +4,7 @@ public class AppModel
 {
   public string Title { get; set; } = string.Empty;
 
-  public List<CallModel> Instructions { get; set; } = new();
+  public List<InstructionsGroup> InstructionGroups { get; set; } = new();
 
   public List<FunctionModel> Functions { get; set; } = new();
 

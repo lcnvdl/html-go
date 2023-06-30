@@ -7,8 +7,9 @@ public static class RegisterBasicProvidersExtension
   public static void RegisterBasicProviders(this IHtmlRuntimeForApp runtime)
   {
     //  Language instructions
-    runtime.RegisterProvider(new ConditionalProvider());
-    runtime.RegisterProvider(new GotoProvider());
+    runtime.RegisterProvider(new SelectionStatementsProvider());
+    runtime.RegisterProvider(new JumpStatementsProvider());
+    runtime.RegisterProvider(new IterationStatementsProvider());
     runtime.RegisterProvider(new ImportsProvider());
     runtime.RegisterProvider(new VariablesProvider());
     runtime.RegisterProvider(new OOPProvider());

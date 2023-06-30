@@ -13,38 +13,15 @@ class InstructionPointer
     ++this.Position;
   }
 
-  public void ApplyJumpOrFail(IContextJump? cursorModification, CallModel instruction, List<CallModel> instructions)
+  public void ApplyJumpOrFail(IContextJump? cursorModification, List<CallModel> instructions)
   {
-    if (cursorModification is JumpToBranch)
+    if (cursorModification is JumpToLine jump)
     {
-      var jump = (JumpToBranch)cursorModification;
-      this.ApplyJump(jump, instruction, instructions);
-    }
-    else if (cursorModification is JumpToLine)
-    {
-      var jump = (JumpToLine)cursorModification;
       this.ApplyJump(jump, instructions);
     }
     else
     {
       throw new InvalidCastException();
-    }
-  }
-
-  private void ApplyJump(JumpToBranch jump, CallModel currentInstruction, List<CallModel> instructions)
-  {
-    var newBranch = currentInstruction.Arguments.Find(m => m.IsBranch && jump.IsBranch(m.BranchCondition));
-    if (newBranch == null)
-    {
-      // if (jump.IsBranchRequired) // Bug 01
-      // {
-      throw new NullReferenceException($"Missing branch {jump.Condition} in {currentInstruction.FunctionName} call.");
-      // }
-    }
-    else
-    {
-      //  TODO Causa del Bug 01 (me obliga a tener el case false en el IF, sino quedan instrucciones sueltas)
-      instructions.InsertRange(this.Position + 1, newBranch.BranchInstructions!);
     }
   }
 
@@ -59,7 +36,7 @@ class InstructionPointer
       this.Position = instructions.FindIndex(m => m.CustomId != null && m.CustomId == jump.Line);
       if (this.Position < 0)
       {
-        throw new IndexOutOfRangeException();
+        throw new IndexOutOfRangeException($"Label {jump.Line} not found.");
       }
 
       --this.Position;

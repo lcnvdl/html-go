@@ -4,11 +4,11 @@ using HtmlRun.Runtime.RuntimeContext;
 
 namespace HtmlRun.Runtime.Providers;
 
-class GotoProvider : INativeProvider
+class JumpStatementsProvider : INativeProvider
 {
   public string Namespace => Constants.Namespaces.Global;
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new GotoCmd(), new GotoLineCmd(), new LabelCmd(), };
+  public INativeInstruction[] Instructions => new INativeInstruction[] { new GotoCmd(), new GotoLineCmd(), new LabelCmd(), new ContextPullCmd(), new ContextPushCmd(), };
 }
 
 class LabelCmd : INativeInstruction
@@ -46,6 +46,32 @@ class GotoLineCmd : INativeInstruction
     get
     {
       return ctx => ctx.Jump(new JumpToLine(ctx.GetArgument<int>()));
+    }
+  }
+}
+
+class ContextPushCmd : INativeInstruction
+{
+  public string Key => Constants.BasicInstructionsSet.ContextPush;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => ctx.Jump(new ContextPush());
+    }
+  }
+}
+
+class ContextPullCmd : INativeInstruction
+{
+  public string Key => Constants.BasicInstructionsSet.ContextPull;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => ctx.Jump(new ContextPull());
     }
   }
 }

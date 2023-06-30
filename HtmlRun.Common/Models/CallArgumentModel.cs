@@ -1,10 +1,14 @@
 namespace HtmlRun.Common.Models;
 
-public class CallArgumentModel
+public class CallArgumentModel : ICloneable
 {
   public string? ArgumentType { get; set; }
 
   public string? Content { get; set; }
+
+  public string? BranchCondition { get; set; }
+
+  public List<CallModel>? BranchInstructions { get; set; }
 
   public bool IsString => this.ArgumentType == "string";
 
@@ -20,9 +24,7 @@ public class CallArgumentModel
 
   public bool IsBranch => this.ArgumentType == "branch";
 
-  public string? BranchCondition { get; set; }
-
-  public List<CallModel>? BranchInstructions { get; set; }
+  public bool BranchIsEmpty => this.BranchInstructions == null || this.BranchInstructions.Count == 0;
 
   public static CallArgumentModel FromCall(string str)
   {
@@ -32,6 +34,17 @@ public class CallArgumentModel
   public static CallArgumentModel FromString(string str)
   {
     return new CallArgumentModel() { ArgumentType = "string", Content = str };
+  }
+
+  public object Clone()
+  {
+    return new CallArgumentModel()
+    {
+      ArgumentType = this.ArgumentType,
+      BranchCondition = this.BranchCondition,
+      Content = this.Content,
+      BranchInstructions = this.BranchInstructions?.Select(m => m).ToList(),
+    };
   }
 }
 

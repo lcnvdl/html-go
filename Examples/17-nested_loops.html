@@ -1,0 +1,35 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Nested loops example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+  <h1>Nested loops example</h1>
+
+  <h2>Main</h2>
+  <ul>
+    <li class="comment">For loop:</li>
+    <li>
+      <b>For</b>
+      (<ul><li><u>Var</u> <i class="string">x</i> <i class="number">0</i></li></ul>
+      <i class="call">x &lt; 16</i>
+      <ul><li><u>Threading.Increment</u> <i class="string">x</i></li></ul>)
+      <ul>
+        <li>
+          <b>For</b>
+          (<ul><li><u>Var</u> <i class="string">y</i> <i class="number">0</i></li></ul>
+          <i class="call">y &lt; 16</i>
+          <ul><li><u>Threading.Increment</u> <i class="string">y</i></li></ul>)
+          <ul>
+            <li><u>Log</u> <i class="string">Position:</i> <i class="call">x</i>, <i class="call">y</i></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</body>
+
+</html>

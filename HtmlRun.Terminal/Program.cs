@@ -22,7 +22,7 @@ static class Program
 
     if (file == "run" || file == "--run-example")
     {
-      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 10);
+      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 16);
       Console.WriteLine($"DEBUG MODE. Running example {file}...");
       Runtime.Utils.EnvironmentUtils.IsDevelopment = true;
     }
@@ -44,19 +44,19 @@ static class Program
     await RunAppFromFile(file);
   }
 
-  private static async Task RunAppFromFile(string file, CancellationToken? token = null)
+  private static async Task RunAppFromFile(string file)
   {
     var runtime = Startup.GetRuntime();
 
     Environment.SetEnvironmentVariable("ENTRY_FILE", file);
     Environment.SetEnvironmentVariable("ENTRY_DIRECTORY", Path.GetDirectoryName(file));
 
-    var appModel = await ReadAppFromFile(file);
+    var appModel = await ReadApp(file);
 
-    runtime.Run(appModel, token);
+    runtime.Run(appModel, null);
   }
 
-  private static async Task<AppModel> ReadAppFromFile(string file)
+  private static async Task<AppModel> ReadApp(string file)
   {
     IInterpreter spider = new SpiderInterpreter();
 

@@ -1,5 +1,5 @@
 # HTML Language Specifications
-Last updated: 2023-06-18.
+Last updated: 2023-06-30.
 
 ## Introduction
 The HTML (HyperText Machine Language) language is the standard used to create and structure applications inspired by HTML (HyperText Markup Language), referred to as "HTML Classic" or "HTMLC" in this document. This document describes the specifications of the HTML language, including its syntax, elements, attributes, and key features.
@@ -104,7 +104,7 @@ Here is an example of HTML code that demonstrates the use of some elements and a
 ## Language-related Calls
 The language-related calls should be enclosed within a `<b>` tag.
 * If
-  * If condition. 
+  * If statement. 
   Example: 
   ```html
     <li>
@@ -120,6 +120,16 @@ The language-related calls should be enclosed within a `<b>` tag.
   ```
 * EndIf
   * Optional.
+* Switch
+  * Switch statement.
+* EndSwitch
+  * Optional.
+* While
+  * While statement.
+* Do
+  * Do-While statement.
+* For
+  * Do-While statement.
 
 ## Calls
 The calls should be enclosed within a `<u>` tag.
@@ -160,8 +170,14 @@ The calls should be enclosed within a `<u>` tag.
 * Threading.Decrement
 
 ### Server calls
+* Server.Delete
 * Server.Get
+* Server.GetCurrentDirectory
+* Server.Post
+* Server.Put
 * Server.SetDefaultContentType
+* Server.StaticFiles
+* Server.StaticDirectory
 
 ## CSS Keywords
 * call

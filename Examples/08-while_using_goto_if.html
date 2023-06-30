@@ -7,20 +7,25 @@
 </head>
 
 <body>
-  <h1>Goto example</h1>
+  <h1>While loop using GOTO + IF</h1>
 
   <h2>Main</h2>
   <ul>
-    <li class="comment">Loop using GOTO:</li>
-    <li><u>Var</u> <i class="string">iterations</i> <i class="number">0</i></li>
+    <li class="comment">While loop using GOTO + IF:</li>
+    
+    <li class="ignore"><br></li>
+
+    <li><u>Var</u> <i class="string">iteration</i> <i class="number">0</i></li>
     <li data-id="top"><u>Label</u> <i class="string">top</i></li>
-    <li><u>Log</u> <i class="string">Prueba...</i> <i class="string">Timestamp:</i> <i class="call">Date.Timestamp()</i>
+    <li><u>Log</u> <i class="string">Current iteration:</i> <i class="call">iteration</i>
     </li>
-    <li><u>Threading.Increment</u> <i class="string">iterations</i></li>
-    <li><u>Threading.Sleep</u> <i class="number">1000</i></li>
+    <li><u>Threading.Increment</u> <i class="string">iteration</i></li>
+    
+    <li class="ignore"><br></li>
+
     <li>
       <b>If</b>
-      <i class="call">iterations &lt; 5</i>
+      <i class="call">iteration &lt; 5</i>
       <ul data-condition="true">
         <li class="comment"><i>True:</i></li>
         <li><u>Goto</u> <i class="string">top</i></li>
@@ -29,8 +34,6 @@
         <li><u>Log</u> <i class="string">Exit</i></li>
       </ul>
     </li>
-    <li><b>EndIf</b></li>
-    <!-- <li><u>Goto</u> <i class="string">top</i></li> -->
   </ul>
 </body>
 
