@@ -32,7 +32,8 @@ static class BranchedInstructionProcessorFactory
   private static bool IsIterationStatement(CallModel instruction)
   {
     bool isWhile = instruction.FunctionName == Constants.BasicInstructionsSet.While;
-    bool isSelectionStatement = isWhile;
-    return isSelectionStatement;
+    bool isDoWhile = instruction.FunctionName == Constants.BasicInstructionsSet.DoWhile;
+    bool isIterationStatement = isWhile || isDoWhile;
+    return isIterationStatement;
   }
 }

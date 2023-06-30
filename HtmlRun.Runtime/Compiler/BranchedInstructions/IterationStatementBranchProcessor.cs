@@ -33,7 +33,9 @@ internal sealed class IterationStatementBranchProcessor : BranchedInstructionPro
 
     var branch = branches.First();
 
-    var originalConditionArgument = this.InstructionWithBranch.Arguments[0];
+    var originalConditionArgument = this.InstructionWithBranch.Arguments.First(m => !m.IsBranch);
+
+    bool isDoWhile = statement == Constants.BasicInstructionsSet.DoWhile;
 
     //  Condition tests
     CallArgumentModel conditionArgument;
@@ -43,6 +45,11 @@ internal sealed class IterationStatementBranchProcessor : BranchedInstructionPro
     if (!string.IsNullOrEmpty(branch.BranchCondition))
     {
       throw new Exception($"{statement} branch condition must be empty.");
+    }
+
+    if (isDoWhile)
+    {
+      newInstructions.Add(CallModelFactory.Goto($"loop-{key}"));
     }
 
     newInstructions.Add(CallModelFactory.Label($"testloop-{key}"));

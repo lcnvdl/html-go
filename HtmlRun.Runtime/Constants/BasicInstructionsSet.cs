@@ -35,4 +35,6 @@ public static class BasicInstructionsSet
   public const string Const = "Const";
 
   public const string While = "While";
+
+  public const string DoWhile = "Do";
 }
