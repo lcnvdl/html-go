@@ -1,5 +1,5 @@
 # HTML Language Specifications
-Last updated: 2023-06-27.
+Last updated: 2023-06-30.
 
 ## Introduction
 The HTML (HyperText Machine Language) language is the standard used to create and structure applications inspired by HTML (HyperText Markup Language), referred to as "HTML Classic" or "HTMLC" in this document. This document describes the specifications of the HTML language, including its syntax, elements, attributes, and key features.
@@ -126,6 +126,10 @@ The language-related calls should be enclosed within a `<b>` tag.
   * Optional.
 * While
   * While statement.
+* Do
+  * Do-While statement.
+* For
+  * Do-While statement.
 
 ## Calls
 The calls should be enclosed within a `<u>` tag.
