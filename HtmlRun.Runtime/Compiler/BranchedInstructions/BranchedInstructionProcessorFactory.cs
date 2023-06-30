@@ -23,17 +23,18 @@ static class BranchedInstructionProcessorFactory
 
   private static bool IsSelectionStatement(CallModel instruction)
   {
-    bool isIf = instruction.FunctionName == Constants.BasicInstructionsSet.If;
-    bool isSwitch = instruction.FunctionName == Constants.BasicInstructionsSet.Switch;
-    bool isSelectionStatement = isIf || isSwitch;
+    bool isSelectionStatement =
+      instruction.FunctionName == Constants.BasicInstructionsSet.If ||
+      instruction.FunctionName == Constants.BasicInstructionsSet.Switch;
     return isSelectionStatement;
   }
 
   private static bool IsIterationStatement(CallModel instruction)
   {
-    bool isWhile = instruction.FunctionName == Constants.BasicInstructionsSet.While;
-    bool isDoWhile = instruction.FunctionName == Constants.BasicInstructionsSet.DoWhile;
-    bool isIterationStatement = isWhile || isDoWhile;
+    bool isIterationStatement =
+      instruction.FunctionName == Constants.BasicInstructionsSet.While ||
+      instruction.FunctionName == Constants.BasicInstructionsSet.DoWhile ||
+      instruction.FunctionName == Constants.BasicInstructionsSet.For;
     return isIterationStatement;
   }
 }
