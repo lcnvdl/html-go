@@ -1,11 +1,22 @@
 using HtmlRun.Common.Models;
-using HtmlRun.Runtime.Factories;
 
 namespace HtmlRun.Runtime.Compiler.BranchedInstructions;
 
 static class BranchedInstructionProcessorFactory
 {
   internal static BranchedInstructionProcessor GetInstance(InstructionsGroup group, CallModel instruction)
+  {
+    BranchedInstructionProcessor? value = GetInstanceOrDefault(group, instruction);
+
+    if (value == null)
+    {
+      throw new NotImplementedException($"Unknown branched instruction '{instruction.FunctionName}'.");
+    }
+
+    return value;
+  }
+
+  internal static BranchedInstructionProcessor? GetInstanceOrDefault(InstructionsGroup group, CallModel instruction)
   {
     if (IsSelectionStatement(instruction))
     {
@@ -17,7 +28,7 @@ static class BranchedInstructionProcessorFactory
     }
     else
     {
-      throw new NotImplementedException($"Unknown branched instruction '{instruction.FunctionName}'.");
+      return null;
     }
   }
 

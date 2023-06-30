@@ -20,12 +20,31 @@ static class HtmlRuntimeCompiler
 
   private static void CompileBranches(InstructionsGroup group)
   {
-    var instructionsWithBranch = group.Instructions.FindAll(instruction => instruction.Arguments.Any(m => m.IsBranch && !m.BranchIsEmpty));
+    int count;
 
-    foreach (var instruction in instructionsWithBranch)
+    do
     {
-      var processor = BranchedInstructionProcessorFactory.GetInstance(group, instruction);
-      processor.VerifyAndAddLowLevelInstructions();
+      count = group.Instructions.Count;
+      var instructionsWithBranch = group.Instructions.FindAll(instruction => instruction.Arguments.Any(m => m.IsBranch && !m.BranchIsEmpty));
+      CompileBranches(group, instructionsWithBranch, false);
+    }
+    while (count != group.Instructions.Count);
+  }
+
+  private static void CompileBranches(InstructionsGroup group, List<CallModel> instructionsWithBranch, bool branchIsOptional)
+  {
+    foreach (CallModel instruction in instructionsWithBranch)
+    {
+      // var branches = instruction.Arguments.FindAll(m => m.IsBranch && !m.BranchIsEmpty);
+      // foreach (var branch in branches)
+      // {
+      //   CompileBranches(group, branch.BranchInstructions!, true);
+      // }
+
+      var processor = branchIsOptional ?
+        BranchedInstructionProcessorFactory.GetInstanceOrDefault(group, instruction) :
+        BranchedInstructionProcessorFactory.GetInstance(group, instruction);
+      processor!.VerifyAndAddLowLevelInstructions();
     }
   }
 }

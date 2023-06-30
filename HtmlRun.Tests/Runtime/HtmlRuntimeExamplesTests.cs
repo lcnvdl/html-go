@@ -196,6 +196,16 @@ public class HtmlRuntimeExamplesTests: IDisposable
     Assert.Equal("Iteration: 4", LogCmd.Logs[4]);
   }
 
+  [Fact]
+  public async void HtmlRuntime_Example_17()
+  {
+    var app = await this.ReadApp("17-nested_loops");
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(16*16, LogCmd.Logs.Count);
+  }
+
   private async Task<AppModel> ReadApp(string exampleName)
   {
     string file = Environment.CurrentDirectory.Remove(Environment.CurrentDirectory.IndexOf("HtmlRun.Tests"));

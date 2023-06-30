@@ -79,7 +79,9 @@ internal sealed class SelectionStatementBranchProcessor : BranchedInstructionPro
         newInstructions.Add(CallModelFactory.Label($"default-{key}"));
       }
 
+      newInstructions.Add(CallModelFactory.PushContext());
       newInstructions.AddRange(branch.BranchInstructions!);
+      newInstructions.Add(CallModelFactory.PullContext());
 
       newInstructions.Add(CallModelFactory.Goto($"end-{key}"));
     }

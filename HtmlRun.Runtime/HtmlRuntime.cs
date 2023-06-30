@@ -124,11 +124,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
         this.SaveContextVariableChangesToJsEngine(finalCtx, jsParserWithContext);
 
-        if (finalCtx.CursorModification != null && !finalCtx.CursorModification.IsEmpty)
-        {
-          cursor.ApplyJumpOrFail(finalCtx.CursorModification, appInstructions);
-          finalCtx.CursorModification = null;
-        }
+        this.ApplyJumpAndContextSwitching(finalCtx, cursor, appInstructions);
 
         cursor.MoveToNextPosition();
       }
@@ -231,6 +227,32 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
         {
           this.jsInstructions[$"{provider.Namespace}.{instruction.Key}"] = jsInstruction.ToJSAction();
         }
+      }
+    }
+  }
+
+  private void ApplyJumpAndContextSwitching(ICurrentInstructionContext finalCtx, InstructionPointer cursor, List<CallModel> appInstructions)
+  {
+    if (finalCtx.CursorModification != null && !finalCtx.CursorModification.IsEmpty)
+    {
+      if (finalCtx.CursorModification is ContextPush)
+      {
+        var newCtx = this.ctxStack.Peek().Fork();
+        this.ctxStack.Push(newCtx);
+      }
+      else if (finalCtx.CursorModification is ContextPull)
+      {
+        this.ctxStack.Pop();
+
+        if (this.ctxStack.Count == 0)
+        {
+          throw new InvalidOperationException("Context stack is not balanced.");
+        }
+      }
+      else
+      {
+        cursor.ApplyJumpOrFail(finalCtx.CursorModification, appInstructions);
+        finalCtx.CursorModification = null;
       }
     }
   }

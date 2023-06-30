@@ -40,6 +40,11 @@ public class Context : BaseContext, IRuntimeContext
     }
   }
 
+  public Context Fork()
+  {
+    return new Context(this, this.ctxStack);
+  }
+
   public ICurrentInstructionContext Fork(IHtmlRuntimeForContext runtimeForContext, string callName, IEnumerable<ParsedArgument> args)
   {
     return new CurrentInstructionContext(runtimeForContext, this, this.ctxStack, callName, args);

@@ -31,4 +31,14 @@ static class CallModelFactory
     label.CustomId = labelName;
     return label;
   }
+
+  internal static CallModel PushContext()
+  {
+    return NewCall(Constants.BasicInstructionsSet.ContextPush);
+  }
+
+  internal static CallModel PullContext()
+  {
+    return NewCall(Constants.BasicInstructionsSet.ContextPull);
+  }
 }

@@ -26,6 +26,10 @@ public static class BasicInstructionsSet
 
   public const string GotoLine = "GotoLine";
 
+  public const string ContextPush = "CtxPush";
+
+  public const string ContextPull = "CtxPull";
+
   public const string Set = "Set";
 
   public const string Var = "Var";

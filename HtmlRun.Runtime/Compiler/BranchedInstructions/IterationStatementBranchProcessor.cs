@@ -44,6 +44,7 @@ internal sealed class IterationStatementBranchProcessor : BranchedInstructionPro
     string key = this.StatementInstructionKeyForId;
     var newInstructions = new List<CallModel>();
 
+    newInstructions.Add(CallModelFactory.PushContext());
     newInstructions.AddRange(declarationBranch.BranchInstructions!);
 
     newInstructions.Add(CallModelFactory.Label($"testloop-{key}"));
@@ -53,13 +54,18 @@ internal sealed class IterationStatementBranchProcessor : BranchedInstructionPro
     //  Branch instructions
 
     newInstructions.Add(CallModelFactory.Label($"loop-{key}"));
+    newInstructions.Add(CallModelFactory.PushContext());
     newInstructions.AddRange(iterationBranch.BranchInstructions!);
+    newInstructions.Add(CallModelFactory.PullContext());
+    newInstructions.Add(CallModelFactory.PushContext());
     newInstructions.AddRange(incrementalBranch.BranchInstructions!);
+    newInstructions.Add(CallModelFactory.PullContext());
     newInstructions.Add(CallModelFactory.Goto($"testloop-{key}"));
 
     //  End for
 
     newInstructions.Add(CallModelFactory.Label($"end-{key}"));
+    newInstructions.Add(CallModelFactory.PullContext());
 
     return newInstructions;
   }
@@ -93,7 +99,9 @@ internal sealed class IterationStatementBranchProcessor : BranchedInstructionPro
     //  Branch instructions
 
     newInstructions.Add(CallModelFactory.Label($"loop-{key}"));
+    newInstructions.Add(CallModelFactory.PushContext());
     newInstructions.AddRange(branch.BranchInstructions!);
+    newInstructions.Add(CallModelFactory.PullContext());
     newInstructions.Add(CallModelFactory.Goto($"testloop-{key}"));
 
     //  End while
