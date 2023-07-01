@@ -1,0 +1,1 @@
+docker build --build-arg APP_FILE=01-hello_world.html --build-arg APP_DIRECTORY=/Examples/WebApi --tag htmlgo-example .

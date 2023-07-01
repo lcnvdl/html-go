@@ -89,6 +89,9 @@ https://www.youtube.com/@ACodearla
 * Watch-sv (compile and run in server mode with hot-reload feature) - `watch-sv.bat`
 * Watch-test (compile and run tests with hot-reload feature) - `watch-test.bat`
 * Publish (release build) - `publish.bat`
+* Publish docker (generates an example docker image) - `publish-docker.bat`
+* Publish plugins (NHibernate) - `publish-plugins.bat`
+* Run docker (runs the example docker image) - `run-docker.bat`
 
 ## License
 Please note that the license specified in this documentation apply specifically to the `HtmlGo compiler` and not to the HTML language itself. The HTML language is free to use, both for commercial and non-commercial purposes.
