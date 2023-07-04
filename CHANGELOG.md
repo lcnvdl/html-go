@@ -1,4 +1,9 @@
 # HtmlGo changelog
+## v0.3.0-alpha (next)
+* Runtime parameters:
+  * Version info. Usage: `htmlgo --version` or `htmlgo-server --version`.
+  * Https redirection (disabled by default). Usage: `htmlgo-server --http Example1.html`.
+
 ## v0.2.0-alpha
 * Improvement: Enhance Instruction Processing. [View issue](https://github.com/lcnvdl/html-go/issues/5).
 * Selection statements (switch).
