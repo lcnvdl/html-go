@@ -88,8 +88,9 @@ https://www.youtube.com/@ACodearla
 * Watch (compile and run with hot-reload feature) - `watch.bat`
 * Watch-sv (compile and run in server mode with hot-reload feature) - `watch-sv.bat`
 * Watch-test (compile and run tests with hot-reload feature) - `watch-test.bat`
-* Publish (release build) - `publish.bat`
+* Publish (win-x64 release build) - `publish.bat`
 * Publish docker (generates an example docker image) - `publish-docker.bat`
+* Publish linux (linux-x64 release build) - `publish-linux.bat`
 * Publish plugins (NHibernate) - `publish-plugins.bat`
 * Run docker (runs the example docker image) - `run-docker.bat`
 

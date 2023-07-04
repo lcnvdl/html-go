@@ -15,59 +15,42 @@ static class Program
 
     //  HtmlGo
 
-    var runtime = HtmlRun.WebApi.Startup.GetRuntime(app, builder);
+    var argsModel = ProgramArgsProcessor.ProcessInputAndGetModel(args, 0, app.Logger);
 
-    string? file = args.FirstOrDefault();
-
-    if (string.IsNullOrEmpty(file))
+    if (argsModel.ShowVersionAndFinish)
     {
-      app.Logger.LogError("Missing input file.");
-      Environment.Exit(1);
+      ShowCurrentVersion(app.Logger);
       return;
     }
 
-    if (file == "run" || file == "--run-example")
-    {
-      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : 0);
-      app.Logger.LogInformation("DEBUG MODE. Running example...");
-    }
+    var runtime = Startup.GetRuntime(app, builder);
 
-    if (!File.Exists(file))
-    {
-      app.Logger.LogError($"File not found: {Path.GetFileName(file)}.");
-      Environment.Exit(1);
-      return;
-    }
+    Environment.SetEnvironmentVariable("ENTRY_FILE", argsModel.File);
+    Environment.SetEnvironmentVariable("ENTRY_DIRECTORY", Path.GetDirectoryName(argsModel.File));
 
-    if (!Path.GetExtension(file).Equals(".html", StringComparison.InvariantCultureIgnoreCase))
-    {
-      app.Logger.LogError($"Extension of \"{Path.GetFileName(file)}\" must be .html.");
-      Environment.Exit(1);
-      return;
-    }
+    AppModel appModel = await ReadAppFromFile(argsModel.File);
 
-    Environment.SetEnvironmentVariable("ENTRY_FILE", file);
-    Environment.SetEnvironmentVariable("ENTRY_DIRECTORY", Path.GetDirectoryName(file));
-
-    AppModel appModel = await ReadAppFromFile(file);
-
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment() || file == "run" || args.Contains("--swagger"))
+    if (app.Environment.IsDevelopment() || argsModel.UseSwagger)
     {
       app.UseSwagger();
       app.UseSwaggerUI();
     }
 
-    app.UseHttpsRedirection();
-
-    // app.UseAuthorization();
-    // app.MapControllers();
+    if (argsModel.Https)
+    {
+      app.UseHttpsRedirection();
+    }
 
     runtime.Run(appModel, null);
 
-    // app.MapGet("/", () => "Works");
-
     app.Run();
+  }
+
+  private static void ShowCurrentVersion(ILogger logger)
+  {
+    var assembly = typeof(Program).Assembly;
+    string version = assembly.GetName().Version?.ToString() ?? "0.0.0.0";
+    logger.LogInformation($"v{version}");
   }
 
   private static async Task<AppModel> ReadAppFromFile(string file)
@@ -77,15 +60,6 @@ static class Program
     AppModel app = await spider.ParseString(File.ReadAllText(file));
 
     return app;
-  }
-
-  private static string GetExample(int number)
-  {
-    return new DirectoryInfo(
-      Directory.Exists(
-        Path.Combine(Environment.CurrentDirectory, "../Examples/WebApi")) ?
-        Path.Combine(Environment.CurrentDirectory, "../Examples/WebApi") :
-        Path.Combine(Environment.CurrentDirectory, "./Examples/WebApi")).GetFiles("*.html")[number].FullName;
   }
 }
 

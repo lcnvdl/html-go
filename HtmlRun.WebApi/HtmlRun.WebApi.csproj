@@ -1,4 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <Company>HtmlGo</Company>
+    <Copyright>Copyright HtmlGo contributors. All rights reserved.</Copyright>
+    <Description>HtmlGo Server</Description>
+    <Product>HtmlGo Server</Product>
+    <AssemblyTitle>HtmlRun.WebApi</AssemblyTitle>
+    <Version>0.2.0-beta</Version>
+  </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>

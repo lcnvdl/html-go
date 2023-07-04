@@ -1,4 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Company>HtmlGo</Company>
+    <Copyright>Copyright HtmlGo contributors. All rights reserved.</Copyright>
+    <Description>HtmlGo Runtime</Description>
+    <Product>HtmlGo Runtime</Product>
+    <AssemblyTitle>HtmlGo.Runtime</AssemblyTitle>
+    <Version>0.2.0-beta</Version>
+  </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
