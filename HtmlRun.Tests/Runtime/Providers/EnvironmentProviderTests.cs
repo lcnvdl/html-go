@@ -1,8 +1,6 @@
-using HtmlRun.Runtime;
 using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Constants;
 using HtmlRun.Runtime.Providers;
-using HtmlRun.Runtime.RuntimeContext;
 
 public class EnvironmentProviderTests : BaseProviderTests
 {
@@ -32,12 +30,7 @@ public class EnvironmentProviderTests : BaseProviderTests
   [Fact]
   public void EnvironmentProvider_SetEnvironmentVariableJS_ShouldWorkFine()
   {
-    var setEnvVar = this.GetJSInstruction(EnvironmentInstructionsSet.SetEnvironmentVariable);
-    Assert.NotNull(setEnvVar);
-
-    var jsAction = setEnvVar!.ToJSAction();
-
-    jsAction.DynamicInvoke("NewJSVar", "qwerty");
+    this.CallJsInstruction(EnvironmentInstructionsSet.SetEnvironmentVariable, "NewJSVar", "qwerty");
 
     Assert.Equal("qwerty", Environment.GetEnvironmentVariable("NewJSVar"));
   }

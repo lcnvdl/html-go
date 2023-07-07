@@ -1,7 +1,6 @@
 using HtmlRun.Common.Plugins;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
-using HtmlRun.Runtime.RuntimeContext;
 
 namespace HtmlRun.Runtime.Providers;
 
@@ -23,17 +22,17 @@ class LoadPluginCmd : INativeInstruction
       return ctx =>
       {
         string pluginName = ctx.GetRequiredArgument();
+
         var assembly = System.Reflection.Assembly.LoadFrom(pluginName);
-        var pluginType = assembly.GetTypes().FirstOrDefault(m => typeof(PluginBase).IsAssignableFrom(m));
 
-        if (pluginType == null)
-        {
-          throw new TypeAccessException($"Plugin class for {pluginName} not found.");
-        }
+        var pluginType = assembly.GetTypes().FirstOrDefault(m => typeof(PluginBase).IsAssignableFrom(m))
+          ?? throw new TypeAccessException($"Plugin class for {pluginName} not found.");
 
-        var instance = (PluginBase?)Activator.CreateInstance(pluginType, System.Reflection.Assembly.GetEntryAssembly()) ?? throw new TypeLoadException($"Error starting the plugin {pluginName}.");
+        var instance = (PluginBase?)Activator.CreateInstance(pluginType, System.Reflection.Assembly.GetEntryAssembly())
+          ?? throw new TypeLoadException($"Error starting the plugin {pluginName}.");
 
         var unsafeCtx = (IUnsafeCurrentInstructionContext)ctx;
+
         unsafeCtx.UnsafeRuntime.RegisterPlugin(instance!);
       };
     }

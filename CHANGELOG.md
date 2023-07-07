@@ -3,6 +3,8 @@
 * Runtime parameters:
   * Version info. Usage: `htmlgo --version` or `htmlgo-server --version`.
   * Https redirection (disabled by default). Usage: `htmlgo-server --http Example1.html`.
+  * String provider (String.Trim, String.ToLowerCase, String.ToUpperCase, String.ToTitleCase).
+  * Terminal provider (Console.ReadLine).
 
 ## v0.2.0-alpha
 * Improvement: Enhance Instruction Processing. [View issue](https://github.com/lcnvdl/html-go/issues/5).

@@ -12,7 +12,7 @@ class DateProvider : INativeProvider
 
 class TimestampCmd : INativeInstruction, INativeJSInstruction
 {
-  private long Value => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+  private static long Value => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 
   public string Key => Constants.DateInstructionsSet.Timestamp;
 
@@ -26,13 +26,13 @@ class TimestampCmd : INativeInstruction, INativeJSInstruction
 
   public Delegate ToJSAction()
   {
-    return new Func<string>(() => this.Value.ToString());
+    return new Func<string>(() => Value.ToString());
   }
 }
 
-class TimestampInSecondsCmd : INativeInstruction
+class TimestampInSecondsCmd : INativeInstruction, INativeJSInstruction
 {
-  private long Value => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+  private static long Value => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
 
   public string Key => Constants.DateInstructionsSet.TimestampInSeconds;
 
@@ -46,6 +46,6 @@ class TimestampInSecondsCmd : INativeInstruction
 
   public Delegate ToJSAction()
   {
-    return new Func<string>(() => this.Value.ToString());
+    return new Func<string>(() => Value.ToString());
   }
 }

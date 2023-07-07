@@ -3,7 +3,7 @@ using HtmlRun.Terminal.Instructions;
 
 namespace HtmlRun.Terminal;
 
-class TerminalProvider : INativeProvider
+class GlobalProvider : INativeProvider
 {
   public string Namespace => Runtime.Constants.Namespaces.Global;
 

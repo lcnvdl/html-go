@@ -11,6 +11,7 @@ static class CallArgumentFactory
     if (elementHtmlDefinition.HasClass("preprocess", StringComparison.InvariantCultureIgnoreCase))
     {
       var matches = Regex.Matches(content, @"([\$](\w+))\b");
+      
       foreach (Match match in matches)
       {
         string varName = match.Value.Substring(1);

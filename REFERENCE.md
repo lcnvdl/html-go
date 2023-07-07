@@ -144,7 +144,10 @@ The calls should be enclosed within a `<u>` tag.
 * Set
 * SetTitle
 * Using
-* Var
+* V
+
+### Console calls
+* Console.ReadLine
 
 ### Date calls
 * Date.Timestamp
@@ -164,10 +167,11 @@ The calls should be enclosed within a `<u>` tag.
 ### Plugins calls
 * Plugins.Load
 
-### Threading calls
-* Threading.Sleep
-* Threading.Increment
-* Threading.Decrement
+### String calls
+* String.ToLowerCase
+* String.ToUpperCase
+* String.ToTitleCase
+* String.Trim
 
 ### Server calls
 * Server.Delete
@@ -178,6 +182,11 @@ The calls should be enclosed within a `<u>` tag.
 * Server.SetDefaultContentType
 * Server.StaticFiles
 * Server.StaticDirectory
+
+### Threading calls
+* Threading.Sleep
+* Threading.Increment
+* Threading.Decrement
 
 ## CSS Keywords
 * call

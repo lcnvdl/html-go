@@ -2,7 +2,7 @@ namespace HtmlRun.Terminal;
 
 static class ProgramArgsProcessor
 {
-  public static ProgramArgs ProcessInputAndGetModel(string[] args, int defaultExample)
+  public static ProgramArgs ProcessInputAndGetModel(string[] args, int defaultExample, string? examplesDirectoryName = "Examples")
   {
     var model = new ProgramArgs();
 
@@ -21,7 +21,7 @@ static class ProgramArgsProcessor
 
     if (file == "run" || file == "--run-example")
     {
-      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : defaultExample);
+      file = GetExample(args.Length > 1 ? int.Parse(args[1]) : defaultExample, examplesDirectoryName);
       Console.WriteLine($"DEBUG MODE. Running example {file}...");
       Runtime.Utils.EnvironmentUtils.IsDevelopment = true;
     }
@@ -41,12 +41,12 @@ static class ProgramArgsProcessor
     return model;
   }
 
-  private static string GetExample(int number)
+  private static string GetExample(int number, string examplesDirectoryName)
   {
     return new DirectoryInfo(
       Directory.Exists(
-        Path.Combine(Environment.CurrentDirectory, "../Examples")) ?
-        Path.Combine(Environment.CurrentDirectory, "../Examples") :
-        Path.Combine(Environment.CurrentDirectory, "./Examples")).GetFiles("*.html")[number].FullName;
+        Path.Combine(Environment.CurrentDirectory, $"../{examplesDirectoryName}")) ?
+        Path.Combine(Environment.CurrentDirectory, $"../{examplesDirectoryName}") :
+        Path.Combine(Environment.CurrentDirectory, $"./{examplesDirectoryName}")).GetFiles("*.html")[number].FullName;
   }
 }

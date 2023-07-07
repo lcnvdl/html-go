@@ -17,9 +17,10 @@ public static class RegisterBasicProvidersExtension
     //  Plugins
     runtime.RegisterProvider(new PluginsProvider());
 
-    //  Tools
+    //  Types and tools
     runtime.RegisterProvider(new EnvironmentProvider());
     runtime.RegisterProvider(new DateProvider());
+    runtime.RegisterProvider(new StringProvider());
 
     //  TODO  Threading is not a basic provider
     runtime.RegisterProvider(new ThreadingProvider());

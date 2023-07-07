@@ -8,6 +8,7 @@ public static class Startup
   {
     var runtime = new HtmlRuntime();
     runtime.RegisterBasicProviders();
+    runtime.RegisterProvider(new GlobalProvider());
     runtime.RegisterProvider(new TerminalProvider());
     return runtime;
   }
