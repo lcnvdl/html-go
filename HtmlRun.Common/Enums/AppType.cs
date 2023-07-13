@@ -4,6 +4,6 @@ public enum AppType
 {
   Unknown = 0,
   Library = 1,
-  ConsoleApplication = 2,
-  WebServerApplication = 3,
+  Console = 2,
+  WebServer = 3,
 }

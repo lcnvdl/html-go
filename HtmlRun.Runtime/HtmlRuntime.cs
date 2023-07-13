@@ -65,6 +65,13 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
     this.applicationJsContext = jsParserWithContext;
 
+    //  App info
+    this.globalCtx.DeclareAndSetConst("Application.Title", application.Title);
+    this.globalCtx.DeclareAndSetConst("Application.Version", application.Version);
+    this.globalCtx.DeclareAndSetConst("Application.Type", application.Type.ToString());
+
+    jsParserWithContext.ExecuteCode($"window.Application = {{ Title: '{application.Title}', Version: '{application.Version}', Type: '{application.Type}', }}");
+
     //  Title
 
     if (!string.IsNullOrEmpty(app.Title))

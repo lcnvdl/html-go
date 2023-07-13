@@ -42,7 +42,7 @@ public class HtmlRuntimeExamplesTests : IDisposable
     var app = await this.ReadApp("02-simple_operation");
 
     Assert.Equal("1.0.1", app.Version);
-    Assert.Equal(AppType.ConsoleApplication, app.Type);
+    Assert.Equal(AppType.Console, app.Type);
 
     this.runtime.Run(app, null);
 

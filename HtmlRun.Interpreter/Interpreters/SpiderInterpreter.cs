@@ -162,9 +162,9 @@ public class SpiderInterpreter : IInterpreter
     switch (appType.ToLowerInvariant())
     {
       case "console":
-        return AppType.ConsoleApplication;
+        return AppType.Console;
       case "webserver":
-        return AppType.WebServerApplication;
+        return AppType.WebServer;
       default:
         throw new Exception($"App type {appType} is wrong.");
     }

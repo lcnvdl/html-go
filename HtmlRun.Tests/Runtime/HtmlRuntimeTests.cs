@@ -36,6 +36,28 @@ public class HtmlRuntimeTests : IDisposable
   }
 
   [Fact]
+  public void HtmlRuntime_AppInfo_ShouldBeAvailable()
+  {
+    this.runtime.RegisterBasicProviders();
+
+    var app = new AppModel();
+    app.Version = "3.14.15";
+    app.Title = "Test";
+    app.Type = AppType.Console;
+    app.InstructionGroups.Add(InstructionsGroup.Main);
+    app.InstructionGroups[0].Instructions.Add("Log".AsCall(CallArgumentModel.FromCall("Application.Title")));
+    app.InstructionGroups[0].Instructions.Add("Log".AsCall(CallArgumentModel.FromCall("Application.Version")));
+    app.InstructionGroups[0].Instructions.Add("Log".AsCall(CallArgumentModel.FromCall("Application.Type")));
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(3, LogCmd.Logs.Count);
+    Assert.Equal("Test", LogCmd.Logs[0]);
+    Assert.Equal("3.14.15", LogCmd.Logs[1]);
+    Assert.Equal("Console", LogCmd.Logs[2]);
+  }
+
+  [Fact]
   public void HtmlRuntime_ShouldHaveVariablesSynchronizedWithJsEngine()
   {
     this.runtime.RegisterBasicProviders();
