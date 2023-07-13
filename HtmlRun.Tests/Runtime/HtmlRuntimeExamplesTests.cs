@@ -4,7 +4,7 @@ using HtmlRun.Runtime;
 using HtmlRun.Tests.Stubs;
 using HtmlRun.Tests.Stubs.Instructions;
 
-public class HtmlRuntimeExamplesTests: IDisposable
+public class HtmlRuntimeExamplesTests : IDisposable
 {
   private HtmlRuntime runtime;
   private SpiderInterpreter spider;
@@ -40,6 +40,9 @@ public class HtmlRuntimeExamplesTests: IDisposable
   public async void HtmlRuntime_Example_2()
   {
     var app = await this.ReadApp("02-simple_operation");
+
+    Assert.Equal("1.0.1", app.Version);
+    Assert.Equal(AppType.ConsoleApplication, app.Type);
 
     this.runtime.Run(app, null);
 
@@ -203,7 +206,7 @@ public class HtmlRuntimeExamplesTests: IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(16*16, LogCmd.Logs.Count);
+    Assert.Equal(16 * 16, LogCmd.Logs.Count);
   }
 
   private async Task<AppModel> ReadApp(string exampleName)

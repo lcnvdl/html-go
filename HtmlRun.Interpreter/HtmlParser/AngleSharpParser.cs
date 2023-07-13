@@ -14,7 +14,37 @@ public class AngleSharpParser : IParser, IDisposable
   {
   }
 
-  public string HeadTitle => this.document?.Head?.Title ?? string.Empty;
+  public string HeadTitle
+  {
+    get
+    {
+      if (this.document == null || this.document.Head == null)
+      {
+        return string.Empty;
+      }
+
+      string title = this.document.Head.Title ??
+        this.document.Head.GetElementsByTagName("title").FirstOrDefault()?.InnerHtml ??
+        string.Empty;
+
+      return title.Trim();
+    }
+  }
+
+  public async Task Load(string content)
+  {
+    var config = Configuration.Default.WithDefaultLoader();
+    this.context = BrowsingContext.New(config);
+    this.document = await context.OpenAsync(req => req.Content(content));
+  }
+
+  public void Dispose()
+  {
+    this.document?.Dispose();
+    this.document = null;
+    this.context?.Dispose();
+    this.context = null;
+  }
 
   public IEnumerable<IHtmlElementAbstraction> BodyQuerySelectorAll(string query)
   {
@@ -32,19 +62,20 @@ public class AngleSharpParser : IParser, IDisposable
     return result.AsEnumerable().Select(m => new AngleSharpHtmlElementAbstraction(m)).Cast<IHtmlElementAbstraction>();
   }
 
-  public async Task Load(string content)
+  public string? GetMetaContentWithDefaultValue(string name)
   {
-    var config = Configuration.Default.WithDefaultLoader();
-    this.context = BrowsingContext.New(config);
-    this.document = await context.OpenAsync(req => req.Content(content));
+    if (this.document == null)
+    {
+      throw new NullReferenceException();
+    }
+
+    var metatag = this.document.Head?.GetElementsByTagName("meta").FirstOrDefault(m => m.GetAttribute("name") == name);
+    return metatag?.GetAttribute("content");
   }
 
-  public void Dispose()
+  public string GetMetaContentWithDefaultValue(string name, string defaultValue)
   {
-    this.document?.Dispose();
-    this.document = null;
-    this.context?.Dispose();
-    this.context = null;
+    return this.GetMetaContentWithDefaultValue(name) ?? defaultValue;
   }
 }
 

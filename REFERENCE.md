@@ -101,6 +101,25 @@ Here is an example of HTML code that demonstrates the use of some elements and a
 </html>
 ```
 
+## Metatags
+HtmlGo is compatible with any HTML meta tag, meaning that none of them will affect its functionality. In line with the [HTML semantics](https://html.spec.whatwg.org/multipage/semantics.html#meta-application-name), which allows the inclusion of new meta tags, we have decided to introduce some specific meta tags for HtmlGo.
+
+### New Metatags
+* Application version (optional): `htmlgo:application-version`.
+  * Possible values: `major.minor.patch`.
+  * Default value: `1.0.0`.
+  * Given a version number MAJOR.MINOR.PATCH, increment the:
+      -  MAJOR version when you make incompatible API changes.
+      -  MINOR version when you add functionality in a backward compatible manner.
+      -  PATCH version when you make backward compatible bug fixes.
+  * Additional labels for pre-release and build metadata are **not supported**.
+  * Example: `<meta name='htmlgo:application-version' content='1.0.0' />`.
+
+* Application type (optional): `htmlgo:application-type`.
+  * Possible values: `Console`, `WebServer`, `Library`.
+  * Default value: `Unknown`.
+  * Example: `<meta name='htmlgo:application-type' content='Console' />`.
+
 ## Language-related Calls
 The language-related calls should be enclosed within a `<b>` tag.
 * If

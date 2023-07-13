@@ -17,8 +17,9 @@ public class SpiderInterpreter : IInterpreter
     //  App
 
     var program = new AppModel();
-
     program.Title = parser.HeadTitle;
+    program.Version = parser.GetMetaContentWithDefaultValue("htmlgo:application-version", "1.0.0");
+    program.Type = GetAppTypeFromString(parser.GetMetaContentWithDefaultValue("htmlgo:application-type"));
 
     //  * Calls
 
@@ -149,5 +150,23 @@ public class SpiderInterpreter : IInterpreter
   private static string HtmlDecode(string html)
   {
     return System.Net.WebUtility.HtmlDecode(html).Trim();
+  }
+
+  private static AppType GetAppTypeFromString(string? appType)
+  {
+    if (string.IsNullOrEmpty(appType))
+    {
+      return AppType.Unknown;
+    }
+
+    switch (appType.ToLowerInvariant())
+    {
+      case "console":
+        return AppType.ConsoleApplication;
+      case "webserver":
+        return AppType.WebServerApplication;
+      default:
+        throw new Exception($"App type {appType} is wrong.");
+    }
   }
 }
