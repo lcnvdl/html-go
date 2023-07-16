@@ -1,5 +1,6 @@
 {
   "dotnet-test-explorer.autoWatch": true,
   "dotnet-test-explorer.autoExpandTree": true,
-  "dotnet-test-explorer.runInParallel": false
+  "dotnet-test-explorer.runInParallel": false,
+  "terminal.integrated.localEchoStyle": "dim"
 }

@@ -175,13 +175,13 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(6, LogCmd.Logs.Count);
     Assert.Equal("Do-While is working fine when condition is false", LogCmd.Logs[0]);
     Assert.Equal("Iteration: 0", LogCmd.Logs[1]);
     Assert.Equal("Iteration: 1", LogCmd.Logs[2]);
     Assert.Equal("Iteration: 2", LogCmd.Logs[3]);
     Assert.Equal("Iteration: 3", LogCmd.Logs[4]);
     Assert.Equal("Iteration: 4", LogCmd.Logs[5]);
+    Assert.Equal(6, LogCmd.Logs.Count);
   }
 
   [Fact]
@@ -209,10 +209,21 @@ public class HtmlRuntimeExamplesTests : IDisposable
     Assert.Equal(16 * 16, LogCmd.Logs.Count);
   }
 
+  [Fact]
+  public async void HtmlRuntime_Example_18()
+  {
+    var app = await this.ReadApp("18-library_import");
+
+    this.runtime.Run(app, null);
+
+    Assert.Single(LogCmd.Logs);
+    Assert.Equal("H", LogCmd.Logs[0]);
+  }
+
   private async Task<AppModel> ReadApp(string exampleName)
   {
     string file = Environment.CurrentDirectory.Remove(Environment.CurrentDirectory.IndexOf("HtmlRun.Tests"));
-    var app = await this.spider.ParseString(File.ReadAllText($"{file}/Examples/{exampleName}.html"));
+    var app = await this.spider.ParseString($"{exampleName}.html", m => File.ReadAllText($"{file}/Examples/{m}"));
     Assert.NotNull(app);
     return app!;
   }

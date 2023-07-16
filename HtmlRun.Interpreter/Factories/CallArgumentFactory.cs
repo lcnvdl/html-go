@@ -43,6 +43,12 @@ static class CallArgumentFactory
     {
       return new CallArgumentModel() { ArgumentType = "callReference", Content = content };
     }
+    else if (elementHtmlDefinition.TagName.Equals("a", StringComparison.InvariantCultureIgnoreCase) && !string.IsNullOrEmpty(elementHtmlDefinition.GetAttribute("href")))
+    {
+      string? hrefContent = elementHtmlDefinition.GetAttribute("href");
+      string alias = elementHtmlDefinition.InnerText.Trim();
+      return new CallArgumentModel() { ArgumentType = "string", Content = hrefContent, Alias = string.IsNullOrEmpty(alias) ? null : alias };
+    }
     else
     {
       return null;

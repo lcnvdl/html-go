@@ -106,6 +106,8 @@ class AngleSharpHtmlElementAbstraction : IHtmlElementAbstraction
 
   public string? GetData(string dataName) => this.element.GetAttribute($"data-{dataName}");
 
+  public string? GetAttribute(string dataName) => this.element.GetAttribute(dataName);
+
   public override string ToString()
   {
     return this.element.ToHtml();

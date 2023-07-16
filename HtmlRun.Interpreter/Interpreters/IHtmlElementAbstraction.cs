@@ -16,5 +16,7 @@ public interface IHtmlElementAbstraction
 
   string? GetData(string dataName);
 
+  string? GetAttribute(string attributeName);
+
   IHtmlElementAbstraction? FindChildByTag(string tag, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase) => this.Children.FirstOrDefault(m => m.TagName.Equals(tag, comparison));
 }

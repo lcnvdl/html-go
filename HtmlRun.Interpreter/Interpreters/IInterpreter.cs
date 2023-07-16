@@ -4,5 +4,5 @@ namespace HtmlRun.Interpreter.Interpreters;
 
 public interface IInterpreter
 {
-  Task<AppModel> ParseString(string content);
+  Task<AppModel> ParseString(string content, Func<string, string> readContent);
 }
