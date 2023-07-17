@@ -5,7 +5,7 @@
     <Description>HtmlGo Interpreter</Description>
     <Product>HtmlGo Interpreter</Product>
     <AssemblyTitle>HtmlGo.Interpreter</AssemblyTitle>
-    <Version>0.2.0-beta</Version>
+    <Version>0.3.0-alpha</Version>
   </PropertyGroup>
 
   <PropertyGroup>
