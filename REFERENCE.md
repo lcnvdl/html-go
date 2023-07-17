@@ -228,6 +228,7 @@ The calls should be enclosed within a `<u>` tag.
 ## Specialized Tags
 * ul -
   * Used to list instructions.
+  * If you include the `data-label` attribute, you can define a group of instructions as a custom call, allowing you to call it from the main program using its associated label.
 * ul > li -
   * Used to specify an instruction in the list.
 * ul > li > u -

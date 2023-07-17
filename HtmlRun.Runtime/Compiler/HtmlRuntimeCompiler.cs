@@ -32,9 +32,6 @@ static class HtmlRuntimeCompiler
     //  Merge and clear groups
     foreach (var groupToMerge in app.LabeledGroups)
     {
-      var label = $"group-{groupToMerge.Label}";
-      var endLabel = $"end-group-{groupToMerge.Label}";
-
       mainGroup.Instructions.AddRange(groupToMerge.Instructions);
 
       groupToMerge.Instructions.Clear();
