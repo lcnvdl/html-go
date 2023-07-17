@@ -7,5 +7,12 @@ class InstructionsProvider : INativeProvider
 {
   public string Namespace => Runtime.Constants.Namespaces.Global;
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new LogCmd(), new SetTitleCmd(), };
+  public List<string> Logs { get; private set; }
+
+  public INativeInstruction[] Instructions => new INativeInstruction[] { new LogCmd(this.Logs), new SetTitleCmd(), };
+
+  public InstructionsProvider(List<string> logs)
+  {
+    this.Logs = logs;
+  }
 }

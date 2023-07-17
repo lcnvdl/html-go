@@ -2,28 +2,24 @@ using HtmlRun.Common.Models;
 using HtmlRun.Interpreter.Interpreters;
 using HtmlRun.Runtime;
 using HtmlRun.Tests.Stubs;
-using HtmlRun.Tests.Stubs.Instructions;
 
-[Collection("IntegrationTests")]
-public class HtmlRuntimeExamplesTests : IDisposable
+public class HtmlRuntimeExamplesTests
 {
   private HtmlRuntime runtime;
+
   private SpiderInterpreter spider;
+
+  private List<string> logs;
 
   public HtmlRuntimeExamplesTests()
   {
-    LogCmd.Logs.Clear();
+    this.logs = new List<string>();
 
     this.runtime = new HtmlRuntime();
     this.runtime.RegisterBasicProviders();
-    this.runtime.RegisterProvider(new InstructionsProvider());
+    this.runtime.RegisterProvider(new InstructionsProvider(this.logs));
 
     this.spider = new SpiderInterpreter();
-  }
-
-  public void Dispose()
-  {
-    LogCmd.Logs.Clear();
   }
 
   [Fact]
@@ -33,8 +29,8 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Single(LogCmd.Logs);
-    Assert.Equal("Hello world", LogCmd.Logs[0]);
+    Assert.Single(this.logs);
+    Assert.Equal("Hello world", this.logs[0]);
   }
 
   [Fact]
@@ -47,8 +43,8 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Single(LogCmd.Logs);
-    Assert.Equal("The result of 1 + 2 is 3", LogCmd.Logs[0]);
+    Assert.Single(this.logs);
+    Assert.Equal("The result of 1 + 2 is 3", this.logs[0]);
   }
 
   [Fact]
@@ -58,8 +54,8 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Single(LogCmd.Logs);
-    Assert.Equal("The result of Fibonacci(13) is 233", LogCmd.Logs[0]);
+    Assert.Single(this.logs);
+    Assert.Equal("The result of Fibonacci(13) is 233", this.logs[0]);
   }
 
   [Fact]
@@ -69,9 +65,9 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(2, LogCmd.Logs.Count);
-    Assert.Equal("3 > 2... Yep", LogCmd.Logs[0]);
-    Assert.Equal("1 > 2... Nope", LogCmd.Logs[1]);
+    Assert.Equal(2, this.logs.Count);
+    Assert.Equal("3 > 2... Yep", this.logs[0]);
+    Assert.Equal("1 > 2... Nope", this.logs[1]);
   }
 
   [Fact]
@@ -81,12 +77,12 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(5, LogCmd.Logs.Count);
-    Assert.Equal("Language: HyperText Machine Language", LogCmd.Logs[0]);
-    Assert.Equal("You have a new message: Hi there!", LogCmd.Logs[1]);
-    Assert.Equal("Reply: Hello", LogCmd.Logs[2]);
-    Assert.Contains("Current time: ", LogCmd.Logs[3]);
-    Assert.Contains("Next second value: ", LogCmd.Logs[4]);
+    Assert.Equal(5, this.logs.Count);
+    Assert.Equal("Language: HyperText Machine Language", this.logs[0]);
+    Assert.Equal("You have a new message: Hi there!", this.logs[1]);
+    Assert.Equal("Reply: Hello", this.logs[2]);
+    Assert.Contains("Current time: ", this.logs[3]);
+    Assert.Contains("Next second value: ", this.logs[4]);
   }
 
   [Fact]
@@ -96,11 +92,11 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    // Assert.Single(LogCmd.Logs);
-    Assert.Equal(3, LogCmd.Logs.Count);
-    Assert.Equal("Value: 0", LogCmd.Logs[0]);
-    Assert.Equal("Value (+1): 1", LogCmd.Logs[1]);
-    Assert.Equal("Value (-1): 0", LogCmd.Logs[2]);
+    // Assert.Single(this.logs);
+    Assert.Equal(3, this.logs.Count);
+    Assert.Equal("Value: 0", this.logs[0]);
+    Assert.Equal("Value (+1): 1", this.logs[1]);
+    Assert.Equal("Value (-1): 0", this.logs[2]);
   }
 
   [Fact]
@@ -110,13 +106,13 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(6, LogCmd.Logs.Count);
-    Assert.Equal("Current iteration: 0", LogCmd.Logs[0]);
-    Assert.Equal("Current iteration: 1", LogCmd.Logs[1]);
-    Assert.Equal("Current iteration: 2", LogCmd.Logs[2]);
-    Assert.Equal("Current iteration: 3", LogCmd.Logs[3]);
-    Assert.Equal("Current iteration: 4", LogCmd.Logs[4]);
-    Assert.Equal("Exit", LogCmd.Logs[5]);
+    Assert.Equal(6, this.logs.Count);
+    Assert.Equal("Current iteration: 0", this.logs[0]);
+    Assert.Equal("Current iteration: 1", this.logs[1]);
+    Assert.Equal("Current iteration: 2", this.logs[2]);
+    Assert.Equal("Current iteration: 3", this.logs[3]);
+    Assert.Equal("Current iteration: 4", this.logs[4]);
+    Assert.Equal("Exit", this.logs[5]);
   }
 
   [Fact]
@@ -126,8 +122,8 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Single(LogCmd.Logs);
-    Assert.Equal("Sleep was called without the namespace (Threading.Sleep).", LogCmd.Logs[0]);
+    Assert.Single(this.logs);
+    Assert.Equal("Sleep was called without the namespace (Threading.Sleep).", this.logs[0]);
   }
 
   [Fact]
@@ -137,8 +133,8 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Single(LogCmd.Logs);
-    Assert.Equal("3 > 2... Yep", LogCmd.Logs[0]);
+    Assert.Single(this.logs);
+    Assert.Equal("3 > 2... Yep", this.logs[0]);
   }
 
   [Fact]
@@ -148,10 +144,10 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(3, LogCmd.Logs.Count);
-    Assert.Equal("Arf arf!", LogCmd.Logs[0]);
-    Assert.Equal("Squeek!", LogCmd.Logs[1]);
-    Assert.Equal("Moo!", LogCmd.Logs[2]);
+    Assert.Equal(3, this.logs.Count);
+    Assert.Equal("Arf arf!", this.logs[0]);
+    Assert.Equal("Squeek!", this.logs[1]);
+    Assert.Equal("Moo!", this.logs[2]);
   }
 
   [Fact]
@@ -161,12 +157,12 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(5, LogCmd.Logs.Count);
-    Assert.Equal("Iteration: 0", LogCmd.Logs[0]);
-    Assert.Equal("Iteration: 1", LogCmd.Logs[1]);
-    Assert.Equal("Iteration: 2", LogCmd.Logs[2]);
-    Assert.Equal("Iteration: 3", LogCmd.Logs[3]);
-    Assert.Equal("Iteration: 4", LogCmd.Logs[4]);
+    Assert.Equal(5, this.logs.Count);
+    Assert.Equal("Iteration: 0", this.logs[0]);
+    Assert.Equal("Iteration: 1", this.logs[1]);
+    Assert.Equal("Iteration: 2", this.logs[2]);
+    Assert.Equal("Iteration: 3", this.logs[3]);
+    Assert.Equal("Iteration: 4", this.logs[4]);
   }
 
   [Fact]
@@ -176,13 +172,13 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal("Do-While is working fine when condition is false", LogCmd.Logs[0]);
-    Assert.Equal("Iteration: 0", LogCmd.Logs[1]);
-    Assert.Equal("Iteration: 1", LogCmd.Logs[2]);
-    Assert.Equal("Iteration: 2", LogCmd.Logs[3]);
-    Assert.Equal("Iteration: 3", LogCmd.Logs[4]);
-    Assert.Equal("Iteration: 4", LogCmd.Logs[5]);
-    Assert.Equal(6, LogCmd.Logs.Count);
+    Assert.Equal("Do-While is working fine when condition is false", this.logs[0]);
+    Assert.Equal("Iteration: 0", this.logs[1]);
+    Assert.Equal("Iteration: 1", this.logs[2]);
+    Assert.Equal("Iteration: 2", this.logs[3]);
+    Assert.Equal("Iteration: 3", this.logs[4]);
+    Assert.Equal("Iteration: 4", this.logs[5]);
+    Assert.Equal(6, this.logs.Count);
   }
 
   [Fact]
@@ -192,12 +188,12 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(5, LogCmd.Logs.Count);
-    Assert.Equal("Iteration: 0", LogCmd.Logs[0]);
-    Assert.Equal("Iteration: 1", LogCmd.Logs[1]);
-    Assert.Equal("Iteration: 2", LogCmd.Logs[2]);
-    Assert.Equal("Iteration: 3", LogCmd.Logs[3]);
-    Assert.Equal("Iteration: 4", LogCmd.Logs[4]);
+    Assert.Equal(5, this.logs.Count);
+    Assert.Equal("Iteration: 0", this.logs[0]);
+    Assert.Equal("Iteration: 1", this.logs[1]);
+    Assert.Equal("Iteration: 2", this.logs[2]);
+    Assert.Equal("Iteration: 3", this.logs[3]);
+    Assert.Equal("Iteration: 4", this.logs[4]);
   }
 
   [Fact]
@@ -207,7 +203,7 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(16 * 16, LogCmd.Logs.Count);
+    Assert.Equal(16 * 16, this.logs.Count);
   }
 
   //  Partial comment. Will be implemented in another PR.
@@ -218,8 +214,8 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Single(LogCmd.Logs);
-    Assert.Equal("H", LogCmd.Logs[0]);
+    Assert.Single(this.logs);
+    Assert.Equal("H", this.logs[0]);
   }*/
 
   [Fact]
@@ -229,11 +225,11 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(4, LogCmd.Logs.Count);
-    Assert.Equal("Begin", LogCmd.Logs[0]);
-    Assert.Equal("Inside the function", LogCmd.Logs[1]);
-    Assert.Equal("Closing app...", LogCmd.Logs[2]);
-    Assert.Equal("Exit", LogCmd.Logs[3]);
+    Assert.Equal(4, this.logs.Count);
+    Assert.Equal("Begin", this.logs[0]);
+    Assert.Equal("Inside the function", this.logs[1]);
+    Assert.Equal("Closing app...", this.logs[2]);
+    Assert.Equal("Exit", this.logs[3]);
   }
 
 
@@ -244,10 +240,10 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(3, LogCmd.Logs.Count);
-    Assert.Equal("Program started", LogCmd.Logs[0]);
-    Assert.Equal("Info", LogCmd.Logs[1]);
-    Assert.Equal("Program finished", LogCmd.Logs[2]);
+    Assert.Equal(3, this.logs.Count);
+    Assert.Equal("Program started", this.logs[0]);
+    Assert.Equal("Info", this.logs[1]);
+    Assert.Equal("Program finished", this.logs[2]);
   }
 
   private async Task<AppModel> ReadApp(string exampleName)
