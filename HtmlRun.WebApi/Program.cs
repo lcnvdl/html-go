@@ -1,5 +1,6 @@
 using HtmlRun.Common.Models;
 using HtmlRun.Interpreter.Interpreters;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace HtmlRun.WebApi;
 
@@ -10,6 +11,10 @@ static class Program
     var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+
+    var corsArgs = ProgramArgsProcessor.Preprocess(args);
+
+    SetupCors(corsArgs, builder);
 
     var app = builder.Build();
 
@@ -36,6 +41,11 @@ static class Program
       app.UseSwaggerUI();
     }
 
+    if (argsModel.UseCors)
+    {
+      app.UseCors();
+    }
+
     if (argsModel.Https)
     {
       app.UseHttpsRedirection();
@@ -44,6 +54,48 @@ static class Program
     runtime.Run(appModel, null);
 
     app.Run();
+  }
+
+  private static void SetupCors(ProgramArgs corsArgs, WebApplicationBuilder builder)
+  {
+    if (corsArgs.UseCors)
+    {
+      builder.Services.AddCors(options =>
+      {
+        options.AddDefaultPolicy(
+          builder =>
+          {
+            if (corsArgs.CorsOrigin != "*")
+            {
+              builder.WithOrigins(corsArgs.CorsOrigin.Split(","));
+            }
+            else
+            {
+              builder.AllowAnyOrigin();
+            }
+
+            if (corsArgs.CorsHeaders != "*")
+            {
+              builder.WithHeaders(corsArgs.CorsHeaders.Split(","));
+            }
+            else
+            {
+              builder.AllowAnyHeader();
+            }
+
+            if (corsArgs.CorsMethods != "*")
+            {
+              builder.WithMethods(corsArgs.CorsMethods.Split(","));
+            }
+            else
+            {
+              builder.AllowAnyMethod();
+            }
+
+            builder.SetIsOriginAllowedToAllowWildcardSubdomains();
+          });
+      });
+    }
   }
 
   private static void ShowCurrentVersion(ILogger logger)

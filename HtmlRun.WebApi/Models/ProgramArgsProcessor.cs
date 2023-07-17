@@ -2,9 +2,21 @@ namespace HtmlRun.WebApi;
 
 static class ProgramArgsProcessor
 {
-  public static ProgramArgs ProcessInputAndGetModel(string[] args, int defaultExample, ILogger logger)
+  public static ProgramArgs Preprocess(string[] args)
   {
     var model = new ProgramArgs();
+
+    model.UseCors = !args.Contains("--no-cors");
+    model.CorsOrigin = args.FirstOrDefault(x => x.StartsWith("--cors-origin="))?.Split("=")[1] ?? "*";
+    model.CorsMethods = args.FirstOrDefault(x => x.StartsWith("--cors-methods="))?.Split("=")[1] ?? "*";
+    model.CorsHeaders = args.FirstOrDefault(x => x.StartsWith("--cors-headers="))?.Split("=")[1] ?? "*";
+
+    return model;
+  }
+
+  public static ProgramArgs ProcessInputAndGetModel(string[] args, int defaultExample, ILogger logger)
+  {
+    var model = Preprocess(args);
 
     string? file = args.FirstOrDefault();
 
@@ -42,6 +54,7 @@ static class ProgramArgsProcessor
     model.File = file;
     model.UseSwagger = file == "run" || args.Contains("--swagger");
     model.Https = args.Contains("--https");
+    model.UseCors = !args.Contains("--no-cors");
 
     return model;
   }
