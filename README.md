@@ -80,8 +80,10 @@ Before you can start using `HtmlGo` to compile and execute applications, you'll 
 
 Once you have completed these steps, you have successfully installed `HtmlGo` on your system. You can now start using `HtmlGo` to compile and execute applications written in HTML.
 
-## Tutorials (Spanish)
-https://www.youtube.com/@ACodearla
+## Tutorials
+* [HtmlGo Playlist (Spanish-Español)](https://www.youtube.com/playlist?list=PLN55oDjIbZw-n1D9bUEykjyBoSS_3D8fn)
+
+Are you a content creator? Send us a pull request with your videos!
 
 ## Dev tools
 * Commands (list of commands I've used) - `commands.bat`
