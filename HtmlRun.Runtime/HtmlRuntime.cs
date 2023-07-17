@@ -110,7 +110,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
     this.isApplicationStarted = true;
 
-    InstructionPointer cursor = new();
+    var cursor = new InstructionPointer();
 
     InstructionsGroup? main = app.InstructionGroups.FirstOrDefault(m => m.Label == InstructionsGroup.MainLabel);
     if (main == null)

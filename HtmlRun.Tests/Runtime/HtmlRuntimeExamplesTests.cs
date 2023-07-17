@@ -220,6 +220,20 @@ public class HtmlRuntimeExamplesTests : IDisposable
     Assert.Equal("H", LogCmd.Logs[0]);
   }
 
+  [Fact(Timeout = 10000)]
+  public async void HtmlRuntime_Example_19()
+  {
+    var app = await this.ReadApp("19-call_stack");
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(4, LogCmd.Logs.Count);
+    Assert.Equal("Begin", LogCmd.Logs[0]);
+    Assert.Equal("Inside the function", LogCmd.Logs[1]);
+    Assert.Equal("Closing app...", LogCmd.Logs[2]);
+    Assert.Equal("Exit", LogCmd.Logs[3]);
+  }
+
   private async Task<AppModel> ReadApp(string exampleName)
   {
     string file = Environment.CurrentDirectory.Remove(Environment.CurrentDirectory.IndexOf("HtmlRun.Tests"));

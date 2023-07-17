@@ -1,0 +1,41 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Call stack manipulation example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+  <h1>Call stack manipulation example</h1>
+  <div class="comment">
+    En primer lugar, deberá pasar por "Begin".<br />
+    Luego, hacer un goto a la función "kindOfFunction".<br />
+    Esta debe ejecutar su contenido y luego retornar al punto donde se llamó.<br />
+    Después de esto, deberá pasar por "Closing app..." y ejecutar el "Goto" hacia "exit".
+    Finalmente deberá pasar por "Exit".
+  </div>
+
+  <h2>Main</h2>
+  <ul>
+    <li><u>Log</u> <i class="string">Begin</i></li>
+
+    <li><u>Call</u> <i class="string">kindOfFunction</i></li>
+
+    <li><u>Log</u> <i class="string">Closing app...</i></li>
+
+    <li><u>Goto</u> <i class="string">exit</i></li>
+
+    <li data-id="kindOfFunction"><u>Label</u> <i class="string">kindOfFunction</i></li>
+
+    <li><u>Log</u> <i class="string">Inside the function</i></li>
+    
+    <li><u>Return</u></li>
+
+    <li data-id="exit"><u>Label</u> <i class="string">exit</i></li>
+
+    <li><u>Log</u> <i class="string">Exit</i></li>
+  </ul>
+</body>
+
+</html>

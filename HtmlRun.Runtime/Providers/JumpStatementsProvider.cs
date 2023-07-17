@@ -8,7 +8,43 @@ class JumpStatementsProvider : INativeProvider
 {
   public string Namespace => Constants.Namespaces.Global;
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new GotoCmd(), new GotoLineCmd(), new LabelCmd(), new ContextPullCmd(), new ContextPushCmd(), };
+  public INativeInstruction[] Instructions => new INativeInstruction[] {
+    new GotoCmd(),
+    new GotoLineCmd(),
+    new LabelCmd(),
+    new ContextPullCmd(),
+    new ContextPushCmd(),
+    new CallCmd(),
+    new ReturnCmd(),
+  };
+}
+
+
+
+class CallCmd : INativeInstruction
+{
+  public string Key => Constants.BasicInstructionsSet.Call;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => ctx.Jump(new JumpToLineWithCallStack(ctx.GetArgument()!, JumpToLine.JumpTypeEnum.LineId, ctx.GetArgument(1) == null ? 0 : int.Parse(ctx.GetRequiredArgument(1))));
+    }
+  }
+}
+
+class ReturnCmd : INativeInstruction
+{
+  public string Key => Constants.BasicInstructionsSet.Return;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => ctx.Jump(new JumpReturn());
+    }
+  }
 }
 
 class LabelCmd : INativeInstruction
