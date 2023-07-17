@@ -1,5 +1,5 @@
 # HtmlGo changelog
-## v0.3.0-alpha (next)
+## v0.3.0-alpha
 * Runtime parameters:
   * Version info. Usage: `htmlgo --version` or `htmlgo-server --version`.
   * Https redirection (disabled by default). Usage: `htmlgo-server --http Example1.html`.
