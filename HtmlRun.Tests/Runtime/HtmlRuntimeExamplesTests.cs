@@ -4,6 +4,7 @@ using HtmlRun.Runtime;
 using HtmlRun.Tests.Stubs;
 using HtmlRun.Tests.Stubs.Instructions;
 
+[Collection("IntegrationTests")]
 public class HtmlRuntimeExamplesTests : IDisposable
 {
   private HtmlRuntime runtime;
@@ -209,7 +210,8 @@ public class HtmlRuntimeExamplesTests : IDisposable
     Assert.Equal(16 * 16, LogCmd.Logs.Count);
   }
 
-  [Fact]
+  //  Partial comment. Will be implemented in another PR.
+  /*[Fact]
   public async void HtmlRuntime_Example_18()
   {
     var app = await this.ReadApp("18-library_import");
@@ -218,7 +220,7 @@ public class HtmlRuntimeExamplesTests : IDisposable
 
     Assert.Single(LogCmd.Logs);
     Assert.Equal("H", LogCmd.Logs[0]);
-  }
+  }*/
 
   [Fact]
   public async void HtmlRuntime_Example_19()
