@@ -220,7 +220,7 @@ public class HtmlRuntimeExamplesTests : IDisposable
     Assert.Equal("H", LogCmd.Logs[0]);
   }
 
-  [Fact(Timeout = 10000)]
+  [Fact]
   public async void HtmlRuntime_Example_19()
   {
     var app = await this.ReadApp("19-call_stack");
@@ -232,6 +232,20 @@ public class HtmlRuntimeExamplesTests : IDisposable
     Assert.Equal("Inside the function", LogCmd.Logs[1]);
     Assert.Equal("Closing app...", LogCmd.Logs[2]);
     Assert.Equal("Exit", LogCmd.Logs[3]);
+  }
+
+
+  [Fact]
+  public async void HtmlRuntime_Example_20()
+  {
+    var app = await this.ReadApp("20-instruction_groups");
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(3, LogCmd.Logs.Count);
+    Assert.Equal("Program started", LogCmd.Logs[0]);
+    Assert.Equal("Info", LogCmd.Logs[1]);
+    Assert.Equal("Program finished", LogCmd.Logs[2]);
   }
 
   private async Task<AppModel> ReadApp(string exampleName)

@@ -6,6 +6,7 @@ using HtmlRun.Runtime.Factories;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Models;
 using HtmlRun.Runtime.Native;
+using HtmlRun.Runtime.Providers;
 using HtmlRun.Runtime.RuntimeContext;
 using HtmlRun.Runtime.Utils;
 
@@ -112,7 +113,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
     var cursor = new InstructionPointer();
 
-    InstructionsGroup? main = app.InstructionGroups.FirstOrDefault(m => m.Label == InstructionsGroup.MainLabel);
+    InstructionsGroup? main = app.InstructionGroups.SingleOrDefault(m => m.Label == InstructionsGroup.MainLabel);
     if (main == null)
     {
       throw new InvalidOperationException("Main instructions group not found.");
@@ -292,6 +293,17 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     if (this.instructions.ContainsKey(key))
     {
       return this.instructions[key];
+    }
+
+    if (this.application.LabeledGroups.Any())
+    {
+      foreach (var group in this.application.LabeledGroups)
+      {
+        if (group.Label.Equals(key))
+        {
+          return ctx => ctx.CursorModification = new JumpToLineWithCallStack($"group-{group.Label}", JumpToLine.JumpTypeEnum.LineId);
+        }
+      }
     }
 
     if (ctx.Usings.Any())

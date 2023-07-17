@@ -10,6 +10,8 @@ public class AppModel
 
   public List<InstructionsGroup> InstructionGroups { get; set; } = new();
 
+  public IEnumerable<InstructionsGroup> LabeledGroups => this.InstructionGroups.Where(m => !m.IsMain);
+
   public List<FunctionModel> Functions { get; set; } = new();
 
   public List<EntityModel> Entities { get; set; } = new();

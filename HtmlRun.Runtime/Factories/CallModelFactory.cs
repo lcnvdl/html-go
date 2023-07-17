@@ -18,6 +18,12 @@ static class CallModelFactory
     return NewCall(Constants.BasicInstructionsSet.Goto, CallArgumentModel.FromString(labelName));
   }
 
+
+  internal static CallModel Return()
+  {
+    return NewCall(Constants.BasicInstructionsSet.Return);
+  }
+
   internal static CallModel TestAndGoto(CallArgumentModel ifCondition, string expectedValue, string labelName)
   {
     var testAndGoto = NewCall(Constants.BasicInstructionsSet.TestAndGoto, CallArgumentModel.FromString(expectedValue), CallArgumentModel.FromString(labelName));

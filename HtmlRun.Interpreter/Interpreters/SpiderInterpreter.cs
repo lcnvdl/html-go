@@ -73,17 +73,39 @@ public class SpiderInterpreter : IInterpreter
     var groups = new List<InstructionsGroup>();
     var allPossibleGroups = possibleGroups.ToList();
 
+    InstructionsGroup? mainGroup = null;
+
     foreach (var groupElement in allPossibleGroups)
     {
-      bool isMain = (allPossibleGroups.Count == 1) || groupElement.HasClass("calls", StringComparison.InvariantCultureIgnoreCase);
+      if (groupElement.HasClass("ignore", StringComparison.InvariantCultureIgnoreCase) ||
+        groupElement.HasClass("comment", StringComparison.InvariantCultureIgnoreCase))
+      {
+        continue;
+      }
 
-      var possibleCalls = groupElement.Children.ToList();
+      string label = groupElement.GetData("label") ?? InstructionsGroup.MainLabel;
 
-      var newGroup = isMain ? InstructionsGroup.Main : new InstructionsGroup();
-      newGroup.Label = groupElement.GetData("label") ?? newGroup.Label;
-      newGroup.Instructions = this.ParseInstructionOfGroup(possibleCalls).ToList();
-      
-      groups.Add(newGroup);
+      bool isMain = label.Equals(InstructionsGroup.MainLabel, StringComparison.InvariantCultureIgnoreCase);
+
+      var possibleCalls = groupElement.Children;
+
+      if (isMain)
+      {
+        if (mainGroup == null)
+        {
+          mainGroup = InstructionsGroup.Main;
+          groups.Add(mainGroup);
+        }
+
+        mainGroup.Instructions.AddRange(this.ParseInstructionOfGroup(possibleCalls));
+      }
+      else
+      {
+        var newGroup = new InstructionsGroup(label);
+        newGroup.Instructions.AddRange(this.ParseInstructionOfGroup(possibleCalls));
+
+        groups.Add(newGroup);
+      }
     }
 
     return groups;
