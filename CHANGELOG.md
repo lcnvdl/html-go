@@ -5,6 +5,8 @@
   * Https redirection (disabled by default). Usage: `htmlgo-server --http Example1.html`.
   * String provider (String.Trim, String.ToLowerCase, String.ToUpperCase, String.ToTitleCase).
   * Terminal provider (Console.ReadLine).
+  * Css "calls" recommendation removed.
+  * Call instruction added. Now you can call functions from different instruction groups.
 
 ## v0.2.0-alpha
 * Improvement: Enhance Instruction Processing. [View issue](https://github.com/lcnvdl/html-go/issues/5).

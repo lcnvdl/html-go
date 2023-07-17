@@ -4,20 +4,18 @@ using HtmlRun.Runtime.Code;
 using HtmlRun.Tests.Stubs;
 using HtmlRun.Tests.Stubs.Instructions;
 
-public class HtmlRuntimeTests : IDisposable
+public class HtmlRuntimeTests
 {
   private HtmlRuntime runtime;
 
+  private List<string> logs;
+
   public HtmlRuntimeTests()
   {
-    this.runtime = new HtmlRuntime();
-    this.runtime.RegisterProvider(new InstructionsProvider());
-    LogCmd.Logs.Clear();
-  }
+    this.logs = new List<string>();
 
-  public void Dispose()
-  {
-    LogCmd.Logs.Clear();
+    this.runtime = new HtmlRuntime();
+    this.runtime.RegisterProvider(new InstructionsProvider(this.logs));
   }
 
   [Fact]
@@ -31,8 +29,30 @@ public class HtmlRuntimeTests : IDisposable
   {
     this.runtime.RunInstruction("Log", ParsedArgument.String("this is a message"));
 
-    Assert.Single(LogCmd.Logs);
-    Assert.Equal("this is a message", LogCmd.Logs[0]);
+    Assert.Single(this.logs);
+    Assert.Equal("this is a message", this.logs[0]);
+  }
+
+  [Fact]
+  public void HtmlRuntime_AppInfo_ShouldBeAvailable()
+  {
+    this.runtime.RegisterBasicProviders();
+
+    var app = new AppModel();
+    app.Version = "3.14.15";
+    app.Title = "Test";
+    app.Type = AppType.Console;
+    app.InstructionGroups.Add(InstructionsGroup.Main);
+    app.InstructionGroups[0].Instructions.Add("Log".AsCall(CallArgumentModel.FromCall("Application.Title")));
+    app.InstructionGroups[0].Instructions.Add("Log".AsCall(CallArgumentModel.FromCall("Application.Version")));
+    app.InstructionGroups[0].Instructions.Add("Log".AsCall(CallArgumentModel.FromCall("Application.Type")));
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(3, this.logs.Count);
+    Assert.Equal("Test", this.logs[0]);
+    Assert.Equal("3.14.15", this.logs[1]);
+    Assert.Equal("Console", this.logs[2]);
   }
 
   [Fact]
@@ -48,7 +68,7 @@ public class HtmlRuntimeTests : IDisposable
 
     this.runtime.Run(app, null);
 
-    Assert.Single(LogCmd.Logs);
-    Assert.Equal("Lucho", LogCmd.Logs[0]);
+    Assert.Single(this.logs);
+    Assert.Equal("Lucho", this.logs[0]);
   }
 }

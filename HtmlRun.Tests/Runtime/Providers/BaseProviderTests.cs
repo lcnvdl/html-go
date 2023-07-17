@@ -1,11 +1,10 @@
 using HtmlRun.Runtime;
 using HtmlRun.Runtime.Native;
 using HtmlRun.Tests.Stubs;
-using HtmlRun.Tests.Stubs.Instructions;
 
 public abstract class BaseProviderTests
 {
-  protected INativeProvider Provider { get; private set; }
+  private List<string> logs;
 
   private readonly Context ctx;
 
@@ -14,15 +13,17 @@ public abstract class BaseProviderTests
   protected Context Ctx => this.ctx;
 
   protected HtmlRuntime Runtime => this.runtime;
+  
+  protected INativeProvider Provider { get; private set; }
 
   public BaseProviderTests(INativeProvider provider)
   {
+    this.logs = new List<string>();
     this.Provider = provider;
     this.ctx = new Context(null, new Stack<Context>());
     this.runtime = new HtmlRuntime();
-    this.runtime.RegisterProvider(new InstructionsProvider());
+    this.runtime.RegisterProvider(new InstructionsProvider(this.logs));
     this.runtime.RegisterBasicProviders();
-    LogCmd.Logs.Clear();
   }
 
   protected void TestGetInstructions()

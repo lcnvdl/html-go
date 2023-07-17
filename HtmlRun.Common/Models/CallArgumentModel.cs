@@ -8,6 +8,8 @@ public class CallArgumentModel : ICloneable
 
   public string? BranchCondition { get; set; }
 
+  public string? Alias { get; set; }
+
   public List<CallModel>? BranchInstructions { get; set; }
 
   public bool IsString => this.ArgumentType == "string";

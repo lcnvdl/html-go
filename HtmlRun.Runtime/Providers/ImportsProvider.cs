@@ -7,7 +7,21 @@ public class ImportsProvider : INativeProvider
 {
   public string Namespace => Constants.Namespaces.Global;
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new UsingCmd(), };
+  public INativeInstruction[] Instructions => new INativeInstruction[] { new UsingCmd(), new ImportCmd(), };
+}
+
+class ImportCmd : INativeInstruction
+{
+  public string Key => Constants.BasicInstructionsSet.Import;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      //  Empty because is replaced after compilation.
+      return ctx => { };
+    }
+  }
 }
 
 class UsingCmd : INativeInstruction

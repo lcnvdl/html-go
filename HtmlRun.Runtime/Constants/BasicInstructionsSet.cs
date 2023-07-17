@@ -43,4 +43,10 @@ public static class BasicInstructionsSet
   public const string DoWhile = "Do";
 
   public const string For = "For";
+
+  public const string Import = "Import";
+
+  public const string Call = "Call";
+
+  public const string Return = "Return";
 }

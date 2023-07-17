@@ -6,6 +6,7 @@ using HtmlRun.Runtime.Factories;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Models;
 using HtmlRun.Runtime.Native;
+using HtmlRun.Runtime.Providers;
 using HtmlRun.Runtime.RuntimeContext;
 using HtmlRun.Runtime.Utils;
 
@@ -15,7 +16,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 {
   private readonly Dictionary<string, Action<ICurrentInstructionContext>> instructions = new();
 
-  private readonly Dictionary<string, Delegate> jsInstructions = new();
+  private readonly Dictionary<string, INativeJSDefinition> jsInstructions = new();
 
   private readonly Stack<Context> ctxStack = new();
 
@@ -29,9 +30,9 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
   private JavascriptParserWithContext? applicationJsContext;
 
-  public HtmlRuntime()
+  public HtmlRuntime(Context? parent = null)
   {
-    this.globalCtx = new Context(null, this.ctxStack);
+    this.globalCtx = new Context(parent, this.ctxStack);
   }
 
   public string[] Namespaces => this.instructions.Keys
@@ -64,6 +65,13 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     var jsParserWithContext = JavascriptParserWithContextFactory.CreateNewJavascriptParserAndAssignInstructions(this.jsInstructions);
 
     this.applicationJsContext = jsParserWithContext;
+
+    //  App info
+    this.globalCtx.DeclareAndSetConst("Application.Title", application.Title);
+    this.globalCtx.DeclareAndSetConst("Application.Version", application.Version);
+    this.globalCtx.DeclareAndSetConst("Application.Type", application.Type.ToString());
+
+    jsParserWithContext.ExecuteCode($"window.Application = {{ Title: '{application.Title}', Version: '{application.Version}', Type: '{application.Type}', }}");
 
     //  Title
 
@@ -103,9 +111,13 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
     this.isApplicationStarted = true;
 
-    InstructionPointer cursor = new();
+    var cursor = new InstructionPointer();
 
-    InstructionsGroup main = app.InstructionGroups.First(m => m.Label == InstructionsGroup.Main.Label);
+    InstructionsGroup? main = app.InstructionGroups.SingleOrDefault(m => m.Label == InstructionsGroup.MainLabel);
+    if (main == null)
+    {
+      throw new InvalidOperationException("Main instructions group not found.");
+    }
 
     List<CallModel> appInstructions = main.Instructions;
 
@@ -217,16 +229,11 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
       }
 
       //  JS Engine Instructions
-      if (instruction is INativeJSInstruction jsInstruction)
+      if (instruction is INativeJSBaseInstruction jsInstruction)
       {
-        if (provider.IsGlobal)
-        {
-          this.jsInstructions[instruction.Key] = jsInstruction.ToJSAction();
-        }
-        else
-        {
-          this.jsInstructions[$"{provider.Namespace}.{instruction.Key}"] = jsInstruction.ToJSAction();
-        }
+        string definitionName = provider.IsGlobal ? instruction.Key : $"{provider.Namespace}.{instruction.Key}";
+
+        this.jsInstructions[definitionName] = NativeJSDefinitionFactory.NewInstance(jsInstruction);
       }
     }
   }
@@ -288,6 +295,17 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
       return this.instructions[key];
     }
 
+    if (this.application.LabeledGroups.Any())
+    {
+      foreach (var group in this.application.LabeledGroups)
+      {
+        if (group.Label.Equals(key))
+        {
+          return ctx => ctx.CursorModification = new JumpToLineWithCallStack($"group-{group.Label}", JumpToLine.JumpTypeEnum.LineId);
+        }
+      }
+    }
+
     if (ctx.Usings.Any())
     {
       //  TODO  Optimization: Precompute context instructions.
@@ -307,6 +325,23 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
               return kv.Value;
             }
           }
+        }
+      }
+    }
+
+    if (this.application!.Imports.Any())
+    {
+      //  TODO  Optimization: Precompute context instructions.
+      //  TODO  Bug: Instructions must be saved in context, otherwise "call" and "callReference" params will fail.
+
+      foreach (var import in this.application.Imports)
+      {
+        string prefix = string.IsNullOrEmpty(import.Alias) ? "" : $"{import.Alias}.";
+        var group = import.Library.InstructionGroups.Find(m => $"{prefix}{m.Label}" == key);
+
+        if (group != null)
+        {
+          throw new NotImplementedException("Imported libraries are not implemented yet.");
         }
       }
     }

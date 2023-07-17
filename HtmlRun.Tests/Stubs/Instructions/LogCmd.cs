@@ -5,7 +5,7 @@ namespace HtmlRun.Tests.Stubs.Instructions;
 
 class LogCmd : INativeInstruction, INativeJSInstruction
 {
-  public static List<string> Logs { get; private set; } = new();
+  public List<string> Logs { get; private set; } = new();
 
   public string Key => Runtime.Constants.BasicInstructionsSet.Log;
 
@@ -15,6 +15,11 @@ class LogCmd : INativeInstruction, INativeJSInstruction
     {
       return ctx => Logs.Add(string.Join(" ", ctx.GetArgumentsValues().Select(m => m == null ? Runtime.Constants.Strings.Null : m.ToString())));
     }
+  }
+
+  public LogCmd(List<string> logs)
+  {
+    this.Logs = logs;
   }
 
   public Delegate ToJSAction()

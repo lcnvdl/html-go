@@ -7,7 +7,52 @@ public class StringProvider : INativeProvider
 {
   public string Namespace => "String";
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new TrimCmd(), new ToUpperCaseCmd(), new ToLowerCaseCmd(), new ToTitleCaseCmd(), };
+  public INativeInstruction[] Instructions => new INativeInstruction[] {
+    new TrimCmd(),
+    new ToUpperCaseCmd(),
+    new ToLowerCaseCmd(),
+    new ToTitleCaseCmd(),
+    new ConcatCmd(),
+    new JoinCmd(),
+  };
+}
+
+class ConcatCmd : INativeInstruction, INativeJSEvalInstruction
+{
+  public string Key => Constants.StringInstructionsSet.Concat;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+
+  public EvalDefinition ToEvalFunction()
+  {
+    return new EvalDefinition("return [args].join('');", -1);
+  }
+}
+
+
+class JoinCmd : INativeInstruction, INativeJSEvalInstruction
+{
+  public string Key => Constants.StringInstructionsSet.Join;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+
+  public EvalDefinition ToEvalFunction()
+  {
+    // return new Func<string, string[], string>((separator, values) => string.Join(separator, values));
+    return new EvalDefinition("return arg1.join(arg0);", 2);
+  }
 }
 
 class TrimCmd : INativeInstruction, INativeJSInstruction

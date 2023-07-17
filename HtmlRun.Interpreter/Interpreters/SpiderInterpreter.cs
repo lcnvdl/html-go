@@ -9,26 +9,23 @@ public class SpiderInterpreter : IInterpreter
 {
   private int nextCallModelIdx = 0;
 
-  public async Task<AppModel> ParseString(string content)
+  public async Task<AppModel> ParseString(string initialReference, Func<string, string> readContent)
   {
     IParser parser = new AngleSharpParser();
-    await parser.Load(content);
+    await parser.Load(readContent(initialReference));
 
     //  App
 
     var program = new AppModel();
-
     program.Title = parser.HeadTitle;
+    program.Version = parser.GetMetaContentWithDefaultValue("htmlgo:application-version", "1.0.0");
+    program.Type = GetAppTypeFromString(parser.GetMetaContentWithDefaultValue("htmlgo:application-type"));
 
     //  * Calls
 
-    var possibleCalls = parser.BodyQuerySelectorAll("body > ul.calls > li");
-    if (!possibleCalls.Any())
-    {
-      possibleCalls = parser.BodyQuerySelectorAll("body > ul > li");
-    }
+    var possibleGroups = parser.BodyQuerySelectorAll("body > ul");
 
-    program.InstructionGroups.AddRange(this.ParseInstructionGroupsAndCalls(possibleCalls));
+    program.InstructionGroups.AddRange(this.ParseInstructionGroupsAndCalls(possibleGroups));
 
     //  * Functions
 
@@ -42,21 +39,81 @@ public class SpiderInterpreter : IInterpreter
 
     program.Entities = parser.BodyQuerySelectorAll("table.entity").Select(EntityParser.ParseTable).Where(m => m != null).Cast<EntityModel>().ToList();
 
+    //  * Imports
+
+    foreach (var group in program.InstructionGroups)
+    {
+      var importInstructions = group.Instructions.FindAll(m => m.IsSpecial && m.FunctionName == "Import");
+
+      foreach (var import in importInstructions)
+      {
+        var importedData = new ImportedLibraryModel();
+        importedData.Origin = program;
+
+        if (string.IsNullOrEmpty(import.Arguments[0].Content))
+        {
+          throw new NullReferenceException($"Import path not found in line {import.CustomId}.");
+        }
+
+        importedData.Path = import.Arguments[0].Content!;
+        importedData.Library = await this.ParseString(importedData.Path, readContent);
+        importedData.Alias = (import.Arguments.Count > 1 ? import.Arguments[1].Content : null) ?? import.Arguments[0].Alias;
+
+        program.Imports.Add(importedData);
+      }
+    }
+
     //  Result
 
     return program;
   }
 
-  private List<InstructionsGroup> ParseInstructionGroupsAndCalls(IEnumerable<IHtmlElementAbstraction> possibleCalls)
+  private List<InstructionsGroup> ParseInstructionGroupsAndCalls(IEnumerable<IHtmlElementAbstraction> possibleGroups)
   {
     var groups = new List<InstructionsGroup>();
+    var allPossibleGroups = possibleGroups.ToList();
 
-    var mainGroup = InstructionsGroup.Main;
-    mainGroup.Instructions = possibleCalls.Select(this.ParseCall).Where(m => m != null).Cast<CallModel>().ToList();
+    InstructionsGroup? mainGroup = null;
 
-    groups.Add(mainGroup);
+    foreach (var groupElement in allPossibleGroups)
+    {
+      if (groupElement.HasClass("ignore", StringComparison.InvariantCultureIgnoreCase) ||
+        groupElement.HasClass("comment", StringComparison.InvariantCultureIgnoreCase))
+      {
+        continue;
+      }
+
+      string label = groupElement.GetData("label") ?? InstructionsGroup.MainLabel;
+
+      bool isMain = label.Equals(InstructionsGroup.MainLabel, StringComparison.InvariantCultureIgnoreCase);
+
+      var possibleCalls = groupElement.Children;
+
+      if (isMain)
+      {
+        if (mainGroup == null)
+        {
+          mainGroup = InstructionsGroup.Main;
+          groups.Add(mainGroup);
+        }
+
+        mainGroup.Instructions.AddRange(this.ParseInstructionOfGroup(possibleCalls));
+      }
+      else
+      {
+        var newGroup = new InstructionsGroup(label);
+        newGroup.Instructions.AddRange(this.ParseInstructionOfGroup(possibleCalls));
+
+        groups.Add(newGroup);
+      }
+    }
 
     return groups;
+  }
+
+  private List<CallModel> ParseInstructionOfGroup(IEnumerable<IHtmlElementAbstraction> possibleCalls)
+  {
+    return possibleCalls.Select(this.ParseCall).Where(m => m != null).Cast<CallModel>().ToList();
   }
 
   private CallModel? ParseCall(IHtmlElementAbstraction li)
@@ -149,5 +206,25 @@ public class SpiderInterpreter : IInterpreter
   private static string HtmlDecode(string html)
   {
     return System.Net.WebUtility.HtmlDecode(html).Trim();
+  }
+
+  private static AppType GetAppTypeFromString(string? appType)
+  {
+    if (string.IsNullOrEmpty(appType))
+    {
+      return AppType.Unknown;
+    }
+
+    switch (appType.ToLowerInvariant())
+    {
+      case "console":
+        return AppType.Console;
+      case "webserver":
+        return AppType.WebServer;
+      case "library":
+        return AppType.Library;
+      default:
+        throw new Exception($"App type {appType} is wrong.");
+    }
   }
 }

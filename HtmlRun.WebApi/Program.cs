@@ -109,7 +109,7 @@ static class Program
   {
     IInterpreter spider = new SpiderInterpreter();
 
-    AppModel app = await spider.ParseString(File.ReadAllText(file));
+    AppModel app = await spider.ParseString(file, m => File.ReadAllText(m));
 
     return app;
   }

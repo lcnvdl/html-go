@@ -32,9 +32,8 @@ The recommended structure for applications developed in HTML is as follows:
     <h2>Main</h2> <!-- Used for visual enhacements -->
     
     <!-- IMPORTANT: Required. Main section calls (ul). -->
-    <!-- IMPORTANT: Recommended. Add the .calls class to the ul element to emphasize it as the entry point of the application. -->"
     
-    <ul class="calls">  
+    <ul>  
       <!-- Calls -->
     </ul>
   </body>
@@ -53,7 +52,7 @@ The minimum structure for applications developed in HTML is as follows:
   </head>
 
   <body>
-    <ul class="calls"></ul>
+    <ul></ul>
   </body>
 
 </html>
@@ -75,7 +74,7 @@ Here is an example of HTML code that demonstrates the use of some elements and a
   <h1>Hello world example</h1>
 
   <h2>Main</h2>
-  <ul class="calls">
+  <ul>
     <li class="comment"><i>This is a comment</i></li>
 
     <li><u>Log</u> <i class="string">Hello world</i></li>
@@ -100,6 +99,25 @@ Here is an example of HTML code that demonstrates the use of some elements and a
 
 </html>
 ```
+
+## Metatags
+HtmlGo is compatible with any HTML meta tag, meaning that none of them will affect its functionality. In line with the [HTML semantics](https://html.spec.whatwg.org/multipage/semantics.html#meta-application-name), which allows the inclusion of new meta tags, we have decided to introduce some specific meta tags for HtmlGo.
+
+### New Metatags
+* Application version (optional): `htmlgo:application-version`.
+  * Possible values: `major.minor.patch`.
+  * Default value: `1.0.0`.
+  * Given a version number MAJOR.MINOR.PATCH, increment the:
+      -  MAJOR version when you make incompatible API changes.
+      -  MINOR version when you add functionality in a backward compatible manner.
+      -  PATCH version when you make backward compatible bug fixes.
+  * Additional labels for pre-release and build metadata are **not supported**.
+  * Example: `<meta name='htmlgo:application-version' content='1.0.0' />`.
+
+* Application type (optional): `htmlgo:application-type`.
+  * Possible values: `Console`, `WebServer`, `Library`.
+  * Default value: `Unknown`.
+  * Example: `<meta name='htmlgo:application-type' content='Console' />`.
 
 ## Language-related Calls
 The language-related calls should be enclosed within a `<b>` tag.
@@ -135,16 +153,17 @@ The language-related calls should be enclosed within a `<b>` tag.
 The calls should be enclosed within a `<u>` tag.
 
 ### Global calls
+* Call
 * Const
 * Delete
 * Goto
 * GotoLine
 * Label
 * Log
+* Return
 * Set
 * SetTitle
 * Using
-* V
 
 ### Console calls
 * Console.ReadLine
@@ -191,12 +210,12 @@ The calls should be enclosed within a `<u>` tag.
 ## CSS Keywords
 * call
   * Used to set dynamic arguments. For example `<i class='call'>Date.Timestamp()</i>`.
-* calls
-  * Used in `ul` to specify an instruction list.
 * comment
   * Used in `li` to comment the code. For example `<li class="comment"><i>This is a comment</i></li>`.
+  * Also can be used in `ul` to interpret the entire list as a comment by the compiler.
 * ignore
   * Used in `li` to ignore the line by the compiler. Useful for `<li><hr /></li>` for example.
+  * Also used in `ul` to ignore the entire list by the compiler.
 * number
   * Used to set the type of the argument. For example `<i class='number'>5</i>`.
 * solve
@@ -209,6 +228,7 @@ The calls should be enclosed within a `<u>` tag.
 ## Specialized Tags
 * ul -
   * Used to list instructions.
+  * If you include the `data-label` attribute, you can define a group of instructions as a custom call, allowing you to call it from the main program using its associated label.
 * ul > li -
   * Used to specify an instruction in the list.
 * ul > li > u -
@@ -232,7 +252,7 @@ We appreciate your interest in `HtmlGo` and welcome pull requests to help us imp
 ## Conclusions
 In conclusion, `HtmlGo` offers an innovative and visual way to program applications using familiar HTML tags and structure. With its unique syntax and instruction-based approach, `HtmlGo` provides a refreshing and creative programming experience.
 
-When developing in `HtmlGo`, it is important to follow the recommended structure for applications, as described in the previous section. Additionally, it is recommended to add the .calls class to the ul element to highlight it as the entry point of the application.
+When developing in `HtmlGo`, it is important to follow the recommended structure for applications, as described in the previous section. 
 
 With `HtmlGo`, you have the flexibility to use specialized tags for different types of instructions and calls. Explore the possibilities and experiment with nested instructions to create more complex applications.
 
