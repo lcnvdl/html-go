@@ -7,6 +7,8 @@
   * Terminal provider (Console.ReadLine).
   * Css "calls" recommendation removed.
   * Call instruction added. Now you can call functions from different instruction groups.
+  * 
+**Full Changelog**: https://github.com/lcnvdl/html-go/compare/v0.2.0-alpha...v0.3.0-alpha
 
 ## v0.2.0-alpha
 * Improvement: Enhance Instruction Processing. [View issue](https://github.com/lcnvdl/html-go/issues/5).
