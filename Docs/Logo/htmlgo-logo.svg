@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg870"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="me caigo de orto.svg">
+  <title
+     id="title1435">https://htmlgo.org</title>
+  <defs
+     id="defs864" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="-204.81961"
+     inkscape:cy="124.74867"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata867">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>https://htmlgo.org</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       transform="matrix(0.58633426,0,0,0.58633426,31.5385,11.937771)"
+       style="display:inline"
+       id="g893-9"
+       inkscape:export-xdpi="38.330723"
+       inkscape:export-ydpi="38.330723">
+      <path
+         inkscape:export-ydpi="37.809231"
+         inkscape:export-xdpi="37.809231"
+         sodipodi:nodetypes="cccccc"
+         inkscape:connector-curvature="0"
+         id="rect826-6"
+         d="m 0.445,70.766 h 255.11 l -23.241,260.36 -104.47,28.962 -104.182,-28.962 z"
+         style="opacity:1;fill:#9a26e4;fill-opacity:1;stroke:none;stroke-width:1.35374999;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke" />
+      <path
+         inkscape:export-ydpi="37.809231"
+         inkscape:export-xdpi="37.809231"
+         inkscape:connector-curvature="0"
+         id="path845-1"
+         d="m 128,337.95 84.417,-23.403 19.86,-222.490001 H 128 Z"
+         style="fill:#c629f1;fill-opacity:1;stroke:none;stroke-width:0.45124999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </g>
+    <g
+       transform="matrix(0.58633426,0,0,0.58633426,31.5385,11.937771)"
+       style="display:inline"
+       id="g935-8"
+       inkscape:export-xdpi="38.330723"
+       inkscape:export-ydpi="38.330723">
+      <g
+         inkscape:export-ydpi="38.376858"
+         inkscape:export-xdpi="38.376858"
+         id="g897-5">
+        <path
+           style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.45124999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           d="M 207.892,123.995 H 128 l -0.11,31.859 77.143,0.078 z"
+           id="path849-4"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccc"
+           inkscape:export-xdpi="37.809231"
+           inkscape:export-ydpi="37.809231" />
+        <path
+           style="fill:#ebebeb;fill-opacity:1;stroke:none;stroke-width:0.45124999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           d="M 127.99992,304.95418 62.431999,286.688 47.917001,123.995 H 128 l -0.11,31.859 -45.069998,0.078 9.471999,106.081 35.707919,9.67036 z"
+           id="path853-1"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccccc"
+           inkscape:export-xdpi="37.809231"
+           inkscape:export-ydpi="37.809231" />
+      </g>
+      <path
+         inkscape:export-ydpi="37.809231"
+         inkscape:export-xdpi="37.809231"
+         sodipodi:nodetypes="ccccccccc"
+         inkscape:connector-curvature="0"
+         id="path851-6"
+         d="m 127.89,188.636 v 31.937 h 39.327 l -3.708,41.42 -35.50908,9.69036 v 33.27082 L 193.362,286.688 l 8.76499,-98.052 z"
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.45124999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>
