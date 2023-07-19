@@ -1,6 +1,8 @@
-# HtmlGo!
+<h1><img src='https://github.com/lcnvdl/html-go/blob/main/Docs/Logo/htmlgo-logo_256_no-background.png' style='width:32px' /> HtmlGo! <img src='https://github.com/lcnvdl/html-go/blob/main/Docs/Logo/htmlgo-logo_256_no-background.png' style='width:32px' /></h1>
 
-![Build Status](https://github.com/lcnvdl/html-go/actions/workflows/build.yml/badge.svg)
+[![Release Notes](https://img.shields.io/github/release/lcnvdl/html-go)](https://github.com/lcnvdl/html-go/releases)
+[![Tests](https://github.com/lcnvdl/html-go/actions/workflows/build.yml/badge.svg)](https://github.com/lcnvdl/html-go/actions/workflows/build.yml)
+[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/acodearla.svg?style=social&label=Follow%20%40ACodearla)](https://twitter.com/acodearla)
 
 The interpreter that lets you 'program' in HTML! Now you can finally join the fun and proudly say you're an HTML programmer (sort of)!
 
