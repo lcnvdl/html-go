@@ -6,7 +6,6 @@ using HtmlRun.Runtime.Factories;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Models;
 using HtmlRun.Runtime.Native;
-using HtmlRun.Runtime.Providers;
 using HtmlRun.Runtime.RuntimeContext;
 using HtmlRun.Runtime.Utils;
 
@@ -30,9 +29,9 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
   private JavascriptParserWithContext? applicationJsContext;
 
-  public HtmlRuntime(Context? parent = null)
+  public HtmlRuntime()
   {
-    this.globalCtx = new Context(parent, this.ctxStack);
+    this.globalCtx = new Context(null, this.ctxStack);
   }
 
   public string[] Namespaces => this.instructions.Keys

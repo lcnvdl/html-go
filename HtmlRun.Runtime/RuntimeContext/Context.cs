@@ -16,7 +16,7 @@ public class Context : BaseContext, IRuntimeContext
 
   public ContextValue[] AllVariables
   {
-    get => this.variables.Values.ToArray<ContextValue>();
+    get => this.variables.Values.ToArray();
 
     set
     {

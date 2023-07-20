@@ -123,4 +123,15 @@ public class NHibernateTests : IDisposable
     Assert.Equal(2, all[0].Id);
     Assert.Equal("Test", all[0].Name);
   }
+
+  [Fact]
+  public void NHibernate_FindAll_WithWhere()
+  {
+    repo.Insert(session, repo.Create(new Dictionary<string, object?>() { { "Id", 3 }, { "Name", "Test" } }));
+
+    var all = repo.FindAll(session, new Dictionary<string, object>() { { "Id", 3 } }).Cast<dynamic>().ToList();
+    Assert.NotEmpty(all);
+    Assert.Equal(3, all[0].Id);
+    Assert.Equal("Test", all[0].Name);
+  }
 }

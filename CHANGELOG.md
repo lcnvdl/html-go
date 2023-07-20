@@ -1,4 +1,7 @@
 # HtmlGo changelog
+## v0.4.0-alpha
+**Full Changelog**: https://github.com/lcnvdl/html-go/compare/v0.3.0-alpha...v0.4.0-alpha
+
 ## v0.3.0-alpha
 * Runtime parameters:
   * Version info. Usage: `htmlgo --version` or `htmlgo-server --version`.
