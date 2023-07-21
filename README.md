@@ -3,6 +3,7 @@
 [![Tests](https://github.com/lcnvdl/html-go/actions/workflows/build.yml/badge.svg)](https://github.com/lcnvdl/html-go/actions/workflows/build.yml)
 ~
 [![Release Notes](https://img.shields.io/github/release/lcnvdl/html-go)](https://github.com/lcnvdl/html-go/releases)
+[![Release Date](https://img.shields.io/github/release-date/lcnvdl/html-go)](https://github.com/lcnvdl/html-go/releases)
 [![Downloads](https://img.shields.io/github/downloads/lcnvdl/html-go/total)](https://github.com/lcnvdl/html-go/releases)
 ~
 [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/acodearla.svg?style=social&label=Follow%20%40ACodearla)](https://twitter.com/acodearla)
