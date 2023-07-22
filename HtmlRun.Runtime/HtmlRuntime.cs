@@ -75,6 +75,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     this.applicationJsContext = jsParserWithContext;
 
     //  App info
+
     this.globalCtx.DeclareAndSetConst("Application.Title", application.Title);
     this.globalCtx.DeclareAndSetConst("Application.Version", application.Version);
     this.globalCtx.DeclareAndSetConst("Application.Type", application.Type.ToString());
@@ -416,6 +417,22 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
       }
       else
       {
+        if (variableKey.Contains('.'))
+        {
+          var accumulatedParts = new List<string>();
+
+          var parts = variableKey.Split('.');
+          jsParserWithContext.ExecuteCode($"if(typeof window.{parts.First()} !== 'object') {{ delete window.{parts.First()}; }}");
+
+          foreach (string part in parts)
+          {
+            accumulatedParts.Add(part);
+            string accumulatedKey = string.Join(".", accumulatedParts);
+
+            jsParserWithContext.ExecuteCode($"window.{accumulatedKey}=window.{accumulatedKey}||{{}}");
+          }
+        }
+
         jsParserWithContext.ExecuteCode($"window.{variableKey}='{metaVariable.Value}'");
       }
     }

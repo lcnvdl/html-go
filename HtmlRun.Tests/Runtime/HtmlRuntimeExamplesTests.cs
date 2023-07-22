@@ -232,7 +232,6 @@ public class HtmlRuntimeExamplesTests
     Assert.Equal("Exit", this.logs[3]);
   }
 
-
   [Fact]
   public async void HtmlRuntime_Example_20()
   {
@@ -244,6 +243,19 @@ public class HtmlRuntimeExamplesTests
     Assert.Equal("Program started", this.logs[0]);
     Assert.Equal("Info", this.logs[1]);
     Assert.Equal("Program finished", this.logs[2]);
+  }
+
+  [Fact]
+  public async void HtmlRuntime_Example_21()
+  {
+    var app = await this.ReadApp("21-reference_values");
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(3, this.logs.Count);
+    Assert.Equal("Current ID: 1", this.logs[0]);
+    Assert.Equal("Current Name: HtmlGo!", this.logs[1]);
+    Assert.Equal("Next ID: 2", this.logs[2]);
   }
 
   private async Task<AppModel> ReadApp(string exampleName)

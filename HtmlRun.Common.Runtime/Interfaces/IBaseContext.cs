@@ -17,7 +17,7 @@ public interface IBaseContext
   
   int AllocInHeap(object val);
 
-  void AllocAndSetPointerVariable(string name, object val) => this.SetValueVariable(name, this.AllocInHeap(val).ToString());
+  void AllocAndSetPointerVariable(string name, object val);
     
   EntityModel? PointerToEntity(int ptr);
 

@@ -10,7 +10,11 @@ public class CallArgumentModel : ICloneable
 
   public string? Alias { get; set; }
 
+  public string? Html { get; set; }
+
   public List<CallModel>? BranchInstructions { get; set; }
+
+  public List<CallArgumentModel>? NestedArguments { get; set; }
 
   public bool IsString => this.ArgumentType == "string";
 

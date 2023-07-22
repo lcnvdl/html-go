@@ -28,7 +28,22 @@ public static class ParsedArgumentFactory
       }
       else
       {
-        result = new ParsedArgument(JavascriptParser.SimpleSolve(argModel.Content!)?.ToString(), ParsedArgumentType.Native);
+        string currentContent = argModel.Content!;
+
+        if (argModel.NestedArguments != null)
+        {
+          foreach (var nestedArg in argModel.NestedArguments)
+          {
+            var partial = CreateFromCallArgumentModel(nestedArg, jsParser);
+
+            if (!string.IsNullOrEmpty(partial.Value))
+            {
+              currentContent = currentContent.Replace(nestedArg.Html!, $"Number('{partial.Value}')");
+            }
+          }
+        }
+
+        result = new ParsedArgument(JavascriptParser.SimpleSolve(currentContent)?.ToString(), ParsedArgumentType.Native);
       }
     }
     else if (argModel.IsPrimitive)

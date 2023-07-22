@@ -163,4 +163,26 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
   {
     return this.ParentContext.PointerToEntity(ptr);
   }
+
+  public void AllocAndSetPointerVariable(string name, object val)
+  {
+    this.ParentContext.AllocAndSetPointerVariable(name, val);
+
+    this.SetAllObjectAsDirty(name, val);
+  }
+
+  private void SetAllObjectAsDirty(string variableName, object newInstance)
+  {
+    if (newInstance is EntityModel entity)
+    {
+      foreach (var attribute in entity.Attributes)
+      {
+        this.SetDirty($"{variableName}.{attribute.Name}");
+      }
+    }
+    else
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

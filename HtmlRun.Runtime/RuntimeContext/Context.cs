@@ -225,4 +225,9 @@ public class Context : BaseContext, IRuntimeContext
 
     return null;
   }
+
+  public void AllocAndSetPointerVariable(string name, object val)
+  {
+    this.SetValueVariable(name, this.AllocInHeap(val).ToString());
+  }
 }

@@ -35,6 +35,8 @@ class NewCmd : INativeInstruction
           throw new InvalidOperationException($"The variable {ctx.GetRequiredArgument()} is not a valid entity.");
         }
 
+        //  Read the definition as JSON
+
         var entity = JsonSerializer.Deserialize<EntityModel>(entityVariable.Value!);
 
         if (entity == null)
