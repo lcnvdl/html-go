@@ -1,5 +1,7 @@
 # HtmlGo changelog
 ## v0.4.0-alpha
+* Memory heap. Reference values.
+
 **Full Changelog**: https://github.com/lcnvdl/html-go/compare/v0.3.0-alpha...v0.4.0-alpha
 
 ## v0.3.0-alpha

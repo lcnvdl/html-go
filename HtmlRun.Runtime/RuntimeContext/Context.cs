@@ -1,4 +1,6 @@
+using HtmlRun.Common.Models;
 using HtmlRun.Runtime.Code;
+using HtmlRun.Runtime.Factories;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.RuntimeContext;
 
@@ -12,7 +14,32 @@ public class Context : BaseContext, IRuntimeContext
 
   private readonly Stack<Context> ctxStack;
 
+  private readonly IHeap heap;
+
+  internal Stack<Context> CtxStack => this.ctxStack;
+
   public List<string> Usings { get; private set; } = new();
+
+  public Context? Parent => this.parent;
+
+  public IHeap Heap => this.heap;
+
+  public ContextValue[] AllHierarchyVariables
+  {
+    get
+    {
+      var result = new List<ContextValue>();
+
+      if (this.parent != null)
+      {
+        result.AddRange(this.parent.AllHierarchyVariables);
+      }
+
+      result.AddRange(this.AllVariables);
+
+      return result.ToArray();
+    }
+  }
 
   public ContextValue[] AllVariables
   {
@@ -29,10 +56,11 @@ public class Context : BaseContext, IRuntimeContext
     }
   }
 
-  public Context(Context? parent, Stack<Context> ctxStack)
+  public Context(Context? parent, Stack<Context> ctxStack, IHeap? heap = null)
   {
     this.parent = parent;
     this.ctxStack = ctxStack;
+    this.heap = heap ?? new Heap();
 
     if (parent != null)
     {
@@ -52,7 +80,10 @@ public class Context : BaseContext, IRuntimeContext
 
   public void DeclareAndSetConst(string name, string val)
   {
-    if (this.variables.ContainsKey(name))
+    //  TODO  Set up this validation
+    const bool skipHeapValidation = true;
+
+    if (skipHeapValidation ? this.VariableExists(name) : this.VariableOrHeapExists(name))
     {
       throw new InvalidOperationException($"Variable or constant {name} was already declared.");
     }
@@ -62,7 +93,10 @@ public class Context : BaseContext, IRuntimeContext
 
   public void DeclareVariable(string name)
   {
-    if (this.variables.ContainsKey(name))
+    //  TODO  Set up this validation
+    const bool skipHeapValidation = true;
+
+    if (skipHeapValidation ? this.VariableExists(name) : this.VariableOrHeapExists(name))
     {
       throw new InvalidOperationException($"Variable or constant {name} was already declared.");
     }
@@ -70,24 +104,15 @@ public class Context : BaseContext, IRuntimeContext
     this.variables[name] = new ContextValue(name);
   }
 
-  public void SetVariable(string name, string? val)
+  public void SetValueVariable(string name, string? val)
   {
-    if (!this.variables.ContainsKey(name))
-    {
-      throw new InvalidOperationException($"Variable {name} was not declared.");
-    }
-
-    this.variables[name].Value = val;
+    var variable = this.GetVariable(name) ?? throw new InvalidOperationException($"Variable {name} was not declared.");
+    variable.Value = val;
   }
 
-  public void AddVariable(ContextValue value)
+  public bool IsDeclared(string name, bool ignoreInferred = false)
   {
-    this.variables[value.Name] = value;
-  }
-
-  public bool IsDeclared(string name)
-  {
-    return this.variables.ContainsKey(name);
+    return ignoreInferred ? this.variables.ContainsKey(name) : this.VariableExists(name);
   }
 
   public ContextValue? GetVariable(string name)
@@ -97,7 +122,7 @@ public class Context : BaseContext, IRuntimeContext
       return metadata;
     }
 
-    return null;
+    return this.GetInferredVariable(name);
   }
 
   public void DeleteVariable(string name)
@@ -119,5 +144,85 @@ public class Context : BaseContext, IRuntimeContext
     {
       this.Usings.Add(namesp);
     }
+  }
+
+  public int AllocInHeap(object val)
+  {
+    if (val is EntityModel entity)
+    {
+      var instanceValues = new Dictionary<string, object?>();
+
+      foreach (var attribute in entity.Attributes)
+      {
+        instanceValues[attribute.Name] = attribute.DefaultValue ?? (attribute.IsNull ? null : "");
+      }
+
+      return this.Heap.Alloc(val, instanceValues);
+    }
+    else
+    {
+      return this.Heap.Alloc(val);
+    }
+  }
+
+  public void Release()
+  {
+    GarbageCollector.CollectFromReleasedContext(this);
+  }
+
+  public void AddVariable(ContextValue value)
+  {
+    this.variables[value.Name] = value;
+  }
+
+  public EntityModel? PointerToEntity(int ptr)
+  {
+    return this.Heap.ItemsRef[ptr].Data as EntityModel;
+  }
+
+  private bool VariableOrHeapExists(string name)
+  {
+    if (name.Contains('.'))
+    {
+      return true;
+    }
+
+    return VariableExists(name);
+  }
+
+  private bool VariableExists(string name)
+  {
+    return this.variables.ContainsKey(name) || this.GetInferredVariable(name) != null;
+  }
+
+  private ContextValue? GetInferredVariable(string name)
+  {
+    if (!name.Contains('.'))
+    {
+      return null;
+    }
+
+    string possibleInstanceName = name.Remove(name.IndexOf('.'));
+
+    if (this.variables.ContainsKey(possibleInstanceName))
+    {
+      var possibleReferenceValue = this.variables[possibleInstanceName].Value;
+
+      if (possibleReferenceValue != null && int.TryParse(possibleReferenceValue, out int refIndex))
+      {
+        if (refIndex < this.heap.ItemsRef.Count)
+        {
+          var heapItem = this.heap.ItemsRef[refIndex];
+
+          var inferredValues = InferredContextValueFactory.InferValuesFromHeapItem(heapItem);
+
+          string varName = name.Substring(name.LastIndexOf('.') + 1);
+
+          return inferredValues.FirstOrDefault(m => m.Name == varName);
+        }
+      }
+    }
+
+    return null;
   }
 }

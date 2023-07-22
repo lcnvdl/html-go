@@ -6,7 +6,6 @@ using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 using HtmlRun.Runtime.RuntimeContext;
 using HtmlRun.Runtime.Utils;
-using HtmlRun.SQL.NHibernate.Extensions;
 using HtmlRun.SQL.NHibernate.Utils;
 
 namespace HtmlRun.SQL.NHibernate.Providers;
@@ -135,7 +134,7 @@ class SaveEntityCmd : INativeInstruction
 
         ContextValue instanceVariable = this.GetAndValidateEntityInstanceVariable(ctx, varNameOfInstanceToSave);
 
-        EntityModel entityModel = this.GetEntityModel(ctx, instanceVariable.Value!, varNameOfInstanceToSave);
+        EntityModel entityModel = this.GetEntityModel(ctx, int.Parse(instanceVariable.Value!), varNameOfInstanceToSave);
 
         // Fill dictionaries with in-memory values
 
@@ -152,8 +151,7 @@ class SaveEntityCmd : INativeInstruction
 
         //  Save
 
-        string realEntityName = instanceVariable.Value!.StartsWith("Entities.") ?
-          instanceVariable.Value!.Substring("Entities.".Length) : instanceVariable.Value!;
+        string realEntityName = entityModel.Name;
 
         var repo = Plugin.Instance.GetRepository(realEntityName);
 
@@ -224,14 +222,9 @@ class SaveEntityCmd : INativeInstruction
     return valuesFromInstance;
   }
 
-  private EntityModel GetEntityModel(ICurrentInstructionContext ctx, string entityName, string instanceName)
+  private EntityModel GetEntityModel(ICurrentInstructionContext ctx, int pointer, string instanceName)
   {
-    ContextValue entityVariable = ctx.GetVariable(entityName) ??
-     throw new Exception($"Entity {entityName} referenced by instance {instanceName} cannot be found.");
-
-    EntityModel entity = JsonSerializer.Deserialize<EntityModel>(entityVariable.Value!) ?? throw new NullReferenceException();
-
-    return entity;
+    return ctx.PointerToEntity(pointer) ?? throw new Exception($"Entity referenced by instance {instanceName} cannot be found.");
   }
 
   private ContextValue GetAndValidateEntityInstanceVariable(ICurrentInstructionContext ctx, string varNameOfEntityToSave)

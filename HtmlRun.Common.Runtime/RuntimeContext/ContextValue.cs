@@ -6,7 +6,7 @@ public class ContextValue
 
   public string Name { get; set; }
 
-  public string? Value
+  public virtual string? Value
   {
     get
     {
@@ -30,6 +30,8 @@ public class ContextValue
   }
 
   public bool IsConst { get; set; }
+
+  public virtual bool IsInferred => false;
 
   public bool IsUnset { get; private set; } = true;
 

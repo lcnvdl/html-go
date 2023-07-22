@@ -5,7 +5,7 @@ using HtmlRun.Runtime.Native;
 
 namespace HtmlRun.Runtime.Providers;
 
-class OOPProvider : INativeProvider
+public class OOPProvider : INativeProvider
 {
   public string Namespace => Constants.Namespaces.Global;
 
@@ -45,14 +45,7 @@ class NewCmd : INativeInstruction
         //  Save entity as variable
 
         ctx.DeclareVariable(entityVariableName);
-        ctx.SetVariable(entityVariableName, entityType);
-
-        foreach (var attribute in entity.Attributes)
-        {
-          var varName = $"{entityVariableName}.{attribute.Name}";
-          ctx.DeclareVariable(varName);
-          ctx.SetVariable(varName, attribute.DefaultValue ?? (attribute.IsNull ? null : ""));
-        }
+        ctx.AllocAndSetPointerVariable(entityVariableName, entity);
       };
     }
   }

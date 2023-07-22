@@ -56,7 +56,7 @@ class IncrementCmd : INativeInstruction
 
         object finalValue = InterlokedUtils.Call("Increment", cast.Value);
 
-        ctx.SetVariable(varName, finalValue.ToString()!);
+        ctx.SetValueVariable(varName, finalValue.ToString()!);
       };
     }
   }
@@ -89,7 +89,7 @@ class DecrementCmd : INativeInstruction
 
         object finalValue = InterlokedUtils.Call("Decrement", cast.Value);
 
-        ctx.SetVariable(varName, finalValue.ToString()!);
+        ctx.SetValueVariable(varName, finalValue.ToString()!);
       };
     }
   }

@@ -22,7 +22,7 @@ public abstract class BaseProviderTests
     this.logs = new List<string>();
     this.Provider = provider;
     this.ctx = new Context(null, new Stack<Context>());
-    this.runtime = new HtmlRuntime();
+    this.runtime = new HtmlRuntime(this.ctx);
     this.runtime.RegisterProvider(new InstructionsProvider(this.logs));
     this.runtime.RegisterBasicProviders();
   }

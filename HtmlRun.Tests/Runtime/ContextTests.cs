@@ -29,7 +29,7 @@ public class ContextTests
   [Fact]
   public void Context_SetVariable_ShouldFail_IfIsNotDeclared()
   {
-    Assert.Throws<InvalidOperationException>(() => this.ctx.SetVariable("notDeclared", "true"));
+    Assert.Throws<InvalidOperationException>(() => this.ctx.SetValueVariable("notDeclared", "true"));
   }
 
   [Fact]
@@ -47,7 +47,7 @@ public class ContextTests
     Assert.False(variable!.IsConst);
     Assert.True(variable!.IsUnset);
 
-    this.ctx.SetVariable("test", "true");
+    this.ctx.SetValueVariable("test", "true");
 
     variable = this.ctx.GetVariable("test");
 

@@ -1,3 +1,4 @@
+using HtmlRun.Common.Models;
 using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Interfaces;
 
@@ -106,9 +107,9 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
     this.CursorModification = jump;
   }
 
-  public void SetVariable(string name, string? val)
+  public void SetValueVariable(string name, string? val)
   {
-    this.ParentContext.SetVariable(name, val);
+    this.ParentContext.SetValueVariable(name, val);
     this.SetDirty(name);
   }
 
@@ -151,5 +152,15 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
   public void AddVariable(ContextValue value)
   {
     this.ParentContext.AddVariable(value);
+  }
+
+  public int AllocInHeap(object value)
+  {
+    return this.ParentContext.AllocInHeap(value);
+  }
+
+  public EntityModel? PointerToEntity(int ptr)
+  {
+    return this.ParentContext.PointerToEntity(ptr);
   }
 }
