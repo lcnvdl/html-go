@@ -5,7 +5,7 @@ using HtmlRun.Runtime.Native;
 
 namespace HtmlRun.Runtime.Providers;
 
-class OOPProvider : INativeProvider
+public class OOPProvider : INativeProvider
 {
   public string Namespace => Constants.Namespaces.Global;
 
@@ -35,6 +35,8 @@ class NewCmd : INativeInstruction
           throw new InvalidOperationException($"The variable {ctx.GetRequiredArgument()} is not a valid entity.");
         }
 
+        //  Read the definition as JSON
+
         var entity = JsonSerializer.Deserialize<EntityModel>(entityVariable.Value!);
 
         if (entity == null)
@@ -45,14 +47,7 @@ class NewCmd : INativeInstruction
         //  Save entity as variable
 
         ctx.DeclareVariable(entityVariableName);
-        ctx.SetVariable(entityVariableName, entityType);
-
-        foreach (var attribute in entity.Attributes)
-        {
-          var varName = $"{entityVariableName}.{attribute.Name}";
-          ctx.DeclareVariable(varName);
-          ctx.SetVariable(varName, attribute.DefaultValue ?? (attribute.IsNull ? null : ""));
-        }
+        ctx.AllocAndSetPointerVariable(entityVariableName, entity);
       };
     }
   }

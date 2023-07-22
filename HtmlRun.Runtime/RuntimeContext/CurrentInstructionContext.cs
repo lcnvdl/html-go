@@ -1,3 +1,4 @@
+using HtmlRun.Common.Models;
 using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Interfaces;
 
@@ -106,9 +107,9 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
     this.CursorModification = jump;
   }
 
-  public void SetVariable(string name, string? val)
+  public void SetValueVariable(string name, string? val)
   {
-    this.ParentContext.SetVariable(name, val);
+    this.ParentContext.SetValueVariable(name, val);
     this.SetDirty(name);
   }
 
@@ -151,5 +152,37 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
   public void AddVariable(ContextValue value)
   {
     this.ParentContext.AddVariable(value);
+  }
+
+  public int AllocInHeap(object value)
+  {
+    return this.ParentContext.AllocInHeap(value);
+  }
+
+  public EntityModel? PointerToEntity(int ptr)
+  {
+    return this.ParentContext.PointerToEntity(ptr);
+  }
+
+  public void AllocAndSetPointerVariable(string name, object val)
+  {
+    this.ParentContext.AllocAndSetPointerVariable(name, val);
+
+    this.SetAllObjectAsDirty(name, val);
+  }
+
+  private void SetAllObjectAsDirty(string variableName, object newInstance)
+  {
+    if (newInstance is EntityModel entity)
+    {
+      foreach (var attribute in entity.Attributes)
+      {
+        this.SetDirty($"{variableName}.{attribute.Name}");
+      }
+    }
+    else
+    {
+      throw new NotImplementedException();
+    }
   }
 }

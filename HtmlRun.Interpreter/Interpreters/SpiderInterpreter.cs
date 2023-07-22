@@ -47,17 +47,16 @@ public class SpiderInterpreter : IInterpreter
 
       foreach (var import in importInstructions)
       {
-        var importedData = new ImportedLibraryModel();
-        importedData.Origin = program;
-
         if (string.IsNullOrEmpty(import.Arguments[0].Content))
         {
           throw new NullReferenceException($"Import path not found in line {import.CustomId}.");
         }
 
-        importedData.Path = import.Arguments[0].Content!;
-        importedData.Library = await this.ParseString(importedData.Path, readContent);
-        importedData.Alias = (import.Arguments.Count > 1 ? import.Arguments[1].Content : null) ?? import.Arguments[0].Alias;
+        string path = import.Arguments[0].Content!;
+        AppModel library = await this.ParseString(path, readContent);
+        string? alias = (import.Arguments.Count > 1 ? import.Arguments[1].Content : null) ?? import.Arguments[0].Alias;
+
+        var importedData = new ImportedLibraryModel(program, path, library, alias);
 
         program.Imports.Add(importedData);
       }

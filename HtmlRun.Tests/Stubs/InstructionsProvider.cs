@@ -5,7 +5,7 @@ namespace HtmlRun.Tests.Stubs;
 
 class InstructionsProvider : INativeProvider
 {
-  public string Namespace => Runtime.Constants.Namespaces.Global;
+  public string Namespace => HtmlRun.Runtime.Constants.Namespaces.Global;
 
   public List<string> Logs { get; private set; }
 

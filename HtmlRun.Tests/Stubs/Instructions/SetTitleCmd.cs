@@ -7,7 +7,7 @@ class SetTitleCmd : INativeInstruction
 {
   public static string? LastTitle { get; set; }
 
-  public string Key => Runtime.Constants.BasicInstructionsSet.SetTitle;
+  public string Key => HtmlRun.Runtime.Constants.BasicInstructionsSet.SetTitle;
 
   public Action<ICurrentInstructionContext> Action
   {

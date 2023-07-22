@@ -1,0 +1,44 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Reference values example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="icon" type="image/x-icon" href="./images/favicon.ico" />
+</head>
+
+<body>
+  <h1>Reference values example</h1>
+
+  <h2>Main</h2>
+  <ul>
+    <li><u>New</u> <i class="string">Entities.User</i> as <i class="string">user</i></li>
+
+    <li><u>Set</u> <i class="string">user.Id</i> <i class="string">1</i></li>
+    <li><u>Set</u> <i class="string">user.Name</i> <i class="string">HtmlGo!</i></li>
+
+    <li><u>Log</u> <i class="string">Current ID:</i> <i class="call">user.Id</i></li>
+    <li><u>Log</u> <i class="string">Current Name:</i> <i class="call">user.Name</i></li>
+    <li><u>Log</u> <i class="string">Next ID:</i> <i class="solve"><i class="call">user.Id</i> + 1</i></li>
+  </ul>
+
+  <hr>
+
+  <h2>Entities definitions</h2>
+
+  <br>
+
+  <table class="entity">
+    <thead><tr><th colspan="5">User</th></tr></thead>
+    <tbody>
+      <tr class="ignore"><td><b>Column</b></td><td><b>Type</b></td><td><b>Nullable?</b></td><td><b>Index</b></td><td><b>Default value?</b></td></tr>
+      <tr><td>Id</td><td>INTEGER</td><td>NOT NULL</td><td>PK</td><td></td></tr>
+      <tr><td>Email</td><td>VARCHAR(40)</td><td>NOT NULL</td><td>Unique</td><td></td></tr>
+      <tr><td>Name</td><td>VARCHAR(100)</td><td>NULL</td><td></td><td></td></tr>
+    </tbody>
+  </table>
+  
+  <br>
+</body>
+
+</html>

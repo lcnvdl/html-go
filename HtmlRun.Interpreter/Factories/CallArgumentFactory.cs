@@ -11,7 +11,7 @@ static class CallArgumentFactory
     if (elementHtmlDefinition.HasClass("preprocess", StringComparison.InvariantCultureIgnoreCase))
     {
       var matches = Regex.Matches(content, @"([\$](\w+))\b");
-      
+
       foreach (Match match in matches)
       {
         string varName = match.Value.Substring(1);
@@ -25,29 +25,42 @@ static class CallArgumentFactory
 
     if (elementHtmlDefinition.HasClass("string", StringComparison.InvariantCultureIgnoreCase))
     {
-      return new CallArgumentModel() { ArgumentType = "string", Content = content };
+      return new CallArgumentModel() { ArgumentType = "string", Content = content, Html = elementHtmlDefinition.Html };
     }
     else if (elementHtmlDefinition.HasClass("number", StringComparison.InvariantCultureIgnoreCase))
     {
-      return new CallArgumentModel() { ArgumentType = "number", Content = content };
+      return new CallArgumentModel() { ArgumentType = "number", Content = content, Html = elementHtmlDefinition.Html };
     }
     else if (elementHtmlDefinition.HasClass("solve", StringComparison.InvariantCultureIgnoreCase))
     {
-      return new CallArgumentModel() { ArgumentType = "solve", Content = content };
+      var argument = new CallArgumentModel() { ArgumentType = "solve", Content = content, Html = elementHtmlDefinition.Html };
+
+      foreach (var child in elementHtmlDefinition.Children)
+      {
+        var childArgument = NewInstance(child, child.InnerText.Trim());
+
+        if (childArgument != null)
+        {
+          argument.NestedArguments ??= new List<CallArgumentModel>();
+          argument.NestedArguments.Add(childArgument);
+        }
+      }
+
+      return argument;
     }
     else if (elementHtmlDefinition.HasClass("call", StringComparison.InvariantCultureIgnoreCase))
     {
-      return new CallArgumentModel() { ArgumentType = "call", Content = content };
+      return new CallArgumentModel() { ArgumentType = "call", Content = content, Html = elementHtmlDefinition.Html };
     }
     else if (elementHtmlDefinition.HasClass("callReference", StringComparison.InvariantCultureIgnoreCase))
     {
-      return new CallArgumentModel() { ArgumentType = "callReference", Content = content };
+      return new CallArgumentModel() { ArgumentType = "callReference", Content = content, Html = elementHtmlDefinition.Html };
     }
     else if (elementHtmlDefinition.TagName.Equals("a", StringComparison.InvariantCultureIgnoreCase) && !string.IsNullOrEmpty(elementHtmlDefinition.GetAttribute("href")))
     {
       string? hrefContent = elementHtmlDefinition.GetAttribute("href");
       string alias = elementHtmlDefinition.InnerText.Trim();
-      return new CallArgumentModel() { ArgumentType = "string", Content = hrefContent, Alias = string.IsNullOrEmpty(alias) ? null : alias };
+      return new CallArgumentModel() { ArgumentType = "string", Content = hrefContent, Alias = string.IsNullOrEmpty(alias) ? null : alias, Html = elementHtmlDefinition.Html };
     }
     else
     {

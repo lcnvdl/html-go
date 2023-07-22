@@ -96,6 +96,8 @@ class AngleSharpHtmlElementAbstraction : IHtmlElementAbstraction
 
   public string TagName => this.element.TagName;
 
+  public string Html => this.element.OuterHtml;
+
   public string InnerHtml => this.element.InnerHtml;
 
   public string InnerText => this.element.InnerHtml;

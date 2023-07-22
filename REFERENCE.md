@@ -1,5 +1,5 @@
 # HTML Language Specifications
-Last updated: 2023-17-17.
+Last updated: 2023-17-22.
 
 ## Introduction
 The HTML (HyperText Machine Language) language is the standard used to create and structure applications inspired by HTML (HyperText Markup Language), referred to as "HTML Classic" or "HTMLC" in this document. This document describes the specifications of the HTML language, including its syntax, elements, attributes, and key features.
@@ -220,6 +220,8 @@ The calls should be enclosed within a `<u>` tag.
   * Used to set the type of the argument. For example `<i class='number'>5</i>`.
 * solve
   * Used to set static math-operation arguments. For example `<i class='solve'>1 + 1</i>`.
+  * It accepts nested arguments. For example `<i class='solve'><i class='call'>pet.Age</i> + 1</i>`. 
+  * The result of each nested argument is converted to a number.
 * string
   * Used to set the type of the argument. For example `<i class='string'>I am an HTML developer.</i>`.
 * preprocess

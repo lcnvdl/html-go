@@ -7,13 +7,13 @@ class LogCmd : INativeInstruction, INativeJSInstruction
 {
   public List<string> Logs { get; private set; } = new();
 
-  public string Key => Runtime.Constants.BasicInstructionsSet.Log;
+  public string Key => HtmlRun.Runtime.Constants.BasicInstructionsSet.Log;
 
   public Action<ICurrentInstructionContext> Action
   {
     get
     {
-      return ctx => Logs.Add(string.Join(" ", ctx.GetArgumentsValues().Select(m => m == null ? Runtime.Constants.Strings.Null : m.ToString())));
+      return ctx => Logs.Add(string.Join(" ", ctx.GetArgumentsValues().Select(m => m == null ? HtmlRun.Runtime.Constants.Strings.Null : m.ToString())));
     }
   }
 

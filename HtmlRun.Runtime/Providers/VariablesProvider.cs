@@ -18,7 +18,7 @@ class SetCmd : INativeInstruction
   {
     get
     {
-      return ctx => ctx.SetVariable(ctx.GetRequiredArgument(0), ctx.GetArgument(1)!);
+      return ctx => ctx.SetValueVariable(ctx.GetRequiredArgument(0), ctx.GetArgument(1)!);
     }
   }
 }
@@ -50,7 +50,7 @@ class VarCmd : INativeInstruction
 
         if (ctx.CountArguments() > 1)
         {
-          ctx.SetVariable(ctx.GetRequiredArgument(), ctx.GetRequiredArgument(1));
+          ctx.SetValueVariable(ctx.GetRequiredArgument(), ctx.GetRequiredArgument(1));
         }
       };
     }

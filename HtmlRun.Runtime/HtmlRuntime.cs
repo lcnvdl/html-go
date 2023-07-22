@@ -6,7 +6,6 @@ using HtmlRun.Runtime.Factories;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Models;
 using HtmlRun.Runtime.Native;
-using HtmlRun.Runtime.Providers;
 using HtmlRun.Runtime.RuntimeContext;
 using HtmlRun.Runtime.Utils;
 
@@ -18,9 +17,9 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
   private readonly Dictionary<string, INativeJSDefinition> jsInstructions = new();
 
-  private readonly Stack<Context> ctxStack = new();
-
   private readonly List<PluginBase> plugins = new();
+
+  private readonly Stack<Context> ctxStack;
 
   private readonly Context globalCtx;
 
@@ -30,9 +29,18 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
   private JavascriptParserWithContext? applicationJsContext;
 
-  public HtmlRuntime(Context? parent = null)
+  public HtmlRuntime(Context? globalCtx = null)
   {
-    this.globalCtx = new Context(parent, this.ctxStack);
+    if (globalCtx == null)
+    {
+      this.ctxStack = new Stack<Context>();
+      this.globalCtx = new Context(null, this.ctxStack);
+    }
+    else
+    {
+      this.globalCtx = globalCtx;
+      this.ctxStack = globalCtx.CtxStack;
+    }
   }
 
   public string[] Namespaces => this.instructions.Keys
@@ -67,6 +75,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     this.applicationJsContext = jsParserWithContext;
 
     //  App info
+
     this.globalCtx.DeclareAndSetConst("Application.Title", application.Title);
     this.globalCtx.DeclareAndSetConst("Application.Version", application.Version);
     this.globalCtx.DeclareAndSetConst("Application.Type", application.Type.ToString());
@@ -180,7 +189,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
     //  For information
     string key = $"Plugin.{plugin.Name}";
-    if (!this.globalCtx.IsDeclared(key))
+    if (!this.globalCtx.IsDeclared(key, ignoreInferred: true))
     {
       this.globalCtx.DeclareAndSetConst(key, "true");
     }
@@ -249,12 +258,14 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
       }
       else if (finalCtx.CursorModification is ContextPull)
       {
-        this.ctxStack.Pop();
+        Context? ctxToDispose = this.ctxStack.Pop();
 
         if (this.ctxStack.Count == 0)
         {
           throw new InvalidOperationException("Context stack is not balanced.");
         }
+
+        ctxToDispose?.Release();
       }
       else
       {
@@ -293,6 +304,11 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     if (this.instructions.ContainsKey(key))
     {
       return this.instructions[key];
+    }
+
+    if (this.application == null)
+    {
+      throw new NullReferenceException("Application is null.");
     }
 
     if (this.application.LabeledGroups.Any())
@@ -374,7 +390,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
             ctx.DeclareVariable(resultKey);
           }
 
-          ctx.SetVariable(resultKey, jsResult);
+          ctx.SetValueVariable(resultKey, jsResult);
         };
 
         result[i] = new ParsedArgument(key, ParsedArgumentType.Reference);
@@ -401,6 +417,22 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
       }
       else
       {
+        if (variableKey.Contains('.'))
+        {
+          var accumulatedParts = new List<string>();
+
+          var parts = variableKey.Split('.');
+          jsParserWithContext.ExecuteCode($"if(typeof window.{parts.First()} !== 'object') {{ delete window.{parts.First()}; }}");
+
+          foreach (string part in parts)
+          {
+            accumulatedParts.Add(part);
+            string accumulatedKey = string.Join(".", accumulatedParts);
+
+            jsParserWithContext.ExecuteCode($"window.{accumulatedKey}=window.{accumulatedKey}||{{}}");
+          }
+        }
+
         jsParserWithContext.ExecuteCode($"window.{variableKey}='{metaVariable.Value}'");
       }
     }

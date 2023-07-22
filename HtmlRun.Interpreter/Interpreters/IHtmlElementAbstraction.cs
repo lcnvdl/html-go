@@ -8,6 +8,8 @@ public interface IHtmlElementAbstraction
 
   IEnumerable<IHtmlElementAbstraction> Children { get; }
   
+  string Html { get; }
+
   string InnerHtml { get; }
 
   string InnerText { get; }
