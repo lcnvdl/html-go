@@ -2,7 +2,7 @@ namespace HtmlRun.Terminal;
 
 static class ProgramArgsProcessor
 {
-  public static ProgramArgs ProcessInputAndGetModel(string[] args, int defaultExample, string examplesDirectoryName = "Examples")
+  public static ProgramArgs ProcessInputAndGetModel(string[] args, int defaultExample, string examplesDirectoryName = "../Examples")
   {
     var model = new ProgramArgs();
 

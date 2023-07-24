@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.Terminal", "HtmlRun.Terminal\HtmlRun.Terminal.csproj", "{083725F1-8393-4CB2-841A-BC10101F45AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.Terminal", "Runtimes\HtmlRun.Terminal\HtmlRun.Terminal.csproj", "{083725F1-8393-4CB2-841A-BC10101F45AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.Runtime", "HtmlRun.Runtime\HtmlRun.Runtime.csproj", "{43BFA828-73BF-4CCE-A25A-C1744AAA05AF}"
 EndProject
@@ -11,11 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.Interpreter", "Html
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.Common", "HtmlRun.Common\HtmlRun.Common.csproj", "{72040FA5-43CD-4F51-AFDD-45B31182C3F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.WebApi", "HtmlRun.WebApi\HtmlRun.WebApi.csproj", "{E79931C2-A289-402D-9F3B-E944AA1302BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.WebApi", "Runtimes\HtmlRun.WebApi\HtmlRun.WebApi.csproj", "{E79931C2-A289-402D-9F3B-E944AA1302BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.Tests", "HtmlRun.Tests\HtmlRun.Tests.csproj", "{34731892-33BB-4756-ADD2-6E9A0C9B5034}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.SQL.NHibernate", "HtmlRun.SQL.NHibernate\HtmlRun.SQL.NHibernate.csproj", "{C2A100E4-77E8-4B67-8835-A5B5DA86CB09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.SQL.NHibernate", "Plugins\HtmlRun.SQL.NHibernate\HtmlRun.SQL.NHibernate.csproj", "{C2A100E4-77E8-4B67-8835-A5B5DA86CB09}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlRun.Common.Runtime", "HtmlRun.Common.Runtime\HtmlRun.Common.Runtime.csproj", "{19FF5B72-A514-4046-95FA-00528105BF7A}"
 EndProject

@@ -9,9 +9,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/HtmlRun.Terminal/bin/Debug/net6.0/HtmlRun.Terminal.dll",
+      "program": "${workspaceFolder}/Runtimes/HtmlRun.Terminal/bin/Debug/net6.0/HtmlRun.Terminal.dll",
       "args": ["run"],
-      "cwd": "${workspaceFolder}/HtmlRun.Terminal",
+      "cwd": "${workspaceFolder}/Runtimes/HtmlRun.Terminal",
       "console": "internalConsole",
       "stopAtEntry": false
     },
@@ -20,9 +20,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/HtmlRun.WebApi/bin/Debug/net6.0/HtmlRun.WebApi.dll",
+      "program": "${workspaceFolder}/Runtimes/HtmlRun.WebApi/bin/Debug/net6.0/HtmlRun.WebApi.dll",
       "args": ["run"],
-      "cwd": "${workspaceFolder}/HtmlRun.WebApi",
+      "cwd": "${workspaceFolder}/Runtimes/HtmlRun.WebApi",
       "console": "internalConsole",
       "stopAtEntry": false
     },

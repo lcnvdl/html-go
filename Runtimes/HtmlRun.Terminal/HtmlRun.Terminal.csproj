@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HtmlRun.Interpreter\HtmlRun.Interpreter.csproj" />
-    <ProjectReference Include="..\HtmlRun.Runtime\HtmlRun.Runtime.csproj" />
+    <ProjectReference Include="..\..\HtmlRun.Interpreter\HtmlRun.Interpreter.csproj" />
+    <ProjectReference Include="..\..\HtmlRun.Runtime\HtmlRun.Runtime.csproj" />
   </ItemGroup>
   
   <PropertyGroup>
