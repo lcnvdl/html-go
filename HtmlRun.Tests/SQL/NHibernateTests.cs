@@ -71,7 +71,7 @@ public class NHibernateTests : IDisposable
     newEntity.Name = "Test";
     repo.Update(session, newEntity);
 
-    dynamic? entityAfterUpdate = repo.Find(session, new Dictionary<string, object>() { { "Id", 5 } });
+    dynamic? entityAfterUpdate = repo.FindByPK(session, new Dictionary<string, object>() { { "Id", 5 } });
     Assert.NotNull(entityAfterUpdate);
     Assert.Equal("Test", entityAfterUpdate!.Name);
   }
@@ -87,10 +87,10 @@ public class NHibernateTests : IDisposable
     Assert.Equal(10, final.Id);
     Assert.Equal("Onix", final.Name);
 
-    dynamic? oldEntityAfterUpdate = repo.Find(session, new Dictionary<string, object>() { { "Id", 5 } });
+    dynamic? oldEntityAfterUpdate = repo.FindByPK(session, new Dictionary<string, object>() { { "Id", 5 } });
     Assert.Null(oldEntityAfterUpdate);
 
-    dynamic? entityAfterUpdate = repo.Find(session, new Dictionary<string, object>() { { "Id", 10 } });
+    dynamic? entityAfterUpdate = repo.FindByPK(session, new Dictionary<string, object>() { { "Id", 10 } });
     Assert.NotNull(entityAfterUpdate);
     Assert.Equal(10, entityAfterUpdate!.Id);
     Assert.Equal("Onix", entityAfterUpdate!.Name);
@@ -99,7 +99,7 @@ public class NHibernateTests : IDisposable
   [Fact]
   public void NHibernate_Find_ShouldReturnNullIfEntityDoesNotExists()
   {
-    dynamic? entity = repo.Find(session, new Dictionary<string, object>() { { "Id", 99 } });
+    dynamic? entity = repo.FindByPK(session, new Dictionary<string, object>() { { "Id", 99 } });
     Assert.Null(entity);
   }
 
@@ -107,7 +107,7 @@ public class NHibernateTests : IDisposable
   public void NHibernate_Find_ShouldWorkFine()
   {
     repo.Insert(session, repo.Create(new Dictionary<string, object?>() { { "Id", 6 }, { "Name", "Seis" } }));
-    dynamic? entity = repo.Find(session, new Dictionary<string, object>() { { "Id", 6 } });
+    dynamic? entity = repo.FindByPK(session, new Dictionary<string, object>() { { "Id", 6 } });
     Assert.NotNull(entity);
     Assert.Equal(6, entity!.Id);
     Assert.Equal("Seis", entity!.Name);
