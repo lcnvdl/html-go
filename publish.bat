@@ -13,4 +13,6 @@ move /y HtmlRun.WebApi.exe htmlgo-server.exe
 del /f /q web.config
 cd ..\..\..\..
 
-call .\Tools\publish-plugins.bat windows
+cd Tools
+
+call publish-plugins.bat windows
