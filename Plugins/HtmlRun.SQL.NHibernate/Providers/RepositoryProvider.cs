@@ -164,7 +164,7 @@ class SaveEntityCmd : INativeInstruction
           //  Fill finalEntity with existing
           if (repo.SatisfiesPK(notNullValuesFromInstance))
           {
-            var existingExpando = repo.Find(session, notNullValuesFromInstance);
+            var existingExpando = repo.FindByPK(session, notNullValuesFromInstance);
             if (existingExpando != null)
             {
               isNewEntity = false;

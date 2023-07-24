@@ -8,7 +8,9 @@ public interface IEntityRepository
 
   ExpandoObject Create(IDictionary<string, object?>? dictionary = null);
 
-  ExpandoObject? Find(ISessionWrapper sessionWrapper, Dictionary<string, object> where);
+  ExpandoObject? Find(ISessionWrapper sessionWrapper, Dictionary<string, object?> where);
+
+  ExpandoObject? FindByPK(ISessionWrapper sessionWrapper, Dictionary<string, object> where);
 
   IEnumerable<ExpandoObject> FindAll(ISessionWrapper sessionWrapper, Dictionary<string, object?>? where = null);
 
@@ -20,5 +22,5 @@ public interface IEntityRepository
 
   ExpandoObject Save(ISessionWrapper sessionWrapper, ExpandoObject entity);
 
-  bool Exists(ISessionWrapper sessionWrapper, Dictionary<string, object> where) => this.Find(sessionWrapper, where) != null;
+  bool Exists(ISessionWrapper sessionWrapper, Dictionary<string, object?> where) => this.Find(sessionWrapper, where) != null;
 }

@@ -87,7 +87,7 @@ public class EntityRepository : IEntityRepository
     Dictionary<string, object?> entityAsDict = new(entity);
     var pks = this.GetValuesFromObjectPKs(entityAsDict);
 
-    var existing = this.Find(sessionWrapper, pks);
+    var existing = this.FindByPK(sessionWrapper, pks);
 
     if (existing == null)
     {
@@ -97,7 +97,12 @@ public class EntityRepository : IEntityRepository
     return this.UpdateSet(sessionWrapper, existing, entityAsDict);
   }
 
-  public ExpandoObject? Find(ISessionWrapper sessionWrapper, Dictionary<string, object> where)
+  public ExpandoObject? FindByPK(ISessionWrapper sessionWrapper, Dictionary<string, object> where)
+  {
+    return this.Find(sessionWrapper, where.ToDictionary(m => m.Key, m => (object?)m.Value));
+  }
+
+  public ExpandoObject? Find(ISessionWrapper sessionWrapper, Dictionary<string, object?> where)
   {
     var session = ((SessionWrapper)sessionWrapper).NativeSession;
     var query = session.CreateSQLQuery(SqlUtils.SelectLimitRows(
