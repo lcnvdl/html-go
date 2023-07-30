@@ -1,4 +1,4 @@
-<h1><img src='https://github.com/lcnvdl/html-go/blob/main/Docs/Logo/htmlgo-logo_256_no-background.png' style='width:32px' /> HtmlGo! <img src='https://github.com/lcnvdl/html-go/blob/main/Docs/Logo/htmlgo-logo_256_no-background.png' style='width:32px' /></h1>
+<h1><img src='./Docs/Logo/htmlgo-logo_256_no-background.png' style='width:32px' /> HtmlGo! <img src='./Docs/Logo/htmlgo-logo_256_no-background.png' style='width:32px' /></h1>
 
 [![Tests](https://github.com/lcnvdl/html-go/actions/workflows/build.yml/badge.svg)](https://github.com/lcnvdl/html-go/actions/workflows/build.yml)
 ~
