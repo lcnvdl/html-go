@@ -2,6 +2,8 @@ namespace HtmlRun.Common.Models;
 
 public class AppModel
 {
+  public string Id { get; set; } = Guid.NewGuid().ToString();
+
   public string Title { get; set; } = string.Empty;
 
   public string Version { get; set; } = string.Empty;
