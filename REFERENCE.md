@@ -119,6 +119,11 @@ HtmlGo is compatible with any HTML meta tag, meaning that none of them will affe
   * Default value: `Unknown`.
   * Example: `<meta name='htmlgo:application-type' content='Console' />`.
 
+* Application id (optional): `htmlgo:application-id`.
+  * Value type: [GUID](https://en.wikipedia.org/wiki/Universally_unique_identifier).
+  * Default value: New GUID per execution.
+  * Example: `<meta name='htmlgo:application-id' content='7407be91-b093-4264-8c9e-1688230cb35e' />`.
+
 ## Language-related Calls
 The language-related calls should be enclosed within a `<b>` tag.
 * If
