@@ -26,6 +26,8 @@ public static class BasicInstructionsSet
 
   public const string GotoLine = "GotoLine";
 
+  public const string PopArguments = "ArgsPop";
+
   public const string ContextPush = "CtxPush";
 
   public const string ContextPull = "CtxPull";

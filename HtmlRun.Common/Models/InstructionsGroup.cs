@@ -10,7 +10,11 @@ public sealed class InstructionsGroup
 
   public List<CallModel> Instructions { get; private set; } = new();
 
+  public List<InstructionGroupArgumentModel> Arguments { get; private set; } = new();
+
   public bool IsMain => this.Label.Equals(MainLabel, StringComparison.InvariantCultureIgnoreCase);
+
+  public bool HasArguments => this.Arguments.Count > 0;
 
   public InstructionsGroup(string label)
   {

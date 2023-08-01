@@ -46,4 +46,9 @@ static class CallModelFactory
   {
     return NewCall(Constants.BasicInstructionsSet.ContextPull);
   }
+
+  internal static CallModel PopGroupArguments()
+  {
+    return NewCall(Constants.BasicInstructionsSet.PopArguments);
+  }
 }

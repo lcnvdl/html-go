@@ -22,6 +22,8 @@ static class HtmlRuntimeCompiler
     {
       AddGroupStartLabels(app, group);
 
+      AddGroupPopArguments(group);
+
       EnsureReturns(group);
 
       CompileBranches(group);
@@ -70,6 +72,14 @@ static class HtmlRuntimeCompiler
   {
     string key = CompilerConstants.GroupStartLabel(app, group);
     group.Instructions.Insert(0, CallModelFactory.Label(key));
+  }
+
+  private static void AddGroupPopArguments(InstructionsGroup group)
+  {
+    if (group.HasArguments)
+    {
+      group.Instructions.Insert(1, CallModelFactory.PopGroupArguments());
+    }
   }
 
   private static void AddGroupEndLabels(AppModel app, InstructionsGroup group)

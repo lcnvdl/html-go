@@ -40,7 +40,8 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     if (globalCtx == null)
     {
       this.ctxStack = new Stack<Context>();
-      this.globalCtx = new Context(null, this.ctxStack);
+      var argsStack = new Stack<GroupArguments>();
+      this.globalCtx = new Context(null, this.ctxStack, argsStack);
     }
     else
     {
@@ -154,11 +155,11 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     this.registeredProviders.Add(provider);
   }
 
-  private void InternalRun(AppModel app, CancellationToken? token, IContextJump? initialCursorModification = null)
+  private void InternalRun(AppModel app, CancellationToken? token, IContextJump? initialCursorModification = null, GroupArguments? argsAndValues = null)
   {
     //  Run instructions
 
-    var applicationStartedModel = this.StartApplication(app, initialCursorModification);
+    var applicationStartedModel = this.StartApplication(app, initialCursorModification, argsAndValues);
 
     var cursor = applicationStartedModel.NewCursor;
     var appInstructions = applicationStartedModel.AppInstructions;
@@ -254,7 +255,8 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
   private HtmlRuntime NewHtmlRuntimeWithSameDependencies()
   {
     var ctxStack = new Stack<Context>();
-    var globalCtx = new Context(null, ctxStack);
+    var argsStack = new Stack<GroupArguments>();
+    var globalCtx = new Context(null, ctxStack, argsStack);
     var runtime = new HtmlRuntime(globalCtx);
 
     foreach (var provider in this.registeredProviders)
@@ -265,7 +267,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     return runtime;
   }
 
-  private ApplicationStartedModel StartApplication(AppModel app, IContextJump? initialCursorModification)
+  private ApplicationStartedModel StartApplication(AppModel app, IContextJump? initialCursorModification, GroupArguments? argsAndValues)
   {
     this.isApplicationStarted = true;
 
@@ -290,6 +292,11 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     this.ctxStack.Clear();
     this.ctxStack.Push(this.globalCtx);
 
+    if (argsAndValues != null)
+    {
+      this.globalCtx.InitialPushArgumentsAndValues(argsAndValues);
+    }
+
     var model = new ApplicationStartedModel(cursor, main, appInstructions);
 
     if (initialCursorModification != null)
@@ -310,44 +317,60 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
       ICurrentInstructionContext finalCtx = this.RunInstruction(this.ctxStack.Peek(), instruction.FunctionName, arguments);
 
-      this.SaveContextVariableChangesToJsEngine(finalCtx, this.applicationJsContext!);
+      finalCtx.SaveContextVariableChangesToJsEngine(this.applicationJsContext!);
 
       this.ApplyJumpAndContextSwitching(finalCtx, cursor, appInstructions);
 
       cursor.MoveToNextPosition();
 
       //  External application run
-      if (
-        (this.application == null && !string.IsNullOrEmpty(cursor.ApplicationId)) ||
-        (this.application != null && cursor.ApplicationId != this.application.Id))
+      if (!cursor.IsPointingToSameApplication(this.application))
       {
-        //  TODO  Set cancellation token
-        if (finalCtx.CursorModification == null)
-        {
-          throw new InvalidOperationException($"Cursor modification is null for line {instruction.FunctionName}.");
-        }
-
-        var app = this.importedRuntimes[cursor.ApplicationId].application!;
-
-        var currentCursorModification = finalCtx.CursorModification as JumpToLine;
-        var cleanJump = new JumpToLine(currentCursorModification.Line, currentCursorModification.JumpType, currentCursorModification.Offset + 1);
-
-        this.importedRuntimes[cursor.ApplicationId].InternalRun(app, null, cleanJump);
-
-        finalCtx.CursorModification = null;
-
-        //  TODO  Should restore cursor and application ID by using a return. The next line should not be released:
-        cursor.UnsafeRecoverFromApplicationContextChange();
-
-        if (this.application != null && cursor.ApplicationId != this.application.Id)
-        {
-          throw new InvalidOperationException("Application ID is not the same after external application run.");
-        }
+        this.RunExternalFunction(finalCtx, cursor, instruction);
       }
     }
     catch (Jurassic.JavaScriptException ex)
     {
       throw new Exception(ex.Message);
+    }
+  }
+
+  private void RunExternalFunction(ICurrentInstructionContext finalCtx, InstructionPointer cursor, CallModel instruction)
+  {
+    //  TODO  Set cancellation token
+    if (finalCtx.CursorModification == null)
+    {
+      throw new NullReferenceException($"Cursor modification is null for instruction {instruction.FunctionName}.");
+    }
+
+    var currentCursorModification = finalCtx.CursorModification as JumpToLine;
+
+    if (currentCursorModification == null)
+    {
+      throw new NullReferenceException($"Cursor modification is null for instruction {instruction.FunctionName}.");
+    }
+
+    if (currentCursorModification.Line == null)
+    {
+      throw new NullReferenceException($"Cursor modification line is null for instruction {instruction.FunctionName}.");
+    }
+
+    var cleanJump = new JumpToLine(currentCursorModification.Line, currentCursorModification.JumpType, currentCursorModification.Offset + 1);
+
+    GroupArguments? argsAndValues = finalCtx.PopArgumentsAndValues();
+
+    var app = this.importedRuntimes[cursor.ApplicationId].application!;
+
+    this.importedRuntimes[cursor.ApplicationId].InternalRun(app, null, cleanJump, argsAndValues);
+
+    finalCtx.CursorModification = null;
+
+    //  TODO  Should restore cursor and application ID by using a return. The next line should not be released:
+    cursor.UnsafeRecoverFromApplicationContextChange();
+
+    if (this.application != null && cursor.ApplicationId != this.application.Id)
+    {
+      throw new InvalidOperationException("Application ID is not the same after external application run.");
     }
   }
 
@@ -403,7 +426,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
   private ICurrentInstructionContext RunInstruction(IRuntimeContext parentCtx, string key, params ParsedArgument[] args)
   {
-    var action = this.GetActionOrFail(parentCtx, key);
+    var action = this.GetActionOrFail(parentCtx, key, args);
 
     var instructionCtx = parentCtx.Fork(this, key, args);
 
@@ -425,7 +448,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     return instructionCtx;
   }
 
-  private Action<ICurrentInstructionContext> GetActionOrFail(IRuntimeContext ctx, string key)
+  private Action<ICurrentInstructionContext> GetActionOrFail(IRuntimeContext ctx, string key, ParsedArgument[] args)
   {
     if (this.instructions.ContainsKey(key))
     {
@@ -444,7 +467,16 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
         if (group.Label.Equals(key))
         {
           string groupStartLabel = CompilerConstants.GroupStartLabel(this.application!, group);
-          return ctx => ctx.CursorModification = new JumpToLineWithCallStack(groupStartLabel, JumpToLine.JumpTypeEnum.LineId);
+
+          return ctx =>
+          {
+            ctx.CursorModification = new JumpToLineWithCallStack(groupStartLabel, JumpToLine.JumpTypeEnum.LineId);
+
+            if (group.HasArguments)
+            {
+              ctx.PushArgumentsAndValues(GroupArguments.GetPartialWithValuesFromGroup(group, args));
+            }
+          };
         }
       }
     }
@@ -491,7 +523,19 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
           string groupStartLabel = CompilerConstants.GroupStartLabel(import.Library, group);
 
-          return ctx => ctx.CursorModification = new JumpToExternalLineWithCallStack(import.Library.Id, groupStartLabel, JumpToLine.JumpTypeEnum.LineId);
+          return ctx =>
+          {
+            ctx.CursorModification = new JumpToExternalLineWithCallStack(import.Library.Id, groupStartLabel, JumpToLine.JumpTypeEnum.LineId);
+
+            if (group.HasArguments)
+            {
+              ctx.PushArgumentsAndValues(GroupArguments.GetPartialWithValuesFromGroup(group, args));
+            }
+            else
+            {
+              ctx.PushArgumentsAndValues(GroupArguments.Empty(group.Label));
+            }
+          };
         }
       }
     }
@@ -537,38 +581,5 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
   private void TriggerPlugins<T>(Action<T> action)
   {
     this.plugins.Where(plugin => plugin is T).Cast<T>().ToList().ForEach(action);
-  }
-
-  private void SaveContextVariableChangesToJsEngine(ICurrentInstructionContext finalCtx, JavascriptParserWithContext jsParserWithContext)
-  {
-    foreach (string variableKey in finalCtx.DirtyVariables)
-    {
-      ContextValue? metaVariable = finalCtx.GetVariable(variableKey);
-
-      if (metaVariable == null)
-      {
-        jsParserWithContext.ExecuteCode($"delete window.{variableKey}");
-      }
-      else
-      {
-        if (variableKey.Contains('.'))
-        {
-          var accumulatedParts = new List<string>();
-
-          var parts = variableKey.Split('.');
-          jsParserWithContext.ExecuteCode($"if(typeof window.{parts.First()} !== 'object') {{ delete window.{parts.First()}; }}");
-
-          foreach (string part in parts)
-          {
-            accumulatedParts.Add(part);
-            string accumulatedKey = string.Join(".", accumulatedParts);
-
-            jsParserWithContext.ExecuteCode($"window.{accumulatedKey}=window.{accumulatedKey}||{{}}");
-          }
-        }
-
-        jsParserWithContext.ExecuteCode($"window.{variableKey}='{metaVariable.Value}'");
-      }
-    }
   }
 }

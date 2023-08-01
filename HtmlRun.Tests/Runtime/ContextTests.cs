@@ -1,4 +1,5 @@
 using HtmlRun.Runtime;
+using HtmlRun.Runtime.Code;
 
 public class ContextTests
 {
@@ -6,7 +7,7 @@ public class ContextTests
 
   public ContextTests()
   {
-    this.ctx = new Context(null, new Stack<Context>());
+    this.ctx = new Context(null, new Stack<Context>(), new Stack<GroupArguments>());
   }
 
   [Fact]

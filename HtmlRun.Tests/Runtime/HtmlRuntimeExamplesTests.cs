@@ -240,7 +240,7 @@ public class HtmlRuntimeExamplesTests
 
     Assert.Equal(3, this.logs.Count);
     Assert.Equal("Program started", this.logs[0]);
-    Assert.Equal("Info", this.logs[1]);
+    Assert.Equal("[Info] Test log", this.logs[1]);
     Assert.Equal("Program finished", this.logs[2]);
   }
 

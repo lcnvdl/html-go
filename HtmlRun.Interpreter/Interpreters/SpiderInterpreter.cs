@@ -104,6 +104,14 @@ public class SpiderInterpreter : IInterpreter
         var newGroup = new InstructionsGroup(label);
         newGroup.Instructions.AddRange(this.ParseInstructionOfGroup(possibleCalls));
 
+        string? argumentsData = groupElement.GetData("arguments");
+
+        if (!string.IsNullOrEmpty(argumentsData))
+        {
+          var arguments = argumentsData!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+          newGroup.Arguments.AddRange(arguments.Select(m => new InstructionGroupArgumentModel() { Name = m }));
+        }
+
         groups.Add(newGroup);
       }
     }

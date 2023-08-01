@@ -16,6 +16,7 @@ class JumpStatementsProvider : INativeProvider
     new ContextPushCmd(),
     new CallCmd(),
     new ReturnCmd(),
+    new PopArgumentsCmd(),
   };
 }
 
@@ -82,6 +83,32 @@ class GotoLineCmd : INativeInstruction
     get
     {
       return ctx => ctx.Jump(new JumpToLine(ctx.GetArgument<int>()));
+    }
+  }
+}
+
+class PopArgumentsCmd : INativeInstruction
+{
+  public string Key => Constants.BasicInstructionsSet.PopArguments;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx =>
+      {
+        var args = ctx.PopArgumentsAndValues();
+        if (args.Arguments == null)
+        {
+          throw new InvalidOperationException($"Error trying to read arguments of group {args.Label}.");
+        }
+
+        foreach (var arg in args.Arguments)
+        {
+          ctx.DeclareVariable(arg.GroupArgumentName);
+          ctx.SetValueVariable(arg.GroupArgumentName, arg.Value);
+        }
+      };
     }
   }
 }

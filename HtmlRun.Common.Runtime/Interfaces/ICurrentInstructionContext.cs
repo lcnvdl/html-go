@@ -27,5 +27,9 @@ public interface ICurrentInstructionContext : IBaseContext
 
   IContextJump? CursorModification { get; set; }
 
+  void PushArgumentsAndValues(GroupArguments arguments);
+
+  GroupArguments PopArgumentsAndValues();
+
   List<string> DirtyVariables { get; }
 }

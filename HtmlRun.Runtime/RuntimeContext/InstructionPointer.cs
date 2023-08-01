@@ -30,6 +30,12 @@ class InstructionPointer
     ++this.Position;
   }
 
+  public bool IsPointingToSameApplication(AppModel? application)
+  {
+    //  TODO  Refactor this
+    return !((application == null && !string.IsNullOrEmpty(this.ApplicationId)) || (application != null && this.ApplicationId != application.Id));
+  }
+
   public void ApplyJumpOrFail(IContextJump? cursorModification, List<CallModel> instructions)
   {
     if (cursorModification is JumpToLine jump)
@@ -38,7 +44,12 @@ class InstructionPointer
     }
     else if (cursorModification is IJumpReturn)
     {
-      var call = this.CallStack.Pop() ?? throw new InvalidOperationException("Call stack is empty.");
+      if (this.CallStack.Count == 0)
+      {
+        throw new InvalidOperationException("Call stack is empty.");
+      }
+
+      IJumpWithMemory call = this.CallStack.Pop()!;
 
       this.ApplyJump(new JumpToLine(call.CallPosition + 1), instructions);
     }
