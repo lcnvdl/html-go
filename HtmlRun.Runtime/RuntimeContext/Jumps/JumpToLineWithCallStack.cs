@@ -15,3 +15,23 @@ class JumpToLineWithCallStack : JumpToLine, IJumpWithMemory
 
   public int CallPosition { get; set; }
 }
+
+class JumpToExternalLineWithCallStack : JumpToLine, IExternalJumpWithMemory
+{
+  public JumpToExternalLineWithCallStack(string appId, int line) : base(line)
+  {
+    this.ApplicationId = appId;
+  }
+
+  public JumpToExternalLineWithCallStack(string appId, string line, JumpTypeEnum jumpType, int offset = 0)
+    : base(line, jumpType, offset)
+  {
+    this.ApplicationId = appId;
+  }
+
+  public int CallPosition { get; set; }
+
+  public string CallApplicationId { get; set; } = "";
+
+  public string ApplicationId { get; set; }
+}

@@ -20,17 +20,35 @@ static class HtmlRuntimeCompiler
     //  Compile instructions
     Parallel.ForEach(app.InstructionGroups, group =>
     {
-      AddGroupStartLabels(app,group);
+      AddGroupStartLabels(app, group);
 
       EnsureReturns(group);
 
       CompileBranches(group);
 
-      AddGroupEndLabels(app,group);
+      AddGroupEndLabels(app, group);
     });
 
     //  Prepare main group for the merge
-    var mainGroup = app.InstructionGroups.First(m => m.IsMain);
+    var mainGroup = app.InstructionGroups.FirstOrDefault(m => m.IsMain);
+
+    if (app.Type == AppType.Library)
+    {
+      if (mainGroup == null)
+      {
+        mainGroup = InstructionsGroup.Main;
+        app.InstructionGroups.Insert(0, mainGroup);
+      }
+    }
+    else
+    {
+      if (mainGroup == null)
+      {
+        throw new InvalidOperationException("Main group not found.");
+      }
+    }
+
+    //  App goto end label
     mainGroup.Instructions.Add(CallModelFactory.Goto(CompilerConstants.ApplicationEndLabel(app)));
 
     //  Merge and clear groups

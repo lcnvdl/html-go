@@ -206,8 +206,7 @@ public class HtmlRuntimeExamplesTests
     Assert.Equal(16 * 16, this.logs.Count);
   }
 
-  //  Partial comment. Will be implemented in another PR.
-  /*[Fact]
+  [Fact]
   public async void HtmlRuntime_Example_18()
   {
     var app = await this.ReadApp("18-library_import");
@@ -216,7 +215,7 @@ public class HtmlRuntimeExamplesTests
 
     Assert.Single(this.logs);
     Assert.Equal("H", this.logs[0]);
-  }*/
+  }
 
   [Fact]
   public async void HtmlRuntime_Example_19()

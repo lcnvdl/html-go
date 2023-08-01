@@ -9,7 +9,21 @@ class InstructionPointer
 {
   public int Position { get; private set; } = 0;
 
+  public string ApplicationId { get; private set; }
+
   public Stack<IJumpWithMemory> CallStack { get; private set; } = new Stack<IJumpWithMemory>();
+
+  public InstructionPointer(string applicationId)
+  {
+    this.ApplicationId = applicationId;
+  }
+
+  public void UnsafeRecoverFromApplicationContextChange()
+  {
+    var memory = this.CallStack.Pop() as IExternalJumpWithMemory ?? throw new InvalidOperationException("Call stack is empty.");
+    this.Position = memory.CallPosition + 1;
+    this.ApplicationId = memory.CallApplicationId;
+  }
 
   public void MoveToNextPosition()
   {
@@ -25,7 +39,7 @@ class InstructionPointer
     else if (cursorModification is IJumpReturn)
     {
       var call = this.CallStack.Pop() ?? throw new InvalidOperationException("Call stack is empty.");
-      
+
       this.ApplyJump(new JumpToLine(call.CallPosition + 1), instructions);
     }
     else
@@ -36,19 +50,29 @@ class InstructionPointer
 
   private void ApplyJump(JumpToLine jump, List<CallModel> instructions)
   {
+    bool isExternalJump = false;
+
     if (jump is IJumpWithMemory jumpWithMemory)
     {
       jumpWithMemory.CallPosition = this.Position;
+
+      if (jumpWithMemory is IExternalJumpWithMemory externalJump)
+      {
+        externalJump.CallApplicationId = this.ApplicationId;
+        this.ApplicationId = externalJump.ApplicationId;
+        isExternalJump = true;
+      }
+
       this.CallStack.Push(jumpWithMemory);
     }
 
     if (jump.JumpType == JumpToLine.JumpTypeEnum.LineNumber)
     {
-      this.Position = int.Parse(jump.Line!) - 1;
+      this.Position = int.Parse(jump.Line!) - 1 + jump.Offset;
     }
-    else
+    else if (!isExternalJump)
     {
-      this.Position = instructions.FindIndex(m => m.CustomId != null && m.CustomId == jump.Line);
+      this.Position = instructions.FindIndex(m => m.CustomId != null && m.CustomId == jump.Line) + jump.Offset;
       if (this.Position < 0)
       {
         throw new IndexOutOfRangeException($"Label {jump.Line} not found.");
