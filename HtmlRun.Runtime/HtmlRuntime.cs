@@ -254,10 +254,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
   private HtmlRuntime NewHtmlRuntimeWithSameDependencies()
   {
-    var ctxStack = new Stack<Context>();
-    var argsStack = new Stack<GroupArguments>();
-    var globalCtx = new Context(null, ctxStack, argsStack);
-    var runtime = new HtmlRuntime(globalCtx);
+    var runtime = new HtmlRuntime();
 
     foreach (var provider in this.registeredProviders)
     {
@@ -462,22 +459,20 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
     if (this.application.LabeledGroups.Any())
     {
-      foreach (var group in this.application.LabeledGroups)
+      var group = this.application.LabeledGroups.FirstOrDefault(m => m.Label.Equals(key));
+      if (group != null)
       {
-        if (group.Label.Equals(key))
+        string groupStartLabel = CompilerConstants.GroupStartLabel(this.application!, group);
+
+        return ctx =>
         {
-          string groupStartLabel = CompilerConstants.GroupStartLabel(this.application!, group);
+          ctx.CursorModification = new JumpToLineWithCallStack(groupStartLabel, JumpToLine.JumpTypeEnum.LineId);
 
-          return ctx =>
+          if (group.HasArguments)
           {
-            ctx.CursorModification = new JumpToLineWithCallStack(groupStartLabel, JumpToLine.JumpTypeEnum.LineId);
-
-            if (group.HasArguments)
-            {
-              ctx.PushArgumentsAndValues(GroupArguments.GetPartialWithValuesFromGroup(group, args));
-            }
-          };
-        }
+            ctx.PushArgumentsAndValues(GroupArguments.GetPartialWithValuesFromGroup(group, args));
+          }
+        };
       }
     }
 
