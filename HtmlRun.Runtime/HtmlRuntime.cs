@@ -521,15 +521,9 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
           return ctx =>
           {
             ctx.CursorModification = new JumpToExternalLineWithCallStack(import.Library.Id, groupStartLabel, JumpToLine.JumpTypeEnum.LineId);
-
-            if (group.HasArguments)
-            {
-              ctx.PushArgumentsAndValues(GroupArguments.GetPartialWithValuesFromGroup(group, args));
-            }
-            else
-            {
-              ctx.PushArgumentsAndValues(GroupArguments.Empty(group.Label));
-            }
+            ctx.PushArgumentsAndValues(group.HasArguments ?
+              GroupArguments.GetPartialWithValuesFromGroup(group, args) :
+              GroupArguments.Empty(group.Label));
           };
         }
       }
