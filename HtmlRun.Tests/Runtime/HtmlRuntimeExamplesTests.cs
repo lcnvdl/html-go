@@ -214,7 +214,7 @@ public class HtmlRuntimeExamplesTests
     this.runtime.Run(app, null);
 
     Assert.Single(this.logs);
-    Assert.Equal("H", this.logs[0]);
+    Assert.Equal("[20230802-19:00:00] Hello world", this.logs[0]);
   }
 
   [Fact]

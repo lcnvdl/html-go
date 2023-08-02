@@ -29,7 +29,7 @@ public interface ICurrentInstructionContext : IBaseContext
 
   void PushArgumentsAndValues(GroupArguments arguments);
 
-  GroupArguments PopArgumentsAndValues();
+  GroupArguments? PopArgumentsAndValues();
 
   List<string> DirtyVariables { get; }
 }

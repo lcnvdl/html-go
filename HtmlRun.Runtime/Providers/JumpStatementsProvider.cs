@@ -97,7 +97,8 @@ class PopArgumentsCmd : INativeInstruction
     {
       return ctx =>
       {
-        var args = ctx.PopArgumentsAndValues();
+        var args = ctx.PopArgumentsAndValues() ?? throw new NullReferenceException("No arguments to pop.");
+        
         if (args.Arguments == null)
         {
           throw new InvalidOperationException($"Error trying to read arguments of group {args.Label}.");

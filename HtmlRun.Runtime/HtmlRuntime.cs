@@ -155,11 +155,11 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     this.registeredProviders.Add(provider);
   }
 
-  private void InternalRun(AppModel app, CancellationToken? token, IContextJump? initialCursorModification = null, GroupArguments? argsAndValues = null)
+  private void InternalRun(AppModel app, CancellationToken? token, IContextJump? initialCursorModification = null, StartApplicationAsFunctionModel? asFunctionModel = null)
   {
     //  Run instructions
 
-    var applicationStartedModel = this.StartApplication(app, initialCursorModification, argsAndValues);
+    var applicationStartedModel = this.StartApplication(app, initialCursorModification, asFunctionModel);
 
     var cursor = applicationStartedModel.NewCursor;
     var appInstructions = applicationStartedModel.AppInstructions;
@@ -264,11 +264,11 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     return runtime;
   }
 
-  private ApplicationStartedModel StartApplication(AppModel app, IContextJump? initialCursorModification, GroupArguments? argsAndValues)
+  private ApplicationStartedModel StartApplication(AppModel app, IContextJump? initialCursorModification, StartApplicationAsFunctionModel? startAsFunction)
   {
     this.isApplicationStarted = true;
 
-    var cursor = new InstructionPointer(app.Id);
+    var cursor = new InstructionPointer(app.Id, startAsFunction?.CallStack);
 
     InstructionsGroup? main = app.InstructionGroups.SingleOrDefault(m => m.Label == InstructionsGroup.MainLabel);
 
@@ -289,9 +289,12 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     this.ctxStack.Clear();
     this.ctxStack.Push(this.globalCtx);
 
-    if (argsAndValues != null)
+    if (startAsFunction != null)
     {
-      this.globalCtx.InitialPushArgumentsAndValues(argsAndValues);
+      if (startAsFunction.ArgsAndValues != null)
+      {
+        this.globalCtx.InitialPushArgumentsAndValues(startAsFunction.ArgsAndValues);
+      }
     }
 
     var model = new ApplicationStartedModel(cursor, main, appInstructions);
@@ -353,12 +356,18 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     }
 
     var cleanJump = new JumpToLine(currentCursorModification.Line, currentCursorModification.JumpType, currentCursorModification.Offset + 1);
+    // var cleanJump = new JumpToLineWithCallStack(currentCursorModification.Line, currentCursorModification.JumpType, currentCursorModification.Offset + 1);
 
     GroupArguments? argsAndValues = finalCtx.PopArgumentsAndValues();
+    var asFunctionModel = new StartApplicationAsFunctionModel
+    {
+      ArgsAndValues = argsAndValues,
+      CallStack = cursor.CallStack,
+    };
 
     var app = this.importedRuntimes[cursor.ApplicationId].application!;
 
-    this.importedRuntimes[cursor.ApplicationId].InternalRun(app, null, cleanJump, argsAndValues);
+    this.importedRuntimes[cursor.ApplicationId].InternalRun(app, null, cleanJump, asFunctionModel);
 
     finalCtx.CursorModification = null;
 

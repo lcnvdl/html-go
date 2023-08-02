@@ -194,8 +194,8 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
     this.argsStack.Push(arguments);
   }
 
-  public GroupArguments PopArgumentsAndValues()
+  public GroupArguments? PopArgumentsAndValues()
   {
-    return this.argsStack.Pop();
+    return this.argsStack.Count == 0 ? null : this.argsStack.Pop();
   }
 }

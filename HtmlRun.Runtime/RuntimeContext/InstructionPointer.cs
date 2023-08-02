@@ -13,9 +13,10 @@ class InstructionPointer
 
   public Stack<IJumpWithMemory> CallStack { get; private set; } = new Stack<IJumpWithMemory>();
 
-  public InstructionPointer(string applicationId)
+  public InstructionPointer(string applicationId, Stack<IJumpWithMemory>? callStack = null)
   {
     this.ApplicationId = applicationId;
+    this.CallStack = callStack ?? new();
   }
 
   public void UnsafeRecoverFromApplicationContextChange()
@@ -49,9 +50,16 @@ class InstructionPointer
         throw new InvalidOperationException("Call stack is empty.");
       }
 
-      IJumpWithMemory call = this.CallStack.Pop()!;
-
-      this.ApplyJump(new JumpToLine(call.CallPosition + 1), instructions);
+      if (this.CallStack.Peek() is IExternalJumpWithMemory)
+      {
+        //  TODO: Refactor this. Now it's being managed from the Unsafe method in HtmlRuntime.
+      }
+      else
+      {
+        IJumpWithMemory call = this.CallStack.Pop()!;
+        
+        this.ApplyJump(new JumpToLine(call.CallPosition + 1), instructions);
+      }
     }
     else
     {
