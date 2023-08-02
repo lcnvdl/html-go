@@ -126,18 +126,38 @@ HtmlGo is compatible with any HTML meta tag, meaning that none of them will affe
 
 ## Language-related Calls
 The language-related calls should be enclosed within a `<b>` tag.
+* Import
+  * Imports a library.
+  Usage:
+  ```html
+    <li><b>Import</b> <a href="LIBRARY LOCAL PATH"></a>ALIAS</li>
+  ```
+  Example:
+  ```html
+    <li><b>Import</b> <a href="./Libraries/example_library.html">Example</a></li>
+  ```
 * If
-  * If statement. 
+  * If statement.
+  Usage:
+  ```html
+    <li>
+      <b>If</b>
+      <i>CONDITION</i>
+      <ul data-condition="CONDITION (true or false)">
+        INSTRUCTIONS
+      </ul>
+    </li>
+  ```
   Example: 
   ```html
     <li>
       <b>If</b>
       <i class="solve">1 > 2</i>
       <ul data-condition="true">
-        <!-- True result -->
+        <li><u>Log</u> <i class='string'>1 es mayor que 2</i></li>
       </ul>
       <ul data-condition="false">
-        <!-- False result -->
+        <li><u>Log</u> <i class='string'>1 es menor que 2</i></li>
       </ul>
     </li>
   ```
