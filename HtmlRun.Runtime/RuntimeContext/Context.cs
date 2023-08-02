@@ -14,6 +14,8 @@ public class Context : BaseContext, IRuntimeContext
 
   private readonly Stack<Context> ctxStack;
 
+  private readonly Stack<GroupArguments> argsStack;
+
   private readonly IHeap heap;
 
   internal Stack<Context> CtxStack => this.ctxStack;
@@ -56,10 +58,11 @@ public class Context : BaseContext, IRuntimeContext
     }
   }
 
-  public Context(Context? parent, Stack<Context> ctxStack, IHeap? heap = null)
+  public Context(Context? parent, Stack<Context> ctxStack, Stack<GroupArguments> argsStack, IHeap? heap = null)
   {
     this.parent = parent;
     this.ctxStack = ctxStack;
+    this.argsStack = argsStack;
     this.heap = heap ?? new Heap();
 
     if (parent != null)
@@ -70,12 +73,22 @@ public class Context : BaseContext, IRuntimeContext
 
   public Context Fork()
   {
-    return new Context(this, this.ctxStack);
+    return new Context(this, this.ctxStack, this.argsStack);
+  }
+
+  public void InitialPushArgumentsAndValues(GroupArguments arguments)
+  {
+    if(this.argsStack.Count > 0)
+    {
+      throw new InvalidOperationException("Cannot push arguments and values when there are already arguments and values in the stack.");
+    }
+
+    this.argsStack.Push(arguments);
   }
 
   public ICurrentInstructionContext Fork(IHtmlRuntimeForContext runtimeForContext, string callName, IEnumerable<ParsedArgument> args)
   {
-    return new CurrentInstructionContext(runtimeForContext, this, this.ctxStack, callName, args);
+    return new CurrentInstructionContext(runtimeForContext, this, this.ctxStack, this.argsStack, callName, args);
   }
 
   public void DeclareAndSetConst(string name, string val)

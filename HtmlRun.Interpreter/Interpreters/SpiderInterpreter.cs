@@ -17,9 +17,10 @@ public class SpiderInterpreter : IInterpreter
     //  App
 
     var program = new AppModel();
-    program.Title = parser.HeadTitle;
+    program.Id = parser.GetMetaContentWithDefaultValue("htmlgo:application-id", program.Id ?? Guid.NewGuid().ToString());
     program.Version = parser.GetMetaContentWithDefaultValue("htmlgo:application-version", "1.0.0");
     program.Type = GetAppTypeFromString(parser.GetMetaContentWithDefaultValue("htmlgo:application-type"));
+    program.Title = parser.HeadTitle;
 
     //  * Calls
 
@@ -102,6 +103,14 @@ public class SpiderInterpreter : IInterpreter
       {
         var newGroup = new InstructionsGroup(label);
         newGroup.Instructions.AddRange(this.ParseInstructionOfGroup(possibleCalls));
+
+        string? argumentsData = groupElement.GetData("arguments");
+
+        if (!string.IsNullOrEmpty(argumentsData))
+        {
+          var arguments = argumentsData!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+          newGroup.Arguments.AddRange(arguments.Select(m => new InstructionGroupArgumentModel() { Name = m }));
+        }
 
         groups.Add(newGroup);
       }

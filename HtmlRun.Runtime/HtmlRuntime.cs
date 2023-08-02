@@ -1,7 +1,9 @@
 ﻿using HtmlRun.Common.Models;
 using HtmlRun.Common.Plugins;
 using HtmlRun.Common.Plugins.Models;
+using HtmlRun.Interfaces;
 using HtmlRun.Runtime.Code;
+using HtmlRun.Runtime.Constants;
 using HtmlRun.Runtime.Factories;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Models;
@@ -16,6 +18,10 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
   private readonly Dictionary<string, Action<ICurrentInstructionContext>> instructions = new();
 
   private readonly Dictionary<string, INativeJSDefinition> jsInstructions = new();
+
+  private readonly Dictionary<string, HtmlRuntime> importedRuntimes = new();
+
+  private readonly List<INativeProvider> registeredProviders = new();
 
   private readonly List<PluginBase> plugins = new();
 
@@ -34,7 +40,8 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     if (globalCtx == null)
     {
       this.ctxStack = new Stack<Context>();
-      this.globalCtx = new Context(null, this.ctxStack);
+      var argsStack = new Stack<GroupArguments>();
+      this.globalCtx = new Context(null, this.ctxStack, argsStack);
     }
     else
     {
@@ -51,114 +58,13 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
   public void Run(AppModel app, CancellationToken? token)
   {
-    //  Application
+    //  Initialization
 
-    if (this.application != null)
-    {
-      throw new InvalidOperationException("There was an application already loaded for this runtime.");
-    }
+    this.Initialize(app);
 
-    this.application = app;
+    //  Run
 
-    //  Plugins: IBeforeApplicationLoadPluginEvent
-
-    if (this.plugins.Count > 0)
-    {
-      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
-      this.TriggerPlugins<IBeforeApplicationLoadPluginEvent>(plugin => plugin.BeforeApplicationLoad(startInfo));
-    }
-
-    //  JS Engine
-
-    var jsParserWithContext = JavascriptParserWithContextFactory.CreateNewJavascriptParserAndAssignInstructions(this.jsInstructions);
-
-    this.applicationJsContext = jsParserWithContext;
-
-    //  App info
-
-    this.globalCtx.DeclareAndSetConst("Application.Title", application.Title);
-    this.globalCtx.DeclareAndSetConst("Application.Version", application.Version);
-    this.globalCtx.DeclareAndSetConst("Application.Type", application.Type.ToString());
-
-    jsParserWithContext.ExecuteCode($"window.Application = {{ Title: '{application.Title}', Version: '{application.Version}', Type: '{application.Type}', }}");
-
-    //  Title
-
-    if (!string.IsNullOrEmpty(app.Title))
-    {
-      this.RunInstruction(Constants.BasicInstructionsSet.SetTitle, new ParsedArgument(app.Title, ParsedArgumentType.String));
-    }
-
-    //  Load functions
-
-    foreach (var fn in app.Functions)
-    {
-      jsParserWithContext.RegisterFunction($"function {fn.Id}({string.Join(",", fn.Arguments)}) {{ {fn.Code} }}");
-    }
-
-    //  Load entities
-
-    foreach (EntityModel entity in app.Entities)
-    {
-      this.globalCtx.DeclareAndSetConst($"Entities.{entity.Name}", System.Text.Json.JsonSerializer.Serialize(entity));
-      this.TriggerPlugins<IOnLoadEntityPluginEvent>(plugin => plugin.OnLoadEntity(entity));
-    }
-
-    //  Plugins: IOnApplicationStartPluginEvent
-
-    if (this.plugins.Count > 0)
-    {
-      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
-      this.TriggerPlugins<IOnApplicationStartPluginEvent>(plugin => plugin.OnApplicationStart(startInfo));
-    }
-
-    //  Compile instructions
-
-    HtmlRuntimeCompiler.CompileInstructions(app);
-
-    //  Run instructions
-
-    this.isApplicationStarted = true;
-
-    var cursor = new InstructionPointer();
-
-    InstructionsGroup? main = app.InstructionGroups.SingleOrDefault(m => m.Label == InstructionsGroup.MainLabel);
-    if (main == null)
-    {
-      throw new InvalidOperationException("Main instructions group not found.");
-    }
-
-    List<CallModel> appInstructions = main.Instructions;
-
-    this.ctxStack.Clear();
-    this.ctxStack.Push(this.globalCtx);
-
-    while (cursor.Position < appInstructions.Count && (!token.HasValue || !token.Value.IsCancellationRequested))
-    {
-      try
-      {
-        CallModel instruction = appInstructions[cursor.Position];
-
-        ParsedArgument[] arguments = this.ParseArguments(jsParserWithContext, instruction.Arguments);
-
-        ICurrentInstructionContext finalCtx = this.RunInstruction(this.ctxStack.Peek(), instruction.FunctionName, arguments);
-
-        this.SaveContextVariableChangesToJsEngine(finalCtx, jsParserWithContext);
-
-        this.ApplyJumpAndContextSwitching(finalCtx, cursor, appInstructions);
-
-        cursor.MoveToNextPosition();
-      }
-      catch (Jurassic.JavaScriptException ex)
-      {
-        throw new Exception(ex.Message);
-      }
-    }
-
-    if (token.HasValue && token.Value.IsCancellationRequested)
-    {
-      System.Diagnostics.Debug.WriteLine("Task Cancelled!");
-    }
+    this.InternalRun(app, token);
   }
 
   public string? RunCallReference(ICurrentInstructionContext ctx, string referenceId)
@@ -245,6 +151,233 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
         this.jsInstructions[definitionName] = NativeJSDefinitionFactory.NewInstance(jsInstruction);
       }
     }
+
+    this.registeredProviders.Add(provider);
+  }
+
+  private void InternalRun(AppModel app, CancellationToken? token, IContextJump? initialCursorModification = null, StartApplicationAsFunctionModel? asFunctionModel = null)
+  {
+    //  Run instructions
+
+    var applicationStartedModel = this.StartApplication(app, initialCursorModification, asFunctionModel);
+
+    var cursor = applicationStartedModel.NewCursor;
+    var appInstructions = applicationStartedModel.AppInstructions;
+
+    while (cursor.Position < appInstructions.Count && (!token.HasValue || !token.Value.IsCancellationRequested))
+    {
+      this.DoStep(cursor, appInstructions);
+    }
+
+    if (token.HasValue && token.Value.IsCancellationRequested)
+    {
+      System.Diagnostics.Debug.WriteLine("Task Cancelled!");
+    }
+  }
+
+  private void Initialize(AppModel app)
+  {
+    //  Application
+
+    if (this.application != null)
+    {
+      throw new InvalidOperationException("There was an application already loaded for this runtime.");
+    }
+
+    this.application = app;
+
+    //  Plugins: IBeforeApplicationLoadPluginEvent
+
+    if (this.plugins.Count > 0)
+    {
+      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
+      this.TriggerPlugins<IBeforeApplicationLoadPluginEvent>(plugin => plugin.BeforeApplicationLoad(startInfo));
+    }
+
+    //  JS Engine
+
+    var jsParserWithContext = JavascriptParserWithContextFactory.CreateNewJavascriptParserAndAssignInstructions(this.jsInstructions);
+
+    this.applicationJsContext = jsParserWithContext;
+
+    //  App info
+
+    this.globalCtx.DeclareAndSetConst("Application.Title", application.Title);
+    this.globalCtx.DeclareAndSetConst("Application.Version", application.Version);
+    this.globalCtx.DeclareAndSetConst("Application.Type", application.Type.ToString());
+
+    jsParserWithContext.ExecuteCode($"window.Application = {{ Title: '{application.Title}', Version: '{application.Version}', Type: '{application.Type}', }}");
+
+    //  Title
+
+    if (!string.IsNullOrEmpty(app.Title) && app.Type != AppType.Library)
+    {
+      this.RunInstruction(BasicInstructionsSet.SetTitle, new ParsedArgument(app.Title, ParsedArgumentType.String));
+    }
+
+    //  Load functions
+
+    foreach (var fn in app.Functions)
+    {
+      jsParserWithContext.RegisterFunction($"function {fn.Id}({string.Join(",", fn.Arguments)}) {{ {fn.Code} }}");
+    }
+
+    //  Load entities
+
+    foreach (EntityModel entity in app.Entities)
+    {
+      this.globalCtx.DeclareAndSetConst($"Entities.{entity.Name}", System.Text.Json.JsonSerializer.Serialize(entity));
+      this.TriggerPlugins<IOnLoadEntityPluginEvent>(plugin => plugin.OnLoadEntity(entity));
+    }
+
+    //  Plugins: IOnApplicationStartPluginEvent
+
+    if (this.plugins.Count > 0)
+    {
+      var startInfo = new ApplicationStartEventModel(Environment.GetEnvironmentVariables().ToDictionary<string, string>());
+      this.TriggerPlugins<IOnApplicationStartPluginEvent>(plugin => plugin.OnApplicationStart(startInfo));
+    }
+
+    //  Compile instructions
+
+    HtmlRuntimeCompiler.CompileInstructions(app);
+
+    //  Prepare imported runtimes
+
+    foreach (var import in app.Imports)
+    {
+      var runtime = NewHtmlRuntimeWithSameDependencies();
+      this.importedRuntimes[import.Library.Id] = runtime;
+      runtime.Initialize(import.Library);
+    }
+  }
+
+  private HtmlRuntime NewHtmlRuntimeWithSameDependencies()
+  {
+    var runtime = new HtmlRuntime();
+
+    foreach (var provider in this.registeredProviders)
+    {
+      runtime.RegisterProvider(provider);
+    }
+
+    return runtime;
+  }
+
+  private ApplicationStartedModel StartApplication(AppModel app, IContextJump? initialCursorModification, StartApplicationAsFunctionModel? startAsFunction)
+  {
+    this.isApplicationStarted = true;
+
+    var cursor = new InstructionPointer(app.Id, startAsFunction?.CallStack);
+
+    InstructionsGroup? main = app.InstructionGroups.SingleOrDefault(m => m.Label == InstructionsGroup.MainLabel);
+
+    if (main == null)
+    {
+      if (app.Type == AppType.Library)
+      {
+        main = InstructionsGroup.Main;
+      }
+      else
+      {
+        throw new InvalidOperationException("Main instructions group not found.");
+      }
+    }
+
+    List<CallModel> appInstructions = main.Instructions;
+
+    this.ctxStack.Clear();
+    this.ctxStack.Push(this.globalCtx);
+
+    if (startAsFunction != null)
+    {
+      if (startAsFunction.ArgsAndValues != null)
+      {
+        this.globalCtx.InitialPushArgumentsAndValues(startAsFunction.ArgsAndValues);
+      }
+    }
+
+    var model = new ApplicationStartedModel(cursor, main, appInstructions);
+
+    if (initialCursorModification != null)
+    {
+      cursor.ApplyJumpOrFail(initialCursorModification, appInstructions);
+    }
+
+    return model;
+  }
+
+  private void DoStep(InstructionPointer cursor, List<CallModel> appInstructions)
+  {
+    try
+    {
+      CallModel instruction = appInstructions[cursor.Position];
+
+      ParsedArgument[] arguments = this.ParseArguments(this.applicationJsContext!, instruction.Arguments);
+
+      ICurrentInstructionContext finalCtx = this.RunInstruction(this.ctxStack.Peek(), instruction.FunctionName, arguments);
+
+      finalCtx.SaveContextVariableChangesToJsEngine(this.applicationJsContext!);
+
+      this.ApplyJumpAndContextSwitching(finalCtx, cursor, appInstructions);
+
+      cursor.MoveToNextPosition();
+
+      //  External application run
+      if (!cursor.IsPointingToSameApplication(this.application))
+      {
+        this.RunExternalFunction(finalCtx, cursor, instruction);
+      }
+    }
+    catch (Jurassic.JavaScriptException ex)
+    {
+      throw new Exception(ex.Message);
+    }
+  }
+
+  private void RunExternalFunction(ICurrentInstructionContext finalCtx, InstructionPointer cursor, CallModel instruction)
+  {
+    //  TODO  Set cancellation token
+    if (finalCtx.CursorModification == null)
+    {
+      throw new NullReferenceException($"Cursor modification is null for instruction {instruction.FunctionName}.");
+    }
+
+    var currentCursorModification = finalCtx.CursorModification as JumpToLine;
+
+    if (currentCursorModification == null)
+    {
+      throw new NullReferenceException($"Cursor modification is null for instruction {instruction.FunctionName}.");
+    }
+
+    if (currentCursorModification.Line == null)
+    {
+      throw new NullReferenceException($"Cursor modification line is null for instruction {instruction.FunctionName}.");
+    }
+
+    var cleanJump = new JumpToLine(currentCursorModification.Line, currentCursorModification.JumpType, currentCursorModification.Offset + 1);
+    // var cleanJump = new JumpToLineWithCallStack(currentCursorModification.Line, currentCursorModification.JumpType, currentCursorModification.Offset + 1);
+
+    GroupArguments? argsAndValues = finalCtx.PopArgumentsAndValues();
+    var asFunctionModel = new StartApplicationAsFunctionModel
+    {
+      ArgsAndValues = argsAndValues,
+      CallStack = cursor.CallStack,
+    };
+
+    var app = this.importedRuntimes[cursor.ApplicationId].application!;
+
+    this.importedRuntimes[cursor.ApplicationId].InternalRun(app, null, cleanJump, asFunctionModel);
+
+    finalCtx.CursorModification = null;
+
+    //  TODO  Should restore cursor and application ID by using a return. The next line should not be released:
+    cursor.UnsafeRecoverFromApplicationContextChange();
+
+    if (this.application != null && cursor.ApplicationId != this.application.Id)
+    {
+      throw new InvalidOperationException("Application ID is not the same after external application run.");
+    }
   }
 
   private void ApplyJumpAndContextSwitching(ICurrentInstructionContext finalCtx, InstructionPointer cursor, List<CallModel> appInstructions)
@@ -267,17 +400,39 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
         ctxToDispose?.Release();
       }
+      else if (finalCtx.CursorModification is IExternalJumpWithMemory)
+      {
+        List<CallModel> appInstructionsForJump = this.GetAppInstructionsFromExternalJump(finalCtx.CursorModification);
+
+        cursor.ApplyJumpOrFail(finalCtx.CursorModification, appInstructionsForJump);
+
+        //  Should keep the cursor modification
+        // finalCtx.CursorModification = null;
+      }
       else
       {
         cursor.ApplyJumpOrFail(finalCtx.CursorModification, appInstructions);
+
         finalCtx.CursorModification = null;
       }
     }
   }
 
+  private List<CallModel> GetAppInstructionsFromExternalJump(IContextJump contextJump)
+  {
+    var jumpAsJumpToLine = (JumpToLine)contextJump;
+
+    var jumpAsExternalJump = (IExternalJumpWithMemory)contextJump;
+
+    var application = this.importedRuntimes[jumpAsExternalJump.ApplicationId].application! ??
+      throw new NullReferenceException($"Application is null in {jumpAsExternalJump.ApplicationId}.");
+
+    return application.InstructionGroups.First(group => group.Instructions.Any(i => i.CustomId == jumpAsJumpToLine.Line)).Instructions;
+  }
+
   private ICurrentInstructionContext RunInstruction(IRuntimeContext parentCtx, string key, params ParsedArgument[] args)
   {
-    var action = this.GetActionOrFail(parentCtx, key);
+    var action = this.GetActionOrFail(parentCtx, key, args);
 
     var instructionCtx = parentCtx.Fork(this, key, args);
 
@@ -299,7 +454,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     return instructionCtx;
   }
 
-  private Action<ICurrentInstructionContext> GetActionOrFail(IRuntimeContext ctx, string key)
+  private Action<ICurrentInstructionContext> GetActionOrFail(IRuntimeContext ctx, string key, ParsedArgument[] args)
   {
     if (this.instructions.ContainsKey(key))
     {
@@ -313,12 +468,20 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
     if (this.application.LabeledGroups.Any())
     {
-      foreach (var group in this.application.LabeledGroups)
+      var group = this.application.LabeledGroups.FirstOrDefault(m => m.Label.Equals(key));
+      if (group != null)
       {
-        if (group.Label.Equals(key))
+        string groupStartLabel = CompilerConstants.GroupStartLabel(this.application!, group);
+
+        return ctx =>
         {
-          return ctx => ctx.CursorModification = new JumpToLineWithCallStack($"group-{group.Label}", JumpToLine.JumpTypeEnum.LineId);
-        }
+          ctx.CursorModification = new JumpToLineWithCallStack(groupStartLabel, JumpToLine.JumpTypeEnum.LineId);
+
+          if (group.HasArguments)
+          {
+            ctx.PushArgumentsAndValues(GroupArguments.GetPartialWithValuesFromGroup(group, args));
+          }
+        };
       }
     }
 
@@ -352,12 +515,25 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
       foreach (var import in this.application.Imports)
       {
-        string prefix = string.IsNullOrEmpty(import.Alias) ? "" : $"{import.Alias}.";
-        var group = import.Library.InstructionGroups.Find(m => $"{prefix}{m.Label}" == key);
+        string aliasPrefix = string.IsNullOrEmpty(import.Alias) ? "" : $"{import.Alias}.";
+        var group = import.Library.InstructionGroups.Find(m => $"{aliasPrefix}{m.Label}" == key);
 
         if (group != null)
         {
-          throw new NotImplementedException("Imported libraries are not implemented yet.");
+          //  Debería hacer un jump no solo  a la linea, sino a la aplicacion en sí
+          // return ctx => ctx.CursorModification = new JumpToLineWithCallStack($"import-{import.Path}-{group.Label}", JumpToLine.JumpTypeEnum.LineId, 0, );
+
+          // throw new NotImplementedException("Imported libraries are not implemented yet.");
+
+          string groupStartLabel = CompilerConstants.GroupStartLabel(import.Library, group);
+
+          return ctx =>
+          {
+            ctx.CursorModification = new JumpToExternalLineWithCallStack(import.Library.Id, groupStartLabel, JumpToLine.JumpTypeEnum.LineId);
+            ctx.PushArgumentsAndValues(group.HasArguments ?
+              GroupArguments.GetPartialWithValuesFromGroup(group, args) :
+              GroupArguments.Empty(group.Label));
+          };
         }
       }
     }
@@ -403,38 +579,5 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
   private void TriggerPlugins<T>(Action<T> action)
   {
     this.plugins.Where(plugin => plugin is T).Cast<T>().ToList().ForEach(action);
-  }
-
-  private void SaveContextVariableChangesToJsEngine(ICurrentInstructionContext finalCtx, JavascriptParserWithContext jsParserWithContext)
-  {
-    foreach (string variableKey in finalCtx.DirtyVariables)
-    {
-      ContextValue? metaVariable = finalCtx.GetVariable(variableKey);
-
-      if (metaVariable == null)
-      {
-        jsParserWithContext.ExecuteCode($"delete window.{variableKey}");
-      }
-      else
-      {
-        if (variableKey.Contains('.'))
-        {
-          var accumulatedParts = new List<string>();
-
-          var parts = variableKey.Split('.');
-          jsParserWithContext.ExecuteCode($"if(typeof window.{parts.First()} !== 'object') {{ delete window.{parts.First()}; }}");
-
-          foreach (string part in parts)
-          {
-            accumulatedParts.Add(part);
-            string accumulatedKey = string.Join(".", accumulatedParts);
-
-            jsParserWithContext.ExecuteCode($"window.{accumulatedKey}=window.{accumulatedKey}||{{}}");
-          }
-        }
-
-        jsParserWithContext.ExecuteCode($"window.{variableKey}='{metaVariable.Value}'");
-      }
-    }
   }
 }

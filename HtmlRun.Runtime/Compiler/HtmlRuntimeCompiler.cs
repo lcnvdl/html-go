@@ -14,20 +14,44 @@ static class HtmlRuntimeCompiler
   /// </summary>
   internal static void CompileInstructions(AppModel app)
   {
+    //  Compile dependencies instructions // En principio no, porque cuando se llama a una librería hija directamente se va a usar otro HtmlRuntime.
+    // Parallel.ForEach(app.Imports.Select(m => m.Library), CompileInstructions);
+
+    //  Compile instructions
     Parallel.ForEach(app.InstructionGroups, group =>
     {
-      AddGroupStartLabels(group);
+      AddGroupStartLabels(app, group);
+
+      AddGroupPopArguments(group);
 
       EnsureReturns(group);
 
       CompileBranches(group);
 
-      AddGroupEndLabels(group);
+      AddGroupEndLabels(app, group);
     });
 
     //  Prepare main group for the merge
-    var mainGroup = app.InstructionGroups.First(m => m.IsMain);
-    mainGroup.Instructions.Add(CallModelFactory.Goto("application-end"));
+    var mainGroup = app.InstructionGroups.FirstOrDefault(m => m.IsMain);
+
+    if (app.Type == AppType.Library)
+    {
+      if (mainGroup == null)
+      {
+        mainGroup = InstructionsGroup.Main;
+        app.InstructionGroups.Insert(0, mainGroup);
+      }
+    }
+    else
+    {
+      if (mainGroup == null)
+      {
+        throw new InvalidOperationException("Main group not found.");
+      }
+    }
+
+    //  App goto end label
+    mainGroup.Instructions.Add(CallModelFactory.Goto(CompilerConstants.ApplicationEndLabel(app)));
 
     //  Merge and clear groups
     foreach (var groupToMerge in app.LabeledGroups)
@@ -41,18 +65,26 @@ static class HtmlRuntimeCompiler
     // app.InstructionGroups.RemoveAll(m => !m.IsMain);
 
     //  Add application end
-    mainGroup.Instructions.Add(CallModelFactory.Label("application-end"));
+    mainGroup.Instructions.Add(CallModelFactory.Label(CompilerConstants.ApplicationEndLabel(app)));
   }
 
-  private static void AddGroupStartLabels(InstructionsGroup group)
+  private static void AddGroupStartLabels(AppModel app, InstructionsGroup group)
   {
-    string key = $"group-{group.Label}";
+    string key = CompilerConstants.GroupStartLabel(app, group);
     group.Instructions.Insert(0, CallModelFactory.Label(key));
   }
 
-  private static void AddGroupEndLabels(InstructionsGroup group)
+  private static void AddGroupPopArguments(InstructionsGroup group)
   {
-    string key = $"end-group-{group.Label}";
+    if (group.HasArguments)
+    {
+      group.Instructions.Insert(1, CallModelFactory.PopGroupArguments());
+    }
+  }
+
+  private static void AddGroupEndLabels(AppModel app, InstructionsGroup group)
+  {
+    string key = CompilerConstants.GroupEndLabel(app, group);
     group.Instructions.Add(CallModelFactory.Label(key));
   }
 

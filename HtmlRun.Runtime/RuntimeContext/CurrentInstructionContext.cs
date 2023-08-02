@@ -10,6 +10,8 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
 
   private readonly string? callName;
 
+  private readonly Stack<GroupArguments> argsStack;
+
   private readonly List<ParsedArgument>? args;
 
   public IRuntimeContext ParentContext { get; private set; }
@@ -24,10 +26,11 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
 
   public IHtmlRuntimeForUnsafeContext UnsafeRuntime => (IHtmlRuntimeForUnsafeContext)this.Runtime;
 
-  public CurrentInstructionContext(IHtmlRuntimeForContext runtime, IRuntimeContext parent, Stack<Context> ctxStack, string callName, IEnumerable<ParsedArgument> args)
+  public CurrentInstructionContext(IHtmlRuntimeForContext runtime, IRuntimeContext parent, Stack<Context> ctxStack, Stack<GroupArguments> argsStack, string callName, IEnumerable<ParsedArgument> args)
   {
     this.Runtime = runtime;
     this.ParentContext = parent;
+    this.argsStack = argsStack;
     this.ctxStack = ctxStack;
     this.callName = callName;
     this.args = args.ToList();
@@ -184,5 +187,15 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
     {
       throw new NotImplementedException();
     }
+  }
+
+  public void PushArgumentsAndValues(GroupArguments arguments)
+  {
+    this.argsStack.Push(arguments);
+  }
+
+  public GroupArguments? PopArgumentsAndValues()
+  {
+    return this.argsStack.Count == 0 ? null : this.argsStack.Pop();
   }
 }
