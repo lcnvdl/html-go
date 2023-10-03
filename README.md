@@ -14,13 +14,6 @@ The interpreter that lets you 'program' in HTML! Now you can finally join the fu
 
 ![Screenshot1](./Docs/screenshot_1.png)
 
-## What is HTML (HyperText __Machine__ Language)?
-The HTML (HyperText Machine Language) language is our new standard we've made to to create and structure applications inspired by HTML (HyperText Markup Language).
-
-For a comprehensive understanding of the HTML language and its syntax, we recommend referring to the Language Specification. This specification provides detailed documentation on the language's structure, elements, attributes, and key features.
-
-To access the HTML Language Specification, please visit [REFERENCE.md](./REFERENCE.md).
-
 ## What is HtmlGo?
 `HtmlGo` allows you to compile and execute applications in a whole new way. Say goodbye to boring lines of code and embrace a more visual and developer-friendly approach. With `HtmlGo`, all you have to do is write your code in .html files and let its interpreter, developed in NET 6.0, do the rest.
 
@@ -29,6 +22,21 @@ Yes, you heard it right, programming in HTML! But don't worry, it's not like the
 The `HtmlGo` interpreter reads your .html file and executes the instructions you've created.
 
 Want to be part of this new way of programming? Join the `HtmlGo` developer community and discover how this language can bring a fun and refreshing twist to your projects. Say goodbye to monotony and welcome a more visual, creative, and HTML-infused programming experience!
+
+## Full Documentation
+See the [Wiki](https://github.com/lcnvdl/html-go/wiki) for full documentation, examples, operational details and other information.
+
+## Table of contents
+- [What is HtmlGo?](#what-is-htmlgo)
+- [Full Documentation](#full-documentation)
+- [Table of contents](#table-of-contents)
+- [How to use?](#how-to-use)
+  - [Terminal mode](#terminal-mode)
+  - [Server mode](#server-mode)
+- [Getting Started for Users](#getting-started-for-users)
+- [Tutorials](#tutorials)
+- [Dev tools](#dev-tools)
+- [License](#license)
 
 ## How to use?
 ### Terminal mode
