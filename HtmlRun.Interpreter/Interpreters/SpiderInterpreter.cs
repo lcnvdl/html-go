@@ -109,7 +109,7 @@ public class SpiderInterpreter : IInterpreter
         if (!string.IsNullOrEmpty(argumentsData))
         {
           var arguments = argumentsData!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-          newGroup.Arguments.AddRange(arguments.Select(m => new InstructionGroupArgumentModel() { Name = m }));
+          newGroup.Arguments.AddRange(arguments.Select(name => new InstructionGroupArgumentModel(name)));
         }
 
         groups.Add(newGroup);
