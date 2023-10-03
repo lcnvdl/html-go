@@ -1,18 +1,10 @@
-<h1><img src='./Docs/Logo/htmlgo-logo_256_no-background.png' style='width:32px' /> HtmlGo! <img src='./Docs/Logo/htmlgo-logo_256_no-background.png' style='width:32px' /></h1>
-
-[![Tests](https://github.com/lcnvdl/html-go/actions/workflows/build.yml/badge.svg)](https://github.com/lcnvdl/html-go/actions/workflows/build.yml)
-~
-[![Release Notes](https://img.shields.io/github/release/lcnvdl/html-go)](https://github.com/lcnvdl/html-go/releases)
-[![Release Date](https://img.shields.io/github/release-date/lcnvdl/html-go)](https://github.com/lcnvdl/html-go/releases)
-[![Downloads](https://img.shields.io/github/downloads/lcnvdl/html-go/total)](https://github.com/lcnvdl/html-go/releases)
-~
-[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/acodearla.svg?style=social&label=Follow%20%40ACodearla)](https://twitter.com/acodearla)
+<h1>HtmlGo!</h1>
 
 The interpreter that lets you 'program' in HTML! Now you can finally join the fun and proudly say you're an HTML programmer (sort of)!
 
 ¡El intérprete que te permite 'programar' en HTML! Ahora puedes unirte a la diversión y decir con orgullo que eres un programador de HTML (más o menos)!
 
-![Screenshot1](./Docs/screenshot_1.png)
+![Screenshot1](https://htmlgo.org/Docs/screenshot_1.png)
 
 ## What is HtmlGo?
 `HtmlGo` allows you to compile and execute applications in a whole new way. Say goodbye to boring lines of code and embrace a more visual and developer-friendly approach. With `HtmlGo`, all you have to do is write your code in .html files and let its interpreter, developed in NET 6.0, do the rest.
@@ -23,20 +15,12 @@ The `HtmlGo` interpreter reads your .html file and executes the instructions you
 
 Want to be part of this new way of programming? Join the `HtmlGo` developer community and discover how this language can bring a fun and refreshing twist to your projects. Say goodbye to monotony and welcome a more visual, creative, and HTML-infused programming experience!
 
-## Full Documentation
-See the [Wiki](https://github.com/lcnvdl/html-go/wiki) for full documentation, examples, operational details and other information.
+## What is HTML (HyperText __Machine__ Language)?
+The HTML (HyperText Machine Language) language is our new standard we've made to to create and structure applications inspired by HTML (HyperText Markup Language).
 
-## Table of contents
-- [What is HtmlGo?](#what-is-htmlgo)
-- [Full Documentation](#full-documentation)
-- [Table of contents](#table-of-contents)
-- [How to use?](#how-to-use)
-  - [Terminal mode](#terminal-mode)
-  - [Server mode](#server-mode)
-- [Getting Started for Users](#getting-started-for-users)
-- [Videos and Tutorials](#videos-and-tutorials)
-- [Dev Tools](#dev-tools)
-- [License](#license)
+For a comprehensive understanding of the HTML language and its syntax, we recommend referring to the Language Specification. This specification provides detailed documentation on the language's structure, elements, attributes, and key features.
+
+To access the HTML Language Specification, please visit [REFERENCE.md](./REFERENCE.md).
 
 ## How to use?
 ### Terminal mode
@@ -54,7 +38,7 @@ Make sure to replace "/path/to/app.html" with the actual path and name of your a
 And that's it! With these simple steps, you'll be able to run your Html application and see the results in action.
 
 ### Server mode
-![WebApiExample1](./Docs/screenshot_webapi_example1.png)
+![WebApiExample1](https://htmlgo.org/Docs/screenshot_webapi_example1.png)
 
 You can use `HtmlGo` as a WebAPI server:
 
@@ -70,7 +54,7 @@ You can add the `--swagger` parameter to enable Swagger UI:
 htmlgo-server /path/to/app.html --swagger
 ```
 
-![SwaggerUI](./Docs/screenshot_swagger.png)
+![SwaggerUI](https://htmlgo.org/Docs/screenshot_swagger.png)
 
 ## Getting Started for Users
 Before you can start using `HtmlGo` to compile and execute applications, you'll need to perform a simple setup process. This involves downloading the `HtmlGo` package, extracting it to a directory, and configuring your system's environment variables. Follow the steps below to get started:
@@ -94,12 +78,12 @@ Before you can start using `HtmlGo` to compile and execute applications, you'll 
 
 Once you have completed these steps, you have successfully installed `HtmlGo` on your system. You can now start using `HtmlGo` to compile and execute applications written in HTML.
 
-## Videos and Tutorials
+## Tutorials
 * [HtmlGo Playlist (Spanish-Español)](https://www.youtube.com/playlist?list=PLN55oDjIbZw-n1D9bUEykjyBoSS_3D8fn)
 
 Are you a content creator? Send us a pull request with your videos!
 
-## Dev Tools
+## Dev tools
 * Commands (list of commands I've used) - `commands.bat`
 * Prepare (useful for first compilation) - `prepare.bat`
 * Watch (compile and run with hot-reload feature) - `watch.bat`
