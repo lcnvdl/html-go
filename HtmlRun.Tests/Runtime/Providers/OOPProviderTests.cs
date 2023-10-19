@@ -1,12 +1,7 @@
 using HtmlRun.Common.Models;
-using HtmlRun.Runtime;
 using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Constants;
-using HtmlRun.Runtime.Models;
 using HtmlRun.Runtime.Providers;
-using HtmlRun.Runtime.RuntimeContext;
-using HtmlRun.Tests.Stubs;
-using HtmlRun.Tests.Stubs.Instructions;
 
 public class OOPProviderTests : BaseProviderTests
 {

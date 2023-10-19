@@ -34,6 +34,8 @@ public static class BasicInstructionsSet
 
   public const string Set = "Set";
 
+  public const string Swap = "Swap";
+
   public const string Var = "Var";
 
   public const string Delete = "Delete";

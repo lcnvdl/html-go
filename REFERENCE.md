@@ -188,6 +188,7 @@ The calls should be enclosed within a `<u>` tag.
 * Return
 * Set
 * SetTitle
+* Swap
 * Using
 
 ### Console calls
@@ -226,6 +227,9 @@ The calls should be enclosed within a `<u>` tag.
 * Server.SetDefaultContentType
 * Server.StaticFiles
 * Server.StaticDirectory
+
+### Network calls
+* Network.HttpGet
 
 ### Threading calls
 * Threading.Sleep

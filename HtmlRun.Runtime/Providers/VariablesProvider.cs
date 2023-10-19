@@ -3,11 +3,11 @@ using HtmlRun.Runtime.Native;
 
 namespace HtmlRun.Runtime.Providers;
 
-class VariablesProvider : INativeProvider
+public class VariablesProvider : INativeProvider
 {
   public string Namespace => Constants.Namespaces.Global;
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new SetCmd(), new ConstCmd(), new VarCmd(), new DeleteCmd(), };
+  public INativeInstruction[] Instructions => new INativeInstruction[] { new SetCmd(), new SwapCmd(), new ConstCmd(), new VarCmd(), new DeleteCmd(), };
 }
 
 class SetCmd : INativeInstruction
@@ -19,6 +19,29 @@ class SetCmd : INativeInstruction
     get
     {
       return ctx => ctx.SetValueVariable(ctx.GetRequiredArgument(0), ctx.GetArgument(1)!);
+    }
+  }
+}
+
+class SwapCmd : INativeInstruction
+{
+  public string Key => Constants.BasicInstructionsSet.Swap;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx =>
+      {
+        var variable1 = ctx.GetVariable(ctx.GetRequiredArgument(0)) ?? throw new InvalidOperationException($"Variable {ctx.GetRequiredArgument(0)} not found.");
+        var variable2 = ctx.GetVariable(ctx.GetRequiredArgument(1)) ?? throw new InvalidOperationException($"Variable {ctx.GetRequiredArgument(1)} not found.");
+
+        var val1 = variable1.Value;
+        var val2 = variable2.Value;
+
+        ctx.SetValueVariable(ctx.GetRequiredArgument(0), val2);
+        ctx.SetValueVariable(ctx.GetRequiredArgument(1), val1);
+      };
     }
   }
 }

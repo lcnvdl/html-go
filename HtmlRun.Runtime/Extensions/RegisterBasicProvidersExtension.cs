@@ -21,8 +21,7 @@ public static class RegisterBasicProvidersExtension
     runtime.RegisterProvider(new EnvironmentProvider());
     runtime.RegisterProvider(new DateProvider());
     runtime.RegisterProvider(new StringProvider());
-
-    //  TODO  Threading is not a basic provider
+    runtime.RegisterProvider(new HttpClientProvider());
     runtime.RegisterProvider(new ThreadingProvider());
   }
 }

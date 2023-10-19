@@ -1,4 +1,8 @@
 # HtmlGo changelog
+## Next
+* Network calls. Now you can send http requests.
+* New variable instruction: `Swap`. It allows you to swap values between variables in one single line.
+
 ## v0.4.0-alpha
 * Memory heap. Reference values. Introducing support for a memory heap to handle reference values, enabling the use of variables by reference instead of just value-based variables
 * New `meta` tags support: `htmlgo:application-id`, `htmlgo:application-version`, `htmlgo:application-type`.
