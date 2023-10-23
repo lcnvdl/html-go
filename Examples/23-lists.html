@@ -1,0 +1,63 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Lists example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="icon" type="image/x-icon" href="./images/favicon.ico" />
+</head>
+
+<body>
+  <h1>Lists example</h1>
+
+  <h2>Main</h2>
+  <ul>
+    <li class="comment"><i>Create a new list</i></li>
+    <li><u>Var</u> <i class="string">list</i> <i class="call">List.New()</i></li>
+    
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Add (unsorted) values</i></li>
+    <li><u>List.Add</u> <i class="string">list</i> <i class="string">World</i></li>
+    <li><u>List.Add</u> <i class="string">list</i> <i class="string">Hello</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Print (world, hello)</i></li>
+    <li><u>Log</u> <i class="call">List.Get(list, 0)</i></li>
+    <li><u>Log</u> <i class="call">List.Get(list, 1)</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Sort</i></li>
+    <li><u>List.Sort</u> <i class="string">list</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Print (hello, world)</i></li>
+    <li><u>Log</u> <i class="call">List.Get(list, 0)</i></li>
+    <li><u>Log</u> <i class="call">List.Get(list, 1)</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Remove the word Hello</i></li>
+    <li><u>List.Remove</u> <i class="string">list</i> <i class="string">Hello</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Print "World"</i></li>
+    <li><u>Log</u> <i class="call">List.Get(list, 0)</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Remove at index 0</i></li>
+    <li><u>List.RemoveAt</u> <i class="string">list</i> <i class="string">0</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li class="comment"><i>Print "0"</i></li>
+    <li><u>Log</u> <i class="call">List.GetSize(list)</i></li>
+  </ul>
+</body>
+
+</html>

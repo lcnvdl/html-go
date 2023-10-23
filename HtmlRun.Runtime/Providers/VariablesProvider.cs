@@ -1,3 +1,4 @@
+using HtmlRun.Runtime.Exceptions;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 
@@ -33,8 +34,8 @@ class SwapCmd : INativeInstruction
     {
       return ctx =>
       {
-        var variable1 = ctx.GetVariable(ctx.GetRequiredArgument(0)) ?? throw new InvalidOperationException($"Variable {ctx.GetRequiredArgument(0)} not found.");
-        var variable2 = ctx.GetVariable(ctx.GetRequiredArgument(1)) ?? throw new InvalidOperationException($"Variable {ctx.GetRequiredArgument(1)} not found.");
+        var variable1 = ctx.GetVariable(ctx.GetRequiredArgument(0)) ?? throw new VariableNotFoundException(ctx.GetRequiredArgument(0));
+        var variable2 = ctx.GetVariable(ctx.GetRequiredArgument(1)) ?? throw new VariableNotFoundException(ctx.GetRequiredArgument(1));
 
         var val1 = variable1.Value;
         var val2 = variable2.Value;

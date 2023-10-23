@@ -53,9 +53,9 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
       throw new NullReferenceException();
     }
 
-    if (this.args[idx].IsNull)
+    if (this.args.Count <= idx || this.args[idx].IsNull)
     {
-      throw new ArgumentException(errorMessage ?? $"Argument {idx} is missing.");
+      throw new ArgumentException(errorMessage ?? $"Argument {idx} is missing on call {this.callName}.");
     }
 
     var newType = Convert.ChangeType(this.args[idx].Value, typeof(T));

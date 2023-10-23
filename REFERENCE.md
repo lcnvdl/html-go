@@ -206,6 +206,16 @@ The calls should be enclosed within a `<u>` tag.
 * Environment.GetEnvironmentVariable
 * Environment.SetEnvironmentVariable
 
+### List calls
+* List.Add
+* List.New
+* List.Get
+* List.GetSize
+* List.Remove
+* List.RemoveAt
+* List.Sort
+* List.Swap
+
 ### OOP calls
 * New
 

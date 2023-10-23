@@ -1,4 +1,5 @@
 using System.Reflection;
+using HtmlRun.Runtime.Exceptions;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 
@@ -44,7 +45,7 @@ class IncrementCmd : INativeInstruction
 
         if (meta == null)
         {
-          throw new NullReferenceException($"Variable {varName} not found.");
+          throw new VariableNotFoundException(varName);
         }
 
         var cast = Utils.CastingUtils.ToNumber(meta.Value);
@@ -77,7 +78,7 @@ class DecrementCmd : INativeInstruction
 
         if (meta == null)
         {
-          throw new NullReferenceException($"Variable {varName} not found.");
+          throw new VariableNotFoundException(varName);
         }
 
         var cast = Utils.CastingUtils.ToNumber(meta.Value);

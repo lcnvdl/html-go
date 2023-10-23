@@ -17,6 +17,9 @@ public static class RegisterBasicProvidersExtension
     //  Plugins
     runtime.RegisterProvider(new PluginsProvider());
 
+    //  Data structures
+    runtime.RegisterProvider(new ListProvider());
+
     //  Types and tools
     runtime.RegisterProvider(new EnvironmentProvider());
     runtime.RegisterProvider(new DateProvider());

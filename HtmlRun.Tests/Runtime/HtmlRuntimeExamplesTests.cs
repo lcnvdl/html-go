@@ -257,6 +257,22 @@ public class HtmlRuntimeExamplesTests
     Assert.Equal("Next ID: 2", this.logs[2]);
   }
 
+  [Fact]
+  public async void HtmlRuntime_Example_23()
+  {
+    var app = await this.ReadApp("23-lists");
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(6, this.logs.Count);
+    Assert.Equal("World", this.logs[0]);
+    Assert.Equal("Hello", this.logs[1]);
+    Assert.Equal("Hello", this.logs[2]);
+    Assert.Equal("World", this.logs[3]);
+    Assert.Equal("World", this.logs[4]);
+    Assert.Equal("0", this.logs[5]);
+  }
+
   private async Task<AppModel> ReadApp(string exampleName)
   {
     string file = Environment.CurrentDirectory.Remove(Environment.CurrentDirectory.IndexOf("HtmlRun.Tests"));

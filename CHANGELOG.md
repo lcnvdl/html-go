@@ -1,5 +1,6 @@
 # HtmlGo changelog
 ## Next
+* List calls. Now you can manipulate lists.
 * Network calls. Now you can send http requests.
 * New variable instruction: `Swap`. It allows you to swap values between variables in one single line.
 
