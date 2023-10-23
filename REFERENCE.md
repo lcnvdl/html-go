@@ -208,9 +208,10 @@ The calls should be enclosed within a `<u>` tag.
 
 ### List calls
 * List.Add
-* List.New
+* List.FromArray
 * List.Get
 * List.GetSize
+* List.New
 * List.Remove
 * List.RemoveAt
 * List.Sort
