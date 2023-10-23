@@ -223,6 +223,9 @@ The calls should be enclosed within a `<u>` tag.
 * Plugins.Load
 
 ### String calls
+* String.Concat
+* String.Join
+* String.Split
 * String.ToLowerCase
 * String.ToUpperCase
 * String.ToTitleCase

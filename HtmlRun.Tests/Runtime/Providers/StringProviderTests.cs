@@ -41,4 +41,14 @@ public class StringProviderTests : BaseProviderTests
     string? result = this.CallJsInstruction(StringInstructionsSet.ToTitleCase, "this is a title")?.ToString();
     Assert.Equal("This Is A Title", result);
   }
+
+  [Fact]
+  public void StringProvider_Split_JS_ShouldWorkFine()
+  {
+    object? result = this.CallJsInstruction(StringInstructionsSet.Split, "hi,dude!", ",");
+    Assert.NotNull(result);
+
+    string json = result?.ToString()!;
+    Assert.Equal("[\"hi\",\"dude!\"]", json);
+  }
 }

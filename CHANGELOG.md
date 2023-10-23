@@ -2,6 +2,7 @@
 ## Next
 * List calls. Now you can manipulate lists.
 * Network calls. Now you can send http requests.
+* New string instruction: `Split`.
 * New variable instruction: `Swap`. It allows you to swap values between variables in one single line.
 
 ## v0.4.0-alpha

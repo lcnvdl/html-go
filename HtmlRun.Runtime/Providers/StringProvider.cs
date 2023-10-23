@@ -1,3 +1,4 @@
+using System.Text.Json;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 
@@ -8,12 +9,13 @@ public class StringProvider : INativeProvider
   public string Namespace => "String";
 
   public INativeInstruction[] Instructions => new INativeInstruction[] {
-    new TrimCmd(),
-    new ToUpperCaseCmd(),
-    new ToLowerCaseCmd(),
-    new ToTitleCaseCmd(),
     new ConcatCmd(),
     new JoinCmd(),
+    new SplitCmd(),
+    new TrimCmd(),
+    new ToLowerCaseCmd(),
+    new ToTitleCaseCmd(),
+    new ToUpperCaseCmd(),
   };
 }
 
@@ -50,7 +52,6 @@ class JoinCmd : INativeInstruction, INativeJSEvalInstruction
 
   public EvalDefinition ToEvalFunction()
   {
-    // return new Func<string, string[], string>((separator, values) => string.Join(separator, values));
     return new EvalDefinition("return arg1.join(arg0);", 2);
   }
 }
@@ -124,6 +125,29 @@ class ToTitleCaseCmd : INativeInstruction, INativeJSInstruction
   public Delegate ToJSAction()
   {
     return new Func<string, string>(arg => System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(arg));
+  }
+}
+
+class SplitCmd : INativeInstruction, INativeJSInstruction
+{
+  public string Key => Constants.StringInstructionsSet.Split;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+  public Delegate ToJSAction()
+  {
+    var jsDelegate = new Func<string, string, string>((text, separator) =>
+    {
+      string[] split = text.Split(separator);
+      return JsonSerializer.Serialize(split);
+    });
+
+    return jsDelegate;
   }
 }
 

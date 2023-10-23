@@ -7,6 +7,8 @@ public static class StringInstructionsSet
   public const string Join = "Join";
 
   public const string Concat = "Concat";
+
+  public const string Split = "Split";
   
   public const string ToLowerCase = "ToLowerCase";
 

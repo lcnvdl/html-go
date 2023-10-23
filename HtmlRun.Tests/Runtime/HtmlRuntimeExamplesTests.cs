@@ -273,6 +273,18 @@ public class HtmlRuntimeExamplesTests
     Assert.Equal("0", this.logs[5]);
   }
 
+  [Fact]
+  public async void HtmlRuntime_Example_24()
+  {
+    var app = await this.ReadApp("24-strings");
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(2, this.logs.Count);
+    Assert.Equal("Hi", this.logs[0]);
+    Assert.Equal("world!", this.logs[1]);
+  }
+
   private async Task<AppModel> ReadApp(string exampleName)
   {
     string file = Environment.CurrentDirectory.Remove(Environment.CurrentDirectory.IndexOf("HtmlRun.Tests"));
