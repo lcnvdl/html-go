@@ -1,3 +1,4 @@
+using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Exceptions;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
@@ -11,7 +12,28 @@ public class VariablesProvider : INativeProvider
   public INativeInstruction[] Instructions => new INativeInstruction[] { new SetCmd(), new SwapCmd(), new ConstCmd(), new VarCmd(), new DeleteCmd(), };
 }
 
-class SetCmd : INativeInstruction
+abstract class VariableBaseCmd
+{
+  protected bool ShouldBeSavedAsPointer(ParsedArgument parsedArgument)
+  {
+    return parsedArgument.RawValue != null && parsedArgument.RawValue!.GetType()!.FullName!.Contains("Jurassic");
+  }
+
+  protected void SetValueToContext(ICurrentInstructionContext ctx, ParsedArgument parsedArgument, string varName)
+  {
+    if (this.ShouldBeSavedAsPointer(parsedArgument))
+    {
+      var rawValue = parsedArgument.RawValue!;
+      ctx.AllocAndSetPointerVariable(varName, rawValue);
+    }
+    else
+    {
+      ctx.SetValueVariable(varName, parsedArgument.Value);
+    }
+  }
+}
+
+class SetCmd : VariableBaseCmd, INativeInstruction
 {
   public string Key => Constants.BasicInstructionsSet.Set;
 
@@ -19,7 +41,10 @@ class SetCmd : INativeInstruction
   {
     get
     {
-      return ctx => ctx.SetValueVariable(ctx.GetRequiredArgument(0), ctx.GetArgument(1)!);
+      return ctx =>
+      {
+        this.SetValueToContext(ctx, ctx.GetArgumentAt(1), ctx.GetRequiredArgument());
+      };
     }
   }
 }
@@ -37,17 +62,28 @@ class SwapCmd : INativeInstruction
         var variable1 = ctx.GetVariable(ctx.GetRequiredArgument(0)) ?? throw new VariableNotFoundException(ctx.GetRequiredArgument(0));
         var variable2 = ctx.GetVariable(ctx.GetRequiredArgument(1)) ?? throw new VariableNotFoundException(ctx.GetRequiredArgument(1));
 
+        if (variable1.IsConst || variable2.IsConst)
+        {
+          throw new InvalidOperationException();
+        }
+
         var val1 = variable1.Value;
         var val2 = variable2.Value;
 
+        bool isVar1Pointer = variable1.IsPointer;
+        bool isVar2Pointer = variable2.IsPointer;
+
         ctx.SetValueVariable(ctx.GetRequiredArgument(0), val2);
         ctx.SetValueVariable(ctx.GetRequiredArgument(1), val1);
+
+        variable1.IsPointer = isVar2Pointer;
+        variable2.IsPointer = isVar1Pointer;
       };
     }
   }
 }
 
-class ConstCmd : INativeInstruction
+class ConstCmd : VariableBaseCmd, INativeInstruction
 {
   public string Key => Constants.BasicInstructionsSet.Const;
 
@@ -55,12 +91,26 @@ class ConstCmd : INativeInstruction
   {
     get
     {
-      return ctx => ctx.DeclareAndSetConst(ctx.GetRequiredArgument(0), ctx.GetArgument(1)!);
+      return ctx =>
+      {
+        //  TODO  Improve DeclareAndSetConst in order to uncomment it and remove the next lines
+        // ctx.DeclareAndSetConst(ctx.GetRequiredArgument(0), ctx.GetArgument(1)!);
+
+        string varName = ctx.GetRequiredArgument();
+
+        ctx.DeclareVariable(varName);
+
+        var parsedArgument = ctx.GetArgumentAt(1);
+
+        this.SetValueToContext(ctx, parsedArgument, varName);
+
+        ctx.GetVariable(varName)!.IsConst = true;
+      };
     }
   }
 }
 
-class VarCmd : INativeInstruction
+class VarCmd : VariableBaseCmd, INativeInstruction
 {
   public string Key => Constants.BasicInstructionsSet.Var;
 
@@ -70,11 +120,15 @@ class VarCmd : INativeInstruction
     {
       return ctx =>
       {
-        ctx.DeclareVariable(ctx.GetRequiredArgument());
+        string varName = ctx.GetRequiredArgument();
+
+        ctx.DeclareVariable(varName);
 
         if (ctx.CountArguments() > 1)
         {
-          ctx.SetValueVariable(ctx.GetRequiredArgument(), ctx.GetRequiredArgument(1));
+          var parsedArgument = ctx.GetArgumentAt(1);
+
+          this.SetValueToContext(ctx, parsedArgument, varName);
         }
       };
     }

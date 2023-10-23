@@ -1,6 +1,8 @@
+using System.Text.Json;
 using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Constants;
 using HtmlRun.Runtime.Providers;
+using Jurassic.Library;
 
 public class StringProviderTests : BaseProviderTests
 {
@@ -48,7 +50,22 @@ public class StringProviderTests : BaseProviderTests
     object? result = this.CallJsInstruction(StringInstructionsSet.Split, "hi,dude!", ",");
     Assert.NotNull(result);
 
-    string json = result?.ToString()!;
+    var arrResult = result as ArrayInstance;
+    Assert.NotNull(arrResult);
+
+    string json = JsonSerializer.Serialize(arrResult!.ElementValues.ToArray());
     Assert.Equal("[\"hi\",\"dude!\"]", json);
+  }
+
+  [Fact]
+  public void StringProvider_Join_JS_ShouldWorkFine()
+  {
+    var arr = this.JavascriptParserWithContext.GetInteropArray(new string[] { "hi", "dude" });
+
+    object? result = this.CallJsInstruction(StringInstructionsSet.Join, arr, " ");
+    Assert.NotNull(result);
+
+    string text = result?.ToString()!;
+    Assert.Equal("hi dude", text);
   }
 }

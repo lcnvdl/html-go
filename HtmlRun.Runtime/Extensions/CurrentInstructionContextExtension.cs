@@ -39,8 +39,31 @@ public static class CurrentInstructionContextExtension
           }
         }
 
-        jsParserWithContext.ExecuteCode($"window.{variableKey}='{metaVariable.Value}'");
+        if (metaVariable.IsPointer)
+        {
+          var heapEntry = finalCtx.ParentContext.Heap.Read(int.Parse(metaVariable.Value!));
+          var rawValue = heapEntry.Data;
+
+          if (rawValue != null && rawValue.GetType()!.FullName!.Contains("Jurassic"))
+          {
+            jsParserWithContext.Engine.SetGlobalValue("tmpPointer", rawValue);
+
+            jsParserWithContext.ExecuteCode($"window.{variableKey}=tmpPointer");
+
+            jsParserWithContext.ExecuteCode("delete window.tmpPointer");
+          }
+          else
+          {
+            //  TODO  Set values from heap
+          }
+        }
+        else
+        {
+          jsParserWithContext.ExecuteCode($"window.{variableKey}='{metaVariable.Value}'");
+        }
       }
     }
+
+    finalCtx.DirtyVariables.Clear();
   }
 }

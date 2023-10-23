@@ -18,7 +18,9 @@ public static class ParsedArgumentFactory
       else
       {
         string code = argModel.Content!;
-        result = new ParsedArgument(jsParser.ExecuteCode(code)?.ToString(), ParsedArgumentType.Native);
+        object rawResult = jsParser.ExecuteCode(code);
+
+        result = new ParsedArgument(rawResult?.ToString(), ParsedArgumentType.Native, rawResult);
       }
     }
     else if (argModel.IsSolve)

@@ -280,9 +280,10 @@ public class HtmlRuntimeExamplesTests
 
     this.runtime.Run(app, null);
 
-    Assert.Equal(2, this.logs.Count);
-    Assert.Equal("Hi", this.logs[0]);
-    Assert.Equal("world!", this.logs[1]);
+    Assert.Equal(3, this.logs.Count);
+    Assert.Equal("Line 1: Hi", this.logs[0]);
+    Assert.Equal("Line 2: world!", this.logs[1]);
+    Assert.Equal("Hi--world!", this.logs[2]);
   }
 
   private async Task<AppModel> ReadApp(string exampleName)

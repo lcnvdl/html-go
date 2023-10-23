@@ -1,6 +1,7 @@
-using System.Text.Json;
+using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
+using Jurassic.Library;
 
 namespace HtmlRun.Runtime.Providers;
 
@@ -38,7 +39,7 @@ class ConcatCmd : INativeInstruction, INativeJSEvalInstruction
 }
 
 
-class JoinCmd : INativeInstruction, INativeJSEvalInstruction
+class JoinCmd : INativeInstruction, INativeJSInstruction
 {
   public string Key => Constants.StringInstructionsSet.Join;
 
@@ -50,9 +51,9 @@ class JoinCmd : INativeInstruction, INativeJSEvalInstruction
     }
   }
 
-  public EvalDefinition ToEvalFunction()
+  public Delegate ToJSAction()
   {
-    return new EvalDefinition("return arg1.join(arg0);", 2);
+    return new Func<ArrayInstance, string, string>((arr, separator) => string.Join(separator, arr.ElementValues));
   }
 }
 
@@ -128,8 +129,10 @@ class ToTitleCaseCmd : INativeInstruction, INativeJSInstruction
   }
 }
 
-class SplitCmd : INativeInstruction, INativeJSInstruction
+class SplitCmd : INativeInstruction, INativeJSInstruction, IInstructionRequiresJsEngine
 {
+  private Func<JavascriptParserWithContext>? engineGetter;
+
   public string Key => Constants.StringInstructionsSet.Split;
 
   public Action<ICurrentInstructionContext> Action
@@ -139,12 +142,25 @@ class SplitCmd : INativeInstruction, INativeJSInstruction
       return ctx => { };
     }
   }
+
+  public void SetEngineGenerator(Func<object> engineGetter)
+  {
+    this.engineGetter = () => (JavascriptParserWithContext)engineGetter();
+  }
+
   public Delegate ToJSAction()
   {
-    var jsDelegate = new Func<string, string, string>((text, separator) =>
+    var jsDelegate = new Func<string, string, ArrayInstance>((text, separator) =>
     {
       string[] split = text.Split(separator);
-      return JsonSerializer.Serialize(split);
+
+      if (this.engineGetter == null)
+      {
+        throw new NullReferenceException("Missing engine generator.");
+      }
+
+      var arr = (ArrayInstance)this.engineGetter().GetInteropArray(split);
+      return arr;
     });
 
     return jsDelegate;

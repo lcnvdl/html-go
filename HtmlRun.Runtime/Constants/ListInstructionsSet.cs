@@ -14,6 +14,8 @@ public static class ListInstructionsSet
 
   public const string New = "New";
 
+  public const string FromArray = "FromArray";
+
   public const string GetSize = "GetSize";
 
   public const string Swap = "Swap";

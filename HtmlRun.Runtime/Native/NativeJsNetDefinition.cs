@@ -8,4 +8,9 @@ public class NativeJSNetDefinition : INativeJSDefinition
   {
     Delegate = @delegate;
   }
+
+  public NativeJSNetDefinition(JsActionDefinition definition)
+  {
+    Delegate = definition.Delegate;
+  }
 }

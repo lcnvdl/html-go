@@ -78,7 +78,7 @@ public class Context : BaseContext, IRuntimeContext
 
   public void InitialPushArgumentsAndValues(GroupArguments arguments)
   {
-    if(this.argsStack.Count > 0)
+    if (this.argsStack.Count > 0)
     {
       throw new InvalidOperationException("Cannot push arguments and values when there are already arguments and values in the stack.");
     }
@@ -90,7 +90,7 @@ public class Context : BaseContext, IRuntimeContext
   {
     return new CurrentInstructionContext(runtimeForContext, this, this.ctxStack, this.argsStack, callName, args);
   }
-
+  
   public void DeclareAndSetConst(string name, string val)
   {
     //  TODO  Set up this validation
@@ -121,6 +121,14 @@ public class Context : BaseContext, IRuntimeContext
   {
     var variable = this.GetVariable(name) ?? throw new InvalidOperationException($"Variable {name} was not declared.");
     variable.Value = val;
+    variable.IsPointer = false;
+  }
+
+  public void SetPointerVariable(string name, string? val)
+  {
+    var variable = this.GetVariable(name) ?? throw new InvalidOperationException($"Variable {name} was not declared.");
+    variable.Value = val;
+    variable.IsPointer = true;
   }
 
   public bool IsDeclared(string name, bool ignoreInferred = false)
@@ -241,6 +249,6 @@ public class Context : BaseContext, IRuntimeContext
 
   public void AllocAndSetPointerVariable(string name, object val)
   {
-    this.SetValueVariable(name, this.AllocInHeap(val).ToString());
+    this.SetPointerVariable(name, this.AllocInHeap(val).ToString());
   }
 }

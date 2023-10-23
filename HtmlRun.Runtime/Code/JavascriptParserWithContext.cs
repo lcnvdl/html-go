@@ -4,7 +4,7 @@ public class JavascriptParserWithContext
 {
   private Jurassic.ScriptEngine? engine;
 
-  private Jurassic.ScriptEngine Engine
+  internal Jurassic.ScriptEngine Engine
   {
     get
     {
@@ -16,6 +16,11 @@ public class JavascriptParserWithContext
 
       return this.engine;
     }
+  }
+
+  public object GetInteropArray(object[] elements)
+  {
+    return this.Engine.Array.New(elements);
   }
 
   public void RegisterInstruction(string name, Delegate code)

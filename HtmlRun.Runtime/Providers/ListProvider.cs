@@ -2,6 +2,8 @@ using System.Text.Json;
 using HtmlRun.Runtime.Exceptions;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
+using Jurassic;
+using Jurassic.Library;
 
 namespace HtmlRun.Runtime.Providers;
 
@@ -13,6 +15,7 @@ class ListProvider : INativeProvider
     new ListGetCmd(),
     new ListNewCmd(),
     new ListAddCmd(),
+    new ListFromArrayCmd(),
     new ListSortCmd(),
     new ListRemoveCmd(),
     new ListRemoveAtCmd(),
@@ -92,6 +95,24 @@ class ListNewCmd : INativeInstruction, INativeJSInstruction
   public Delegate ToJSAction()
   {
     return new Func<string>(() => "[]");
+  }
+}
+
+class ListFromArrayCmd : BaseInstructionWithJsEngine, INativeInstruction, INativeJSInstruction
+{
+  public string Key => Constants.ListInstructionsSet.FromArray;
+
+  public Action<ICurrentInstructionContext> Action
+  {
+    get
+    {
+      return ctx => { };
+    }
+  }
+
+  public Delegate ToJSAction()
+  {
+    return new Func<ArrayInstance, string>(arr => JsonSerializer.Serialize(arr.ElementValues.ToArray()));
   }
 }
 

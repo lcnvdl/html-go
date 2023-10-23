@@ -12,9 +12,16 @@
 
   <h2>Main</h2>
   <ul>
-    <li><u>Var</u> <i class="string">words</i> <i class="call">String.Split("Hi world!", " ")</i></li>
-    <li><u>Log</u> <i class="call">List.Get(words, 0)</i></li>
-    <li><u>Log</u> <i class="call">List.Get(words, 1)</i></li>
+    <li><u>Const</u> <i class="string">words</i> <i class="call">String.Split("Hi world!", " ")</i></li>
+    
+    <li><u>Const</u> <i class="string">wordsList</i> <i class="call">List.FromArray(words)</i></li>
+    <li><u>Log</u> <i class="string">Line 1:</i> <i class="call">List.Get(wordsList, 0)</i></li>
+    <li><u>Log</u> <i class="string">Line 2:</i> <i class="call">List.Get(wordsList, 1)</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li><u>Var</u> <i class="string">text</i> <i class="call">String.Join(words, "--")</i></li>
+    <li><u>Log</u> <i class="call">text</i></li>
   </ul>
 </body>
 

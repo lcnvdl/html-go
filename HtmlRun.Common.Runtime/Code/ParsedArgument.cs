@@ -6,16 +6,19 @@ public class ParsedArgument
 
   public ParsedArgumentType Type { get; private set; }
 
+  public object? RawValue { get; private set; }
+
   public bool IsNative => (this.Type & ParsedArgumentType.Native) == ParsedArgumentType.Native;
 
   public bool IsNull => this.Type == ParsedArgumentType.Null;
 
   public bool IsReference => this.Type == ParsedArgumentType.Reference;
 
-  public ParsedArgument(string? value, ParsedArgumentType type)
+  public ParsedArgument(string? value, ParsedArgumentType type, object? rawValue = null)
   {
     this.Value = value;
     this.Type = type;
+    this.RawValue = rawValue;
   }
 
   public static ParsedArgument Null => new(null, ParsedArgumentType.Null);

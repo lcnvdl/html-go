@@ -8,10 +8,20 @@
       "name": "Launch Terminal",
       "type": "coreclr",
       "request": "launch",
+      "program": "${workspaceFolder}/Runtimes/HtmlRun.Terminal/bin/Debug/net6.0/HtmlRun.Terminal.dll",
+      "args": ["run"],
+      "cwd": "${workspaceFolder}\\Runtimes\\HtmlRun.Terminal",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Build & Launch Terminal",
+      "type": "coreclr",
+      "request": "launch",
       "preLaunchTask": "build",
       "program": "${workspaceFolder}/Runtimes/HtmlRun.Terminal/bin/Debug/net6.0/HtmlRun.Terminal.dll",
       "args": ["run"],
-      "cwd": "${workspaceFolder}/Runtimes/HtmlRun.Terminal",
+      "cwd": "${workspaceFolder}\\Runtimes\\HtmlRun.Terminal",
       "console": "internalConsole",
       "stopAtEntry": false
     },

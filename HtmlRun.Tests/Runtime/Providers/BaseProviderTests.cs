@@ -1,3 +1,4 @@
+using System.Reflection;
 using HtmlRun.Runtime;
 using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Native;
@@ -16,7 +17,11 @@ public abstract class BaseProviderTests
 
   protected HtmlRuntime Runtime => this.runtime;
 
+  private JavascriptParserWithContext? applicationJsContext;
+
   protected INativeProvider Provider { get; private set; }
+
+  protected JavascriptParserWithContext JavascriptParserWithContext => this.applicationJsContext!;
 
   public BaseProviderTests(INativeProvider provider)
   {
@@ -26,6 +31,19 @@ public abstract class BaseProviderTests
     this.runtime = new HtmlRuntime(this.ctx);
     this.runtime.RegisterProvider(new InstructionsProvider(this.logs));
     this.runtime.RegisterBasicProviders();
+
+    var jurassicField = this.runtime.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(m => m.Name.Equals("applicationJsContext"));
+
+    var newJsCtx = new JavascriptParserWithContext();
+
+    jurassicField.SetValue(this.runtime, newJsCtx);
+
+    this.applicationJsContext = (JavascriptParserWithContext)jurassicField.GetValue(this.runtime)!;
+
+    if (this.applicationJsContext == null)
+    {
+      throw new NullReferenceException("applicationJsContext is null");
+    }
   }
 
   protected void TestGetInstructions()
@@ -49,6 +67,11 @@ public abstract class BaseProviderTests
   {
     var jsInstruction = this.GetJSInstruction(key);
     Assert.NotNull(jsInstruction);
+
+    if (jsInstruction is IInstructionRequiresJsEngine engineReq)
+    {
+      engineReq.SetEngineGenerator(() => this.applicationJsContext!);
+    }
 
     var jsAction = jsInstruction!.ToJSAction();
 

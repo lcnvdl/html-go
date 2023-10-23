@@ -148,7 +148,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
       {
         string definitionName = provider.IsGlobal ? instruction.Key : $"{provider.Namespace}.{instruction.Key}";
 
-        this.jsInstructions[definitionName] = NativeJSDefinitionFactory.NewInstance(jsInstruction);
+        this.jsInstructions[definitionName] = NativeJSDefinitionFactory.NewInstance(jsInstruction, () => this.applicationJsContext!);
       }
     }
 

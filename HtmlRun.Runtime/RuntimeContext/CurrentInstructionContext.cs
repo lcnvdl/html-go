@@ -183,6 +183,10 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
         this.SetDirty($"{variableName}.{attribute.Name}");
       }
     }
+    else if (newInstance.GetType()!.FullName!.Contains("Jurassic"))
+    {
+        this.SetDirty($"{variableName}");
+    }
     else
     {
       throw new NotImplementedException();
