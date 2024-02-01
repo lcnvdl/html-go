@@ -273,6 +273,17 @@ public class HtmlRuntimeExamplesTests
     Assert.Equal("0", this.logs[5]);
   }
 
+  [Fact]
+  public async void HtmlRuntime_Example_24()
+  {
+    var app = await this.ReadApp("24-library_import_II");
+
+    this.runtime.Run(app, null);
+
+    // Assert.Single(this.logs);
+    Assert.Equal("Enter: 13", this.logs[0]);
+  }
+
   private async Task<AppModel> ReadApp(string exampleName)
   {
     string file = Environment.CurrentDirectory.Remove(Environment.CurrentDirectory.IndexOf("HtmlRun.Tests"));

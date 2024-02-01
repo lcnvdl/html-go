@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace HtmlRun.Common.Models;
 
 public class ImportedLibraryModel
 {
+  [JsonIgnore]
   public AppModel Origin { get; private set; }
 
   public string Path { get; private set; }

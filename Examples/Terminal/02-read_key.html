@@ -1,0 +1,48 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Get user input example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="icon" type="image/x-icon" href="../images/favicon.ico" />
+</head>
+
+<body>
+  <h1>Get user input example</h1>
+
+  <h2>Main</h2>
+  <ul>
+    <!-- Constants and variables -->
+    <li class="comment"><i>Constants & Variables</i></li>
+    <li><u>Const</u> <i class="string">enter</i> <i class="number">13</i></li>
+    <li><u>Var</u> <i class="string">key</i></li>
+
+    <li class="ignore"><br></li>
+
+    <!-- Loop -->
+    <li class="comment"><i>Loop</i></li>
+    <li data-id="askForKey"><u>Log</u> <i class="string">Hit enter to exit:</i></li>
+
+    <li><u>Set</u> <i class="string">key</i> <i class="call">Console.ReadKey()</i></li>
+
+    <li class="ignore"><br></li>
+
+    <li>
+      <b>If</b>
+      <i class="call">key == 13</i>
+      <ul data-condition="false">
+        <li class="comment"><i>False:</i></li>
+        <li><u>Log</u> <i class="string"></i></li>
+        <li><u>Log</u> <i class="string"> Wrong key...</i></li>
+        <li><u>Log</u> <i class="string"></i></li>
+        <li><u>Goto</u> <i class="string">askForKey</i></li>
+      </ul>
+      <ul data-condition="true">
+        <li class="comment"><i>True:</i></li>
+        <li><u>Log</u> <i class="string">Exit</i></li>
+      </ul>
+    </li>
+  </ul>
+</body>
+
+</html>

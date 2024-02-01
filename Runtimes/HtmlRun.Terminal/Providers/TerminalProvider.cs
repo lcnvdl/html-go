@@ -7,5 +7,11 @@ class TerminalProvider : INativeProvider
 {
   public string Namespace => "Console";
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new ReadLineCmd(), };
+  public INativeInstruction[] Instructions => new INativeInstruction[]
+  {
+    new ReadLineCmd(),
+    new ReadKeyCmd(),
+    new ClearCmd(),
+    new SetCursorPosition(),
+  };
 }

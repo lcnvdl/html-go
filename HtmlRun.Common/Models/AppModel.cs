@@ -8,6 +8,8 @@ public class AppModel
 
   public string Version { get; set; } = string.Empty;
 
+  public string? Alias { get; set; }
+
   public AppType Type { get; set; } = AppType.Unknown;
 
   public List<InstructionsGroup> InstructionGroups { get; set; } = new();

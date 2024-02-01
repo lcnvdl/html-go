@@ -1,4 +1,5 @@
-﻿using HtmlRun.Common.Models;
+﻿using System.Text.Encodings.Web;
+using HtmlRun.Common.Models;
 using HtmlRun.Common.Plugins;
 using HtmlRun.Common.Plugins.Models;
 using HtmlRun.Interfaces;
@@ -164,6 +165,8 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     var cursor = applicationStartedModel.NewCursor;
     var appInstructions = applicationStartedModel.AppInstructions;
 
+    this.RunImportedLibraries(app, token);
+
     while (cursor.Position < appInstructions.Count && (!token.HasValue || !token.Value.IsCancellationRequested))
     {
       this.DoStep(cursor, appInstructions);
@@ -246,9 +249,12 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
     foreach (var import in app.Imports)
     {
-      var runtime = NewHtmlRuntimeWithSameDependencies();
-      this.importedRuntimes[import.Library.Id] = runtime;
-      runtime.Initialize(import.Library);
+      var newRuntime = NewHtmlRuntimeWithSameDependencies();
+      this.importedRuntimes[import.Library.Id] = newRuntime;
+
+      import.Library.Alias = import.Alias;
+
+      newRuntime.Initialize(import.Library);
     }
   }
 
@@ -365,9 +371,10 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
       CallStack = cursor.CallStack,
     };
 
-    var app = this.importedRuntimes[cursor.ApplicationId].application!;
+    var importedRuntime = this.importedRuntimes[cursor.ApplicationId];
+    var app = importedRuntime.application!;
 
-    this.importedRuntimes[cursor.ApplicationId].InternalRun(app, null, cleanJump, asFunctionModel);
+    importedRuntime.InternalRun(app, null, cleanJump, asFunctionModel);
 
     finalCtx.CursorModification = null;
 
@@ -377,6 +384,33 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     if (this.application != null && cursor.ApplicationId != this.application.Id)
     {
       throw new InvalidOperationException("Application ID is not the same after external application run.");
+    }
+
+    //  Get exported variables
+    foreach (ContextValue variable in importedRuntime.globalCtx.AllVariables.Where(m => m != null))
+    {
+      string groupPrefix = (argsAndValues == null || string.IsNullOrEmpty(argsAndValues.Label)) ? string.Empty : $"{argsAndValues.Label}.";
+
+      this.ImportVariablesFromRuntime(importedRuntime, groupPrefix);
+    }
+  }
+
+  private void ImportVariablesFromRuntime(HtmlRuntime child, string groupPrefix = "")
+  {
+    var app = child.application!;
+
+    //  Get exported variables
+    foreach (ContextValue variable in child.globalCtx.AllVariables.Where(m => m != null))
+    {
+      string? libraryAlias = app?.Alias;
+
+      string libraryAliasPrefix = string.IsNullOrEmpty(libraryAlias) ? string.Empty : $"{libraryAlias}.";
+
+      string finalName = $"{libraryAliasPrefix}{groupPrefix}{variable.Name}";
+
+      this.globalCtx.AddVariable(new ContextValue(finalName, variable.Value!, variable.IsConst));
+
+      this.applicationJsContext?.SafeSet(finalName, variable.Value);
     }
   }
 
@@ -579,5 +613,25 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
   private void TriggerPlugins<T>(Action<T> action)
   {
     this.plugins.Where(plugin => plugin is T).Cast<T>().ToList().ForEach(action);
+  }
+
+  private void RunImportedLibraries(AppModel app, CancellationToken? token)
+  {
+    var imports = app.Imports.FindAll(m => m.Library.InstructionGroups.Any(m => m.IsMain && m.Instructions.Count > 0));
+
+    if (imports.Count == 0)
+    {
+      return;
+    }
+
+    var runtimes = imports.Select(m => new { runtime = this.importedRuntimes[m.Library.Id], app = m.Library });
+
+    Parallel.ForEach(runtimes, m => m.runtime.InternalRun(m.app, token));
+
+    foreach (var import in imports)
+    {
+      var runtime = this.importedRuntimes[import.Library.Id];
+      this.ImportVariablesFromRuntime(runtime);
+    }
   }
 }

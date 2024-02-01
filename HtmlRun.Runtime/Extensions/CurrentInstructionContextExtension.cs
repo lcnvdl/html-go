@@ -23,23 +23,7 @@ public static class CurrentInstructionContextExtension
       }
       else
       {
-        if (variableKey.Contains('.'))
-        {
-          var accumulatedParts = new List<string>();
-
-          var parts = variableKey.Split('.');
-          jsParserWithContext.ExecuteCode($"if(typeof window.{parts.First()} !== 'object') {{ delete window.{parts.First()}; }}");
-
-          foreach (string part in parts)
-          {
-            accumulatedParts.Add(part);
-            string accumulatedKey = string.Join(".", accumulatedParts);
-
-            jsParserWithContext.ExecuteCode($"window.{accumulatedKey}=window.{accumulatedKey}||{{}}");
-          }
-        }
-
-        jsParserWithContext.ExecuteCode($"window.{variableKey}='{metaVariable.Value}'");
+        jsParserWithContext.SafeSet(variableKey, metaVariable.Value);
       }
     }
   }
