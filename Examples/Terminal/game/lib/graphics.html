@@ -1,0 +1,77 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Graphics library</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../../../css/style.css" />
+  <meta name="htmlgo:application-version" content="1.0.0" />
+  <meta name="htmlgo:application-type" content="Library" />
+</head>
+
+<body>
+  <h1>Graphics library</h1>
+
+  <h2>Functions</h2>
+
+  <h3>DrawBackground</h3>
+  <ul data-label="DrawBackground" data-arguments="w, h">
+    <li><u>Using</u> <i class="string">Console</i></li>
+    
+    <!-- <li><u>Clear</u></li> -->
+
+    <li>
+      <b>For</b>
+      (<ul><li><u>Var</u> <i class="string">y</i> <i class="number">1</i></li></ul>
+      <i class="call">y &lt; Number(h)</i>
+      <ul><li><u>Threading.Increment</u> <i class="string">y</i></li></ul>)
+      <ul>
+        <li><u>Console.SetCursorPosition</u> <i class="number">1</i> <i class="call">y</i></li>
+        <li><u>Log</u> <i class="string">···············································</i></li>
+      </ul>
+    </li>
+    
+
+    <li><u>SetCursorPosition</u> <i class="number">1</i> <i class="number">1</i></li>
+    <li><u>Log</u> <i class="string">*</i></li>
+    <li><u>SetCursorPosition</u> <i class="number">1</i> <i class="solve">-1+<i class="call">h</i></i></li>
+    <li><u>Log</u> <i class="string">*</i></li>
+    <li><u>SetCursorPosition</u> <i class="call">-1+Number(w)</i> <i class="number">1</i></li>
+    <li><u>Log</u> <i class="string">*</i></li>
+    <li><u>SetCursorPosition</u> <i class="call">-1+Number(w)</i> <i class="call">-1+Number(h)</i></li>
+    <li><u>Log</u> <i class="string">*</i></li>
+  </ul>
+
+  <h3>DrawTitle</h3>
+  <ul data-label="DrawTitle">
+    <li><u>Using</u> <i class="string">Console</i></li>
+    <li><u>SetCursorPosition</u> <i class="number">4</i> <i class="number">0</i></li>
+    <li><u>Log</u> <i class="string">HTML PONG - https://htmlgo.org</i></li>
+  </ul>
+
+  <h3>DrawScore</h3>
+  <ul data-label="DrawScore" data-arguments="a, b">
+    <li><u>Using</u> <i class="string">Console</i></li>
+    <li><u>SetCursorPosition</u> <i class="number">38</i> <i class="number">0</i></li>
+    <li><u>Log</u> <i class="call">a</i> <i class="string"> - </i> <i class="call">b</i></li>
+  </ul>
+
+  <h3>DrawBall</h3>
+  <ul data-label="DrawBall" data-arguments="x, y">
+    <li><u>Using</u> <i class="string">Console</i></li>
+    <li><u>SetCursorPosition</u> <i class="call">x</i> <i class="call">y</i></li>
+    <li><u>Log</u> <i class="string">O</i></li>
+  </ul>
+
+  <h3>DrawPlayer</h3>
+  <ul data-label="DrawPlayer" data-arguments="x, y">
+    <li><u>Using</u> <i class="string">Console</i></li>
+    <li><u>SetCursorPosition</u> <i class="call">x</i> <i class="solve"><i class="call">y</i> - 1</i></li>
+    <li><u>Log</u> <i class="string">#</i></li>
+    <li><u>SetCursorPosition</u> <i class="call">x</i> <i class="call">y</i></li>
+    <li><u>Log</u> <i class="string">#</i></li>
+    <li><u>SetCursorPosition</u> <i class="call">x</i> <i class="solve"><i class="call">y</i> + 1</i></li>
+    <li><u>Log</u> <i class="string">#</i></li>
+  </ul>
+</body>
+
+</html>

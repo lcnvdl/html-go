@@ -3,7 +3,7 @@ using HtmlRun.Runtime.Native;
 
 namespace HtmlRun.Terminal.Instructions;
 
-class SetCursorPosition : INativeInstruction
+class SetCursorPositionCmd : INativeInstruction
 {
   public string Key => "SetCursorPosition";
 

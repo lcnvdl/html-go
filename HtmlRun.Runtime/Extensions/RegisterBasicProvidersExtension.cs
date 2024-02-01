@@ -24,6 +24,7 @@ public static class RegisterBasicProvidersExtension
     runtime.RegisterProvider(new EnvironmentProvider());
     runtime.RegisterProvider(new DateProvider());
     runtime.RegisterProvider(new StringProvider());
+    runtime.RegisterProvider(new MathProvider());
     runtime.RegisterProvider(new HttpClientProvider());
     runtime.RegisterProvider(new ThreadingProvider());
   }

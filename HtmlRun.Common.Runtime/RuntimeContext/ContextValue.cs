@@ -35,6 +35,8 @@ public class ContextValue
 
   public bool IsUnset { get; private set; } = true;
 
+  public bool IsExported { get; set; } = false;
+
   public ContextValue(string name)
   {
     this.Name = name;

@@ -52,5 +52,10 @@ public class CallArgumentModel : ICloneable
       BranchInstructions = this.BranchInstructions?.Select(m => m).ToList(),
     };
   }
+
+  public override string ToString()
+  {
+    return $"{this.Alias}: {this.ArgumentType} = {this.Content}";
+  }
 }
 

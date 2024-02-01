@@ -22,6 +22,8 @@ public interface IBaseContext
   EntityModel? PointerToEntity(int ptr);
 
   void DeclareVariable(string name);
+
+  void ExportVariable(string name);
   
   void DeclareAndSetConst(string name, string val);
 

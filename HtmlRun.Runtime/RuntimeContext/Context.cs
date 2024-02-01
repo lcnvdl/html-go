@@ -76,6 +76,11 @@ public class Context : BaseContext, IRuntimeContext
     return new Context(this, this.ctxStack, this.argsStack);
   }
 
+  public void ClearArguments()
+  {
+    this.argsStack.Clear();
+  }
+
   public void InitialPushArgumentsAndValues(GroupArguments arguments)
   {
     if(this.argsStack.Count > 0)
@@ -115,6 +120,12 @@ public class Context : BaseContext, IRuntimeContext
     }
 
     this.variables[name] = new ContextValue(name);
+  }
+
+  public void ExportVariable(string name)
+  {
+    var variable = this.GetVariable(name) ?? throw new InvalidOperationException($"Variable {name} was not declared.");
+    variable.IsExported = true;
   }
 
   public void SetValueVariable(string name, string? val)

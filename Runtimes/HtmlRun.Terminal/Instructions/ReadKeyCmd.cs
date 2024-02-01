@@ -11,7 +11,7 @@ class ReadKeyCmd : INativeInstruction, INativeJSInstruction
   {
     get
     {
-      return ctx => Console.ReadKey();
+      return ctx => Console.ReadKey(true);
     }
   }
 

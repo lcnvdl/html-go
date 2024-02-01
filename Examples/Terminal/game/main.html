@@ -1,0 +1,189 @@
+<html>
+
+<head>
+  <title>HtmlGo! - Pong example</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../../css/style.css" />
+  <link rel="icon" type="image/x-icon" href="../../images/favicon.ico" />
+</head>
+
+<body>
+  <h1>Pong Game</h1>
+  <h2>Dependencies</h2>
+  <ul>
+    <li><b>Import</b> <a href="./lib/keyboard.html">Keyboard</a></li>
+    <li><b>Import</b> <a href="./lib/graphics.html">Graphics</a></li>
+  </ul>
+
+  <h2>Main</h2>
+
+  <h3>Constants</h3>
+  <ul>
+    <li><u>Const</u> <i class="string">PADDING</i> <i class="number">1</i></li>
+
+    <li><u>Const</u> <i class="string">WIDTH</i> <i class="number">48</i></li>
+    <li><u>Const</u> <i class="string">HEIGHT</i> <i class="number">18</i></li>
+
+    <li><u>Const</u> <i class="string">HALF_WIDTH</i> <i class="number">24</i></li>
+    <li><u>Const</u> <i class="string">HALF_HEIGHT</i> <i class="number">9</i></li>
+  </ul>
+
+  <h3>Variables</h3>
+  <ul>
+    <li><u>Var</u> <i class="string">lastKey</i> <i class="number">0</i></li>
+
+    <li><u>Var</u> <i class="string">p1Y</i> <i class="call">HALF_HEIGHT</i></li>
+    <li><u>Var</u> <i class="string">p2Y</i> <i class="call">HALF_HEIGHT</i></li>
+
+    <li><u>Var</u> <i class="string">p1Score</i> <i class="call">0</i></li>
+    <li><u>Var</u> <i class="string">p2Score</i> <i class="call">0</i></li>
+
+    <li><u>Var</u> <i class="string">ballX</i> <i class="call">HALF_WIDTH</i></li>
+    <li><u>Var</u> <i class="string">ballY</i> <i class="call">HALF_HEIGHT</i></li>
+
+    <li><u>Var</u> <i class="string">ballXSpeed</i> <i class="call">-1</i></li>
+    <li><u>Var</u> <i class="string">ballYSpeed</i> <i class="call">1</i></li>
+  </ul>
+
+  <h3>Game loop</h3>
+  <ul>
+    <li><u>Console.Clear</u></li>
+    <li><u>Console.HideCursor</u></li>
+    <li><u>Graphics.DrawTitle</u></li>
+
+    <li>
+      <b>Do</b>
+      <ul>
+        <li class="ignore"><br /></li>
+
+        <li><u>Graphics.DrawScore</u> <i class="call">p1Score</i> <i class="call">p2Score</i></li>
+
+        <li><u>Graphics.DrawPlayer</u> <i class="call">Number(PADDING)+1</i> <i class="call">p1Y</i></li>
+        <li><u>Graphics.DrawPlayer</u> <i class="call">+WIDTH-PADDING-PADDING</i> <i class="call">p2Y</i></li>
+        <li><u>Graphics.DrawBall</u> <i class="call">ballX</i> <i class="call">ballY</i></li>
+
+        <li class="ignore"><br /></li>
+
+        <li><u>Set</u> <i class="string">ballX</i> <i class="solve"><i class="call">ballX</i> + <i class="call">ballXSpeed</i></i></li>
+        <li><u>Set</u> <i class="string">ballY</i> <i class="solve"><i class="call">ballY</i> + <i class="call">ballYSpeed</i></i></li>
+
+        <li class="ignore"><br /></li>
+
+        <li><u>Set</u> <i class="string">lastKey</i> <i class="call">Console.PeekKey()</i></li>
+
+        <li>
+          <b>If</b>
+          <i class="call">lastKey == Keyboard.UP</i>
+          <ul data-condition="true">
+            <li class="comment"><i>True:</i></li>
+            <li><u>Set</u> <i class="string">p1Y</i> <i class="solve"><i class="call">p1Y</i> - 1</i></li>
+          </ul>
+        </li>
+        <li>
+          <b>If</b>
+          <i class="call">lastKey == Keyboard.DOWN</i>
+          <ul data-condition="true">
+            <li class="comment"><i>True:</i></li>
+            <li><u>Set</u> <i class="string">p1Y</i> <i class="solve"><i class="call">p1Y</i> + 1</i></li>
+          </ul>
+        </li>
+        <li>
+          <b>If</b>
+          <i class="call">lastKey == Keyboard.W</i>
+          <ul data-condition="true">
+            <li class="comment"><i>True:</i></li>
+            <li><u>Set</u> <i class="string">p2Y</i> <i class="solve"><i class="call">p2Y</i> - 1</i></li>
+          </ul>
+        </li>
+        <li>
+          <b>If</b>
+          <i class="call">lastKey == Keyboard.S</i>
+          <ul data-condition="true">
+            <li class="comment"><i>True:</i></li>
+            <li><u>Set</u> <i class="string">p2Y</i> <i class="solve"><i class="call">p2Y</i> + 1</i></li>
+          </ul>
+        </li>
+
+        <li class="ignore"><br /></li>
+
+        <li><u>Set</u> <i class="string">p1Y</i> <i class="call">Math.Clamp(p1Y, Number(PADDING)+2, Number(HEIGHT)-Number(PADDING)-2)</i></li>
+        <li><u>Set</u> <i class="string">p2Y</i> <i class="call">Math.Clamp(p2Y, Number(PADDING)+2, Number(HEIGHT)-Number(PADDING)-2)</i></li>
+
+        <li>
+          <b>If</b>
+          <i class="call">(ballX == Number(PADDING)+2 || ballX == Number(PADDING) + 1) && (ballY == p1Y || ballY == p1Y-1 || ballY == p1Y+1)</i>
+          <ul data-condition="true">
+            <li class="comment"><i>True:</i></li>
+            <li><u>Set</u> <i class="string">ballX</i> <i class="solve"><i class="call">PADDING</i>+2</i></li>
+            <li><u>Set</u> <i class="string">ballXSpeed</i> <i class="solve">-<i class="call">ballXSpeed</i></i></li>
+          </ul>
+        </li>
+
+        <li>
+          <b>If</b>
+          <i class="call">(ballX == Number(WIDTH)-Number(PADDING)*2 || ballX == Number(WIDTH)-Number(PADDING)*2-1) && (ballY == p2Y || ballY == p2Y-1 || ballY == p2Y+1)</i>
+          <ul data-condition="true">
+            <li class="comment"><i>True:</i></li>
+            <li><u>Set</u> <i class="string">ballX</i> <i class="solve"><i class="call">Number(WIDTH)-Number(PADDING)*2</i>-1</i></li>
+            <li><u>Set</u> <i class="string">ballXSpeed</i> <i class="solve">-<i class="call">ballXSpeed</i></i></li>
+          </ul>
+        </li>
+
+        <li>
+          <b>If</b>
+          <i class="call">ballX < Number(PADDING)</i>
+          <ul data-condition="true">
+            <li class="comment"><i>True:</i></li>
+            <li><u>Set</u> <i class="string">ballX</i> <i class="solve"><i class="call">PADDING</i></i></li>
+            <li><u>Set</u> <i class="string">ballXSpeed</i> <i class="solve">-<i class="call">ballXSpeed</i></i></li>
+            <li><u>Set</u> <i class="string">p2Score</i> <i class="solve"><i class="call">p2Score</i>+1</i></li>
+            <li><u>Set</u> <i class="string">ballX</i> <i class="call">HALF_WIDTH</i></li>
+            <li><u>Set</u> <i class="string">ballY</i> <i class="call">HALF_HEIGHT</i></li>
+          </ul>
+        </li>
+
+        <li>
+          <b>If</b>
+          <i class="call">ballX > Number(WIDTH)-Number(PADDING)*2</i>
+          <ul data-condition="true">
+            <li class="comment"><i>True:</i></li>
+            <li><u>Set</u> <i class="string">ballX</i> <i class="solve"><i class="call">Number(WIDTH)-Number(PADDING)*2</i></i></li>
+            <li><u>Set</u> <i class="string">ballXSpeed</i> <i class="solve">-<i class="call">ballXSpeed</i></i></li>
+            <li><u>Set</u> <i class="string">p1Score</i> <i class="solve"><i class="call">p1Score</i>+1</i></li>
+            <li><u>Set</u> <i class="string">ballX</i> <i class="call">HALF_WIDTH</i></li>
+            <li><u>Set</u> <i class="string">ballY</i> <i class="call">HALF_HEIGHT</i></li>
+          </ul>
+        </li>
+
+        <li><u>Set</u> <i class="string">ballYSpeed</i> <i class="call">Bounce(ballY, ballYSpeed, Number(PADDING), Number(HEIGHT)-Number(PADDING))</i></li>
+
+        <li class="ignore"><br /></li>
+
+        <li><u>Threading.Sleep</u> <i class="number">80</i></li>
+
+        <li><u>Graphics.DrawBackground</u> <i class="call">WIDTH</i> <i class="call">HEIGHT</i></li>
+
+        <li class="ignore"><br /></li>
+      </ul>
+      While
+      <i class="call">lastKey != Keyboard.ESC</i>
+    </li>
+
+  </ul>
+
+
+  <h2>Calls</h2>
+  <div id="Bounce" class="code">
+    <h3>Bounce (<i class="number">val</i>, <i class="number">speed</i>, <i class="number">min</i>, <i class="number">max</i>)</h3>
+    <pre>
+      if (val &lt;= min) return -speed;
+      if (val &gt;= max) return -speed;
+      return speed;
+    </pre>
+  </div>
+
+  <br>
+  <br>
+</body>
+
+</html>

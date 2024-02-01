@@ -122,6 +122,12 @@ public class CurrentInstructionContext : BaseContext, ICurrentInstructionContext
     this.SetDirty(name);
   }
 
+  public void ExportVariable(string name)
+  {
+    this.ParentContext.ExportVariable(name);
+    this.SetDirty(name);
+  }
+
   public void DeleteVariable(string name)
   {
     this.ParentContext.DeleteVariable(name);

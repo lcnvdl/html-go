@@ -1,10 +1,12 @@
-﻿using System.Text.Encodings.Web;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Text.Encodings.Web;
 using HtmlRun.Common.Models;
 using HtmlRun.Common.Plugins;
 using HtmlRun.Common.Plugins.Models;
 using HtmlRun.Interfaces;
 using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Constants;
+using HtmlRun.Runtime.Exceptions;
 using HtmlRun.Runtime.Factories;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Models;
@@ -55,6 +57,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     .Cast<string>()
     .Where(m => m.Contains('.'))
     .Select(m => new NamespaceModel(m, true).ToString())
+    .Distinct()
     .ToArray();
 
   public void Run(AppModel app, CancellationToken? token)
@@ -160,7 +163,7 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
   {
     //  Run instructions
 
-    var applicationStartedModel = this.StartApplication(app, initialCursorModification, asFunctionModel);
+    var applicationStartedModel = this.StartOrResumeApplication(app, initialCursorModification, asFunctionModel);
 
     var cursor = applicationStartedModel.NewCursor;
     var appInstructions = applicationStartedModel.AppInstructions;
@@ -169,7 +172,18 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
     while (cursor.Position < appInstructions.Count && (!token.HasValue || !token.Value.IsCancellationRequested))
     {
-      this.DoStep(cursor, appInstructions);
+      try
+      {
+        this.DoStep(cursor, appInstructions);
+      }
+      catch (JumpReturnTemporalException)
+      {
+        //  TODO  This is a temporal bugfix (patch). 
+        //  The problem is that the "Return" statement of an external method
+        //  sometimes does not return, and the cursor keeps moving forward and
+        //  bumping into other methods.
+        break;
+      }
     }
 
     if (token.HasValue && token.Value.IsCancellationRequested)
@@ -270,8 +284,10 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     return runtime;
   }
 
-  private ApplicationStartedModel StartApplication(AppModel app, IContextJump? initialCursorModification, StartApplicationAsFunctionModel? startAsFunction)
+  private ApplicationStartedModel StartOrResumeApplication(AppModel app, IContextJump? initialCursorModification, StartApplicationAsFunctionModel? startAsFunction)
   {
+    bool wasAppStarted = this.isApplicationStarted;
+
     this.isApplicationStarted = true;
 
     var cursor = new InstructionPointer(app.Id, startAsFunction?.CallStack);
@@ -292,14 +308,19 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
     List<CallModel> appInstructions = main.Instructions;
 
-    this.ctxStack.Clear();
-    this.ctxStack.Push(this.globalCtx);
+    if (!wasAppStarted)
+    {
+      this.ctxStack.Clear();
+      this.ctxStack.Push(this.globalCtx);
+    }
 
     if (startAsFunction != null)
     {
       if (startAsFunction.ArgsAndValues != null)
       {
-        this.globalCtx.InitialPushArgumentsAndValues(startAsFunction.ArgsAndValues);
+        //  Clear arguments added because the method can be re-called.
+        this.ctxStack.Peek().ClearArguments();
+        this.ctxStack.Peek().InitialPushArgumentsAndValues(startAsFunction.ArgsAndValues);
       }
     }
 
@@ -374,7 +395,17 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     var importedRuntime = this.importedRuntimes[cursor.ApplicationId];
     var app = importedRuntime.application!;
 
+    var newCtx = importedRuntime.ctxStack.Peek().Fork();
+    importedRuntime.ctxStack.Push(newCtx);
+
+    int stackCount = importedRuntime.ctxStack.Count;
+
     importedRuntime.InternalRun(app, null, cleanJump, asFunctionModel);
+
+    if (stackCount != importedRuntime.ctxStack.Count)
+    {
+      throw new InvalidOperationException("Context stack is unbalanced.");
+    }
 
     finalCtx.CursorModification = null;
 
@@ -387,12 +418,16 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     }
 
     //  Get exported variables
-    foreach (ContextValue variable in importedRuntime.globalCtx.AllVariables.Where(m => m != null))
+    foreach (ContextValue variable in importedRuntime.globalCtx.AllVariables.Where(m => m != null && m.IsExported))
     {
       string groupPrefix = (argsAndValues == null || string.IsNullOrEmpty(argsAndValues.Label)) ? string.Empty : $"{argsAndValues.Label}.";
 
       this.ImportVariablesFromRuntime(importedRuntime, groupPrefix);
     }
+
+    //  Dispose
+    Context? ctxToDispose = importedRuntime.ctxStack.Pop();
+    ctxToDispose?.Release();
   }
 
   private void ImportVariablesFromRuntime(HtmlRuntime child, string groupPrefix = "")
@@ -445,9 +480,15 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
       }
       else
       {
-        cursor.ApplyJumpOrFail(finalCtx.CursorModification, appInstructions);
-
-        finalCtx.CursorModification = null;
+        try
+        {
+          cursor.ApplyJumpOrFail(finalCtx.CursorModification, appInstructions);
+        }
+        finally
+        {
+          //  TODO  Remove then fix the JumpReturnTemporalException bug.
+          finalCtx.CursorModification = null;
+        }
       }
     }
   }
@@ -617,7 +658,11 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
 
   private void RunImportedLibraries(AppModel app, CancellationToken? token)
   {
-    var imports = app.Imports.FindAll(m => m.Library.InstructionGroups.Any(m => m.IsMain && m.Instructions.Count > 0));
+    //var imports = app.Imports.FindAll(m => m.Library.InstructionGroups.Any(m => m.IsMain && m.Instructions.Count > 0));
+
+    //  Run all in order to have a context stack
+
+    var imports = app.Imports;
 
     if (imports.Count == 0)
     {
@@ -627,6 +672,8 @@ public class HtmlRuntime : IHtmlRuntimeForApp, IHtmlRuntimeForContext, IHtmlRunt
     var runtimes = imports.Select(m => new { runtime = this.importedRuntimes[m.Library.Id], app = m.Library });
 
     Parallel.ForEach(runtimes, m => m.runtime.InternalRun(m.app, token));
+
+    //runtimes.ToList().ForEach(m => m.runtime.InternalRun(m.app, token));
 
     foreach (var import in imports)
     {

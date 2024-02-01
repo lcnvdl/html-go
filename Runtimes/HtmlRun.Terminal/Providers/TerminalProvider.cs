@@ -11,7 +11,10 @@ class TerminalProvider : INativeProvider
   {
     new ReadLineCmd(),
     new ReadKeyCmd(),
+    new PeekKeyCmd(),
     new ClearCmd(),
-    new SetCursorPosition(),
+    new SetCursorPositionCmd(),
+    new ShowCursorCmd(),
+    new HideCursorCmd(),
   };
 }

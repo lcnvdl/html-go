@@ -55,7 +55,20 @@ class ConstCmd : INativeInstruction
   {
     get
     {
-      return ctx => ctx.DeclareAndSetConst(ctx.GetRequiredArgument(0), ctx.GetArgument(1)!);
+      return ctx =>
+      {
+        ctx.DeclareAndSetConst(ctx.GetRequiredArgument(0), ctx.GetArgument(1)!);
+
+        if (ctx.CountArguments() > 2)
+        {
+          if (!ctx.GetRequiredArgument(2).Equals("export", StringComparison.InvariantCultureIgnoreCase))
+          {
+            throw new InvalidDataException();
+          }
+
+          ctx.ExportVariable(ctx.GetRequiredArgument());
+        }
+      };
     }
   }
 }
@@ -75,6 +88,16 @@ class VarCmd : INativeInstruction
         if (ctx.CountArguments() > 1)
         {
           ctx.SetValueVariable(ctx.GetRequiredArgument(), ctx.GetRequiredArgument(1));
+        }
+
+        if (ctx.CountArguments() > 2)
+        {
+          if (!ctx.GetRequiredArgument(2).Equals("export", StringComparison.InvariantCultureIgnoreCase))
+          {
+            throw new InvalidDataException();
+          }
+
+          ctx.ExportVariable(ctx.GetRequiredArgument());
         }
       };
     }

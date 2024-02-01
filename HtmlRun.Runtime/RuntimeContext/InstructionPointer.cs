@@ -1,5 +1,6 @@
 using HtmlRun.Common.Models;
 using HtmlRun.Interfaces;
+using HtmlRun.Runtime.Exceptions;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.RuntimeContext;
 
@@ -53,6 +54,7 @@ class InstructionPointer
       if (this.CallStack.Peek() is IExternalJumpWithMemory)
       {
         //  TODO: Refactor this. Now it's being managed from the Unsafe method in HtmlRuntime.
+        throw new JumpReturnTemporalException();
       }
       else
       {

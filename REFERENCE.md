@@ -192,7 +192,13 @@ The calls should be enclosed within a `<u>` tag.
 * Using
 
 ### Console calls
+* Console.Clear
+* Console.HideCursor
+* Console.PeekKey
+* Console.ReadKey
 * Console.ReadLine
+* Console.ShowCursor
+* Console.SetCursorPosition
 
 ### Date calls
 * Date.Timestamp
@@ -215,6 +221,9 @@ The calls should be enclosed within a `<u>` tag.
 * List.RemoveAt
 * List.Sort
 * List.Swap
+
+### Math calls
+* Math.Clamp
 
 ### OOP calls
 * New

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "HtmlRun.Terminal": {
+      "commandName": "Project",
+      "commandLineArgs": "--run-example",
+      "workingDirectory": "C:\\Users\\Lucia\\Documents\\GitHub\\html-go"
+    }
+  }
+}
