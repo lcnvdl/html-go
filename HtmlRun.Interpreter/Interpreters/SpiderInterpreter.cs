@@ -14,6 +14,8 @@ public class SpiderInterpreter : IInterpreter
     IParser parser = new AngleSharpParser();
     await parser.Load(readContent(initialReference));
 
+    string directory = Path.GetDirectoryName(initialReference) ?? string.Empty;
+
     //  App
 
     var program = new AppModel();
@@ -54,6 +56,12 @@ public class SpiderInterpreter : IInterpreter
         }
 
         string path = import.Arguments[0].Content!;
+
+        if (!string.IsNullOrEmpty(directory))
+        {
+          path = Path.Combine(directory, path);
+        }
+
         AppModel library = await this.ParseString(path, readContent);
         string? alias = (import.Arguments.Count > 1 ? import.Arguments[1].Content : null) ?? import.Arguments[0].Alias;
 

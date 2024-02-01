@@ -1,11 +1,14 @@
 # HtmlGo changelog
-## Next
+
+## v0.5.0-alpha
 * Import improved. Now you can import constants and variables, and run imported code.
 * List calls. Now you can manipulate lists.
 * Network calls. Now you can send http requests.
 * New variable instruction: `Swap`. It allows you to swap values between variables in one single line.
 * Terminal calls. Now you can move the cursor, show it, hide it, clear the console, and read keys.
 * Math provider.
+
+**Full Changelog**: https://github.com/lcnvdl/html-go/compare/v0.4.0-alpha...v0.5.0-alpha
 
 ## v0.4.0-alpha
 * Memory heap. Reference values. Introducing support for a memory heap to handle reference values, enabling the use of variables by reference instead of just value-based variables
