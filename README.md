@@ -23,18 +23,24 @@ The `HtmlGo` interpreter reads your .html file and executes the instructions you
 
 Want to be part of this new way of programming? Join the `HtmlGo` developer community and discover how this language can bring a fun and refreshing twist to your projects. Say goodbye to monotony and welcome a more visual, creative, and HTML-infused programming experience!
 
+## Videos and Tutorials
+* [HtmlGo Official Playlist (Spanish-Español)](https://www.youtube.com/playlist?list=PLN55oDjIbZw-n1D9bUEykjyBoSS_3D8fn)
+* [¿Qué es html-go? - by JohnPunk41](https://www.youtube.com/watch?v=JT3DxeVYM-A&t=7s&ab_channel=JohnPunk41)
+
+Are you a content creator? Send us a pull request with your videos!
+
 ## Full Documentation
 See the [Wiki](https://github.com/lcnvdl/html-go/wiki) for full documentation, examples, operational details and other information.
 
 ## Table of contents
 - [What is HtmlGo?](#what-is-htmlgo)
+- [Videos and Tutorials](#videos-and-tutorials)
 - [Full Documentation](#full-documentation)
 - [Table of contents](#table-of-contents)
 - [How to use?](#how-to-use)
   - [Terminal mode](#terminal-mode)
   - [Server mode](#server-mode)
 - [Getting Started for Users](#getting-started-for-users)
-- [Videos and Tutorials](#videos-and-tutorials)
 - [Dev Tools](#dev-tools)
 - [License](#license)
 
@@ -93,11 +99,6 @@ Before you can start using `HtmlGo` to compile and execute applications, you'll 
     * Press Ctrl + X, then Y, and finally Enter to save the changes.
 
 Once you have completed these steps, you have successfully installed `HtmlGo` on your system. You can now start using `HtmlGo` to compile and execute applications written in HTML.
-
-## Videos and Tutorials
-* [HtmlGo Playlist (Spanish-Español)](https://www.youtube.com/playlist?list=PLN55oDjIbZw-n1D9bUEykjyBoSS_3D8fn)
-
-Are you a content creator? Send us a pull request with your videos!
 
 ## Dev Tools
 * Commands (list of commands I've used) - `commands.bat`
