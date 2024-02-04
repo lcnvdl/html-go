@@ -12,7 +12,11 @@ The interpreter that lets you 'program' in HTML! Now you can finally join the fu
 
 ¡El intérprete que te permite 'programar' en HTML! Ahora puedes unirte a la diversión y decir con orgullo que eres un programador de HTML (más o menos)!
 
+*Hello world example*
+
 ![Screenshot1](./Docs/screenshot_1.png)
+
+*Pong example*
 
 ![Screenshot2](./Examples/Terminal/game/preview.gif)
 
