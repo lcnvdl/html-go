@@ -284,6 +284,21 @@ public class HtmlRuntimeExamplesTests
     Assert.Equal("Enter: 13", this.logs[0]);
   }
 
+  [Fact]
+  public async void HtmlRuntime_Example_25()
+  {
+    var app = await this.ReadApp("25-math_example");
+
+    this.runtime.Run(app, null);
+
+    Assert.Equal(5, this.logs.Count);
+    Assert.Equal("Value: 0", this.logs[0]);
+    Assert.Equal("Value (+1 in call): 1", this.logs[1]);
+    Assert.Equal("Value (-1 in call): -1", this.logs[2]);
+    Assert.Equal("Value (+1): 1", this.logs[3]);
+    Assert.Equal("Value (-1): 0", this.logs[4]);
+  }
+
   private async Task<AppModel> ReadApp(string exampleName)
   {
     string file = Environment.CurrentDirectory.Remove(Environment.CurrentDirectory.IndexOf("HtmlRun.Tests"));

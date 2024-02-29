@@ -1,5 +1,8 @@
 # HtmlGo changelog
 
+## Next
+* New math provider instructions: `IncrementValue`, `DecrementValue`.
+
 ## v0.5.0-alpha
 * Import improved. Now you can import constants and variables, and run imported code.
 * List calls. Now you can manipulate lists.

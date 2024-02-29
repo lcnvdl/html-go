@@ -403,3 +403,5 @@ out
 .ignore
 Examples/*.db
 Examples/dbs/*.db
+
+/global.json

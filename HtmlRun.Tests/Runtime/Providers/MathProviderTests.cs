@@ -1,6 +1,4 @@
-﻿using HtmlRun.Runtime.Code;
-using HtmlRun.Runtime.Constants;
-using HtmlRun.Runtime.Providers;
+﻿using HtmlRun.Runtime.Providers;
 
 public class MathProviderTests : BaseProviderTests
 {

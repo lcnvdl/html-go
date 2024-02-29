@@ -224,6 +224,8 @@ The calls should be enclosed within a `<u>` tag.
 
 ### Math calls
 * Math.Clamp
+* Math.IncrementValue
+* Math.DecrementValue
 
 ### OOP calls
 * New
