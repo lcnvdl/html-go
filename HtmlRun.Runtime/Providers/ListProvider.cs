@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Text.Json;
 using HtmlRun.Runtime.Exceptions;
 using HtmlRun.Runtime.Interfaces;
@@ -65,7 +66,7 @@ class ListGetSizeCmd : INativeInstruction, INativeJSInstruction
   {
     return new Func<string, int>((json) =>
     {
-      var list = JsonSerializer.Deserialize<List<string>>(json);
+      var list = JsonSerializer.Deserialize<ArrayList>(json);
 
       if (list == null)
       {
@@ -235,4 +236,3 @@ class ListSortCmd : ListManipulationBaseCmd, INativeInstruction
     }
   }
 }
-

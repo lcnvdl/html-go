@@ -1,13 +1,11 @@
 ﻿using System.Globalization;
-using System.Numerics;
-using System.Reflection;
 using HtmlRun.Runtime.Exceptions;
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 
 namespace HtmlRun.Runtime.Providers;
 
-public class MathProvider : INativeProvider
+class MathProvider : INativeProvider
 {
   public string Namespace => "Math";
 

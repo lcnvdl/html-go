@@ -155,7 +155,7 @@ public class SpiderInterpreter : IInterpreter
     model.Index = Interlocked.Increment(ref this.nextCallModelIdx);
     model.CustomId = li.GetData("id") ?? call.GetData("id");
     model.FunctionName = call.InnerHtml.Trim();
-    model.IsSpecial = special != null;
+    model.CallType = special != null ? CallType.Special : CallType.Instruction;
     model.Arguments.AddRange(this.ParseCallArguments(callArguments, model.IsSpecial, model.FunctionName));
 
     return model;

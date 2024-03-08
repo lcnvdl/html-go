@@ -4,7 +4,7 @@ using HtmlRun.Runtime.Native;
 
 namespace HtmlRun.Runtime.Providers;
 
-public class VariablesProvider : INativeProvider
+class VariablesProvider : INativeProvider
 {
   public string Namespace => Constants.Namespaces.Global;
 

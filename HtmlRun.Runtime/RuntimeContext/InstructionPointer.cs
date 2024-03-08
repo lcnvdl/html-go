@@ -59,7 +59,7 @@ class InstructionPointer
       else
       {
         IJumpWithMemory call = this.CallStack.Pop()!;
-        
+
         this.ApplyJump(new JumpToLine(call.CallPosition + 1), instructions);
       }
     }
@@ -67,6 +67,13 @@ class InstructionPointer
     {
       throw new InvalidCastException();
     }
+  }
+
+  public InstructionPointer Clone()
+  {
+    var clone = (InstructionPointer)base.MemberwiseClone();
+    clone.CallStack = new Stack<IJumpWithMemory>(this.CallStack.Where(m => m is ICloneable).Cast<ICloneable>().Select(m => m.Clone()).Cast<IJumpWithMemory>());
+    return clone;
   }
 
   private void ApplyJump(JumpToLine jump, List<CallModel> instructions)

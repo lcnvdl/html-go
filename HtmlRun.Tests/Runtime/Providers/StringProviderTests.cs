@@ -1,4 +1,3 @@
-using HtmlRun.Runtime.Code;
 using HtmlRun.Runtime.Constants;
 using HtmlRun.Runtime.Providers;
 
@@ -12,6 +11,35 @@ public class StringProviderTests : BaseProviderTests
   public void StringProvider_GetInstructions_ShouldWorkFine()
   {
     base.TestGetInstructions();
+  }
+
+  [Fact]
+  public void StringProvider_Concat_JS_ShouldWorkFine()
+  {
+    string? result = this.CallEvalInstruction(StringInstructionsSet.Concat, "'hi there'")?.ToString();
+    Assert.Equal("hi there", result);
+  }
+
+  [Fact]
+  public void StringProvider_Concat_TwoArguments_JS_ShouldWorkFine()
+  {
+    string? result = this.CallEvalInstruction(StringInstructionsSet.Concat, "1", "2")?.ToString();
+    Assert.Equal("12", result);
+  }
+
+  [Fact]
+  public void StringProvider_Concat_ThreeArguments_JS_ShouldWorkFine()
+  {
+    string? result = this.CallEvalInstruction(StringInstructionsSet.Concat, "'hi'", "' '", "'world'")?.ToString();
+    Assert.Equal("hi world", result);
+  }
+
+  [Fact]
+  public void StringProvider_Join_JS_ShouldWorkFine()
+  {
+    string? result = this.CallEvalInstruction(StringInstructionsSet.Join, "', '", "['hi', 'there']")?.ToString();
+
+    Assert.Equal("hi, there", result);
   }
 
   [Fact]

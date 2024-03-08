@@ -45,6 +45,28 @@ public abstract class BaseProviderTests
     return this.Provider.Instructions.FirstOrDefault(m => m.Key.Equals(key)) as INativeJSInstruction;
   }
 
+  protected INativeJSEvalInstruction? GetEvalInstruction(string key)
+  {
+    return this.Provider.Instructions.FirstOrDefault(m => m.Key.Equals(key)) as INativeJSEvalInstruction;
+  }
+
+  protected object? CallEvalInstruction(string key, params object?[] args)
+  {
+    var evalInstruction = this.GetEvalInstruction(key);
+    Assert.NotNull(evalInstruction);
+
+    var evalFn = evalInstruction!.ToEvalFunction();
+
+    var dict = new Dictionary<string, INativeJSDefinition>();
+    dict[key] = new NativeJSEvalDefinition(evalFn);
+
+    var parser = JavascriptParserWithContextFactory.CreateNewJavascriptParserAndAssignInstructions(dict);
+
+    string joinedArgs = string.Join(',', args);
+
+    return parser.ExecuteCode($"window.{key}({joinedArgs})");
+  }
+
   protected object? CallJsInstruction(string key, params object?[] args)
   {
     var jsInstruction = this.GetJSInstruction(key);

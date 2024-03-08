@@ -4,7 +4,7 @@ using HtmlRun.Runtime.Utils;
 
 namespace HtmlRun.Runtime.Providers;
 
-public class HttpClientProvider : INativeProvider
+class HttpClientProvider : INativeProvider
 {
   public string Namespace => "Network";
 

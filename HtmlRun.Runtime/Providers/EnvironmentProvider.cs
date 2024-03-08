@@ -3,7 +3,7 @@ using HtmlRun.Runtime.Native;
 
 namespace HtmlRun.Runtime.Providers;
 
-public class EnvironmentProvider : INativeProvider
+ class EnvironmentProvider : INativeProvider
 {
   public string Namespace => "Environment";
 

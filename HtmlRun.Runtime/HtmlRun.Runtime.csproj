@@ -22,5 +22,11 @@
     <ProjectReference Include="..\HtmlRun.Common\HtmlRun.Common.csproj" />
     <ProjectReference Include="..\HtmlRun.Common.Runtime\HtmlRun.Common.Runtime.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>HtmlRun.Tests</_Parameter1>
+    </AssemblyAttribute>
+</ItemGroup>
 
 </Project>

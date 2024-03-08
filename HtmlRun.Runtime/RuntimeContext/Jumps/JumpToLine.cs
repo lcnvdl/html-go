@@ -1,6 +1,6 @@
 namespace HtmlRun.Runtime.RuntimeContext;
 
-class JumpToLine : Interfaces.IContextJump
+class JumpToLine : Interfaces.IContextJump, ICloneable
 {
   public enum JumpTypeEnum
   {
@@ -26,4 +26,9 @@ class JumpToLine : Interfaces.IContextJump
   public int Offset { get; set; } = 0;
 
   public bool IsEmpty => string.IsNullOrEmpty(this.Line);
+
+  public object Clone()
+  {
+    return base.MemberwiseClone();
+  }
 }

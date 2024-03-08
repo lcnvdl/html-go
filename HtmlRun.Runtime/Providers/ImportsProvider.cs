@@ -3,7 +3,7 @@ using HtmlRun.Runtime.Native;
 
 namespace HtmlRun.Runtime.Providers;
 
-public class ImportsProvider : INativeProvider
+class ImportsProvider : INativeProvider
 {
   public string Namespace => Constants.Namespaces.Global;
 

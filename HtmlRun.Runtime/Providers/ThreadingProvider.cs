@@ -9,7 +9,11 @@ class ThreadingProvider : INativeProvider
 {
   public string Namespace => "Threading";
 
-  public INativeInstruction[] Instructions => new INativeInstruction[] { new SleepCmd(), new IncrementCmd(), new DecrementCmd(), };
+  public INativeInstruction[] Instructions => new INativeInstruction[] {
+    new SleepCmd(),
+    new IncrementCmd(),
+    new DecrementCmd(),
+  };
 }
 
 class SleepCmd : INativeInstruction, INativeJSInstruction
@@ -49,7 +53,7 @@ class IncrementCmd : INativeInstruction
         }
 
         var cast = Utils.CastingUtils.ToNumber(meta.Value);
-        
+
         if (cast == null)
         {
           throw new InvalidCastException($"Variable {varName} is not a number.");
@@ -82,7 +86,7 @@ class DecrementCmd : INativeInstruction
         }
 
         var cast = Utils.CastingUtils.ToNumber(meta.Value);
-        
+
         if (cast == null)
         {
           throw new InvalidCastException($"Variable {varName} is not a number.");

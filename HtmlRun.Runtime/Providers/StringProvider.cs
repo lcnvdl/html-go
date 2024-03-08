@@ -1,9 +1,11 @@
 using HtmlRun.Runtime.Interfaces;
 using HtmlRun.Runtime.Native;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("HtmlRun.Tests")]
+
 namespace HtmlRun.Runtime.Providers;
 
-public class StringProvider : INativeProvider
+class StringProvider : INativeProvider
 {
   public string Namespace => "String";
 
@@ -31,7 +33,7 @@ class ConcatCmd : INativeInstruction, INativeJSEvalInstruction
 
   public EvalDefinition ToEvalFunction()
   {
-    return new EvalDefinition("return [args].join('');", -1);
+    return new EvalDefinition("return [arg0||'',arg1||'',arg2||''].join('');", 3);
   }
 }
 

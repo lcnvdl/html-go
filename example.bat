@@ -1,0 +1,1 @@
+dotnet .\Runtimes\HtmlRun.Terminal\bin\Debug\net6.0\HtmlRun.Terminal.dll .\Examples\01-hello_world.html
