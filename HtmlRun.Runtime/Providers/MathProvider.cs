@@ -30,7 +30,7 @@ class ClampCmd : INativeInstruction, INativeJSInstruction
 
   public Delegate ToJSAction()
   {
-    return new Func<double, double, double, double>((a, b, c) => Math.Clamp(a, b, c));
+    return new Func<double, double, double, double>((value, min, max) => Math.Clamp(value, min, max));
   }
 }
 
